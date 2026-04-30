@@ -17,7 +17,11 @@ import { Route as FornecedorIndexRouteImport } from './routes/fornecedor/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MotoristaViagemRouteImport } from './routes/motorista/viagem'
 import { Route as MotoristaSolicitarRouteImport } from './routes/motorista/solicitar'
+import { Route as MotoristaNotificacoesRouteImport } from './routes/motorista/notificacoes'
 import { Route as MotoristaIniciarJornadaRouteImport } from './routes/motorista/iniciar-jornada'
+import { Route as MotoristaHistoricoRouteImport } from './routes/motorista/historico'
+import { Route as MotoristaFotoRouteImport } from './routes/motorista/foto'
+import { Route as MotoristaEncerrarJornadaRouteImport } from './routes/motorista/encerrar-jornada'
 import { Route as MotoristaChecklistRouteImport } from './routes/motorista/checklist'
 import { Route as MotoristaAbastecimentoRouteImport } from './routes/motorista/abastecimento'
 import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
@@ -70,11 +74,32 @@ const MotoristaSolicitarRoute = MotoristaSolicitarRouteImport.update({
   path: '/motorista/solicitar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MotoristaNotificacoesRoute = MotoristaNotificacoesRouteImport.update({
+  id: '/motorista/notificacoes',
+  path: '/motorista/notificacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MotoristaIniciarJornadaRoute = MotoristaIniciarJornadaRouteImport.update({
   id: '/motorista/iniciar-jornada',
   path: '/motorista/iniciar-jornada',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MotoristaHistoricoRoute = MotoristaHistoricoRouteImport.update({
+  id: '/motorista/historico',
+  path: '/motorista/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaFotoRoute = MotoristaFotoRouteImport.update({
+  id: '/motorista/foto',
+  path: '/motorista/foto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaEncerrarJornadaRoute =
+  MotoristaEncerrarJornadaRouteImport.update({
+    id: '/motorista/encerrar-jornada',
+    path: '/motorista/encerrar-jornada',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MotoristaChecklistRoute = MotoristaChecklistRouteImport.update({
   id: '/motorista/checklist',
   path: '/motorista/checklist',
@@ -144,7 +169,11 @@ export interface FileRoutesByFullPath {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/encerrar-jornada': typeof MotoristaEncerrarJornadaRoute
+  '/motorista/foto': typeof MotoristaFotoRoute
+  '/motorista/historico': typeof MotoristaHistoricoRoute
   '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
+  '/motorista/notificacoes': typeof MotoristaNotificacoesRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin/': typeof AdminIndexRoute
@@ -166,7 +195,11 @@ export interface FileRoutesByTo {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/encerrar-jornada': typeof MotoristaEncerrarJornadaRoute
+  '/motorista/foto': typeof MotoristaFotoRoute
+  '/motorista/historico': typeof MotoristaHistoricoRoute
   '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
+  '/motorista/notificacoes': typeof MotoristaNotificacoesRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin': typeof AdminIndexRoute
@@ -189,7 +222,11 @@ export interface FileRoutesById {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/encerrar-jornada': typeof MotoristaEncerrarJornadaRoute
+  '/motorista/foto': typeof MotoristaFotoRoute
+  '/motorista/historico': typeof MotoristaHistoricoRoute
   '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
+  '/motorista/notificacoes': typeof MotoristaNotificacoesRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin/': typeof AdminIndexRoute
@@ -213,7 +250,11 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/encerrar-jornada'
+    | '/motorista/foto'
+    | '/motorista/historico'
     | '/motorista/iniciar-jornada'
+    | '/motorista/notificacoes'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin/'
@@ -235,7 +276,11 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/encerrar-jornada'
+    | '/motorista/foto'
+    | '/motorista/historico'
     | '/motorista/iniciar-jornada'
+    | '/motorista/notificacoes'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin'
@@ -257,7 +302,11 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/encerrar-jornada'
+    | '/motorista/foto'
+    | '/motorista/historico'
     | '/motorista/iniciar-jornada'
+    | '/motorista/notificacoes'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin/'
@@ -280,7 +329,11 @@ export interface RootRouteChildren {
   GestorVeiculosRoute: typeof GestorVeiculosRouteWithChildren
   MotoristaAbastecimentoRoute: typeof MotoristaAbastecimentoRoute
   MotoristaChecklistRoute: typeof MotoristaChecklistRoute
+  MotoristaEncerrarJornadaRoute: typeof MotoristaEncerrarJornadaRoute
+  MotoristaFotoRoute: typeof MotoristaFotoRoute
+  MotoristaHistoricoRoute: typeof MotoristaHistoricoRoute
   MotoristaIniciarJornadaRoute: typeof MotoristaIniciarJornadaRoute
+  MotoristaNotificacoesRoute: typeof MotoristaNotificacoesRoute
   MotoristaSolicitarRoute: typeof MotoristaSolicitarRoute
   MotoristaViagemRoute: typeof MotoristaViagemRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -347,11 +400,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MotoristaSolicitarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/motorista/notificacoes': {
+      id: '/motorista/notificacoes'
+      path: '/motorista/notificacoes'
+      fullPath: '/motorista/notificacoes'
+      preLoaderRoute: typeof MotoristaNotificacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/motorista/iniciar-jornada': {
       id: '/motorista/iniciar-jornada'
       path: '/motorista/iniciar-jornada'
       fullPath: '/motorista/iniciar-jornada'
       preLoaderRoute: typeof MotoristaIniciarJornadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/historico': {
+      id: '/motorista/historico'
+      path: '/motorista/historico'
+      fullPath: '/motorista/historico'
+      preLoaderRoute: typeof MotoristaHistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/foto': {
+      id: '/motorista/foto'
+      path: '/motorista/foto'
+      fullPath: '/motorista/foto'
+      preLoaderRoute: typeof MotoristaFotoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/encerrar-jornada': {
+      id: '/motorista/encerrar-jornada'
+      path: '/motorista/encerrar-jornada'
+      fullPath: '/motorista/encerrar-jornada'
+      preLoaderRoute: typeof MotoristaEncerrarJornadaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/motorista/checklist': {
@@ -459,7 +540,11 @@ const rootRouteChildren: RootRouteChildren = {
   GestorVeiculosRoute: GestorVeiculosRouteWithChildren,
   MotoristaAbastecimentoRoute: MotoristaAbastecimentoRoute,
   MotoristaChecklistRoute: MotoristaChecklistRoute,
+  MotoristaEncerrarJornadaRoute: MotoristaEncerrarJornadaRoute,
+  MotoristaFotoRoute: MotoristaFotoRoute,
+  MotoristaHistoricoRoute: MotoristaHistoricoRoute,
   MotoristaIniciarJornadaRoute: MotoristaIniciarJornadaRoute,
+  MotoristaNotificacoesRoute: MotoristaNotificacoesRoute,
   MotoristaSolicitarRoute: MotoristaSolicitarRoute,
   MotoristaViagemRoute: MotoristaViagemRoute,
   AdminIndexRoute: AdminIndexRoute,
