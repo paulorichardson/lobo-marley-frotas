@@ -11,6 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MotoristaIndexRouteImport } from './routes/motorista/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as MotoristaViagemRouteImport } from './routes/motorista/viagem'
+import { Route as MotoristaSolicitarRouteImport } from './routes/motorista/solicitar'
+import { Route as MotoristaChecklistRouteImport } from './routes/motorista/checklist'
+import { Route as MotoristaAbastecimentoRouteImport } from './routes/motorista/abastecimento'
+import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
+import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -22,31 +31,146 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MotoristaIndexRoute = MotoristaIndexRouteImport.update({
+  id: '/motorista/',
+  path: '/motorista/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaViagemRoute = MotoristaViagemRouteImport.update({
+  id: '/motorista/viagem',
+  path: '/motorista/viagem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaSolicitarRoute = MotoristaSolicitarRouteImport.update({
+  id: '/motorista/solicitar',
+  path: '/motorista/solicitar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaChecklistRoute = MotoristaChecklistRouteImport.update({
+  id: '/motorista/checklist',
+  path: '/motorista/checklist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaAbastecimentoRoute = MotoristaAbastecimentoRouteImport.update({
+  id: '/motorista/abastecimento',
+  path: '/motorista/abastecimento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
+  id: '/admin/relatorios',
+  path: '/admin/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
+  id: '/admin/financeiro',
+  path: '/admin/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/admin/configuracoes',
+  path: '/admin/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
+  '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
+  '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/solicitar': typeof MotoristaSolicitarRoute
+  '/motorista/viagem': typeof MotoristaViagemRoute
+  '/admin/': typeof AdminIndexRoute
+  '/motorista/': typeof MotoristaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
+  '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
+  '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/solicitar': typeof MotoristaSolicitarRoute
+  '/motorista/viagem': typeof MotoristaViagemRoute
+  '/admin': typeof AdminIndexRoute
+  '/motorista': typeof MotoristaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
+  '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
+  '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/solicitar': typeof MotoristaSolicitarRoute
+  '/motorista/viagem': typeof MotoristaViagemRoute
+  '/admin/': typeof AdminIndexRoute
+  '/motorista/': typeof MotoristaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/admin/configuracoes'
+    | '/admin/financeiro'
+    | '/admin/relatorios'
+    | '/motorista/abastecimento'
+    | '/motorista/checklist'
+    | '/motorista/solicitar'
+    | '/motorista/viagem'
+    | '/admin/'
+    | '/motorista/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/configuracoes'
+    | '/admin/financeiro'
+    | '/admin/relatorios'
+    | '/motorista/abastecimento'
+    | '/motorista/checklist'
+    | '/motorista/solicitar'
+    | '/motorista/viagem'
+    | '/admin'
+    | '/motorista'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/admin/configuracoes'
+    | '/admin/financeiro'
+    | '/admin/relatorios'
+    | '/motorista/abastecimento'
+    | '/motorista/checklist'
+    | '/motorista/solicitar'
+    | '/motorista/viagem'
+    | '/admin/'
+    | '/motorista/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminFinanceiroRoute: typeof AdminFinanceiroRoute
+  AdminRelatoriosRoute: typeof AdminRelatoriosRoute
+  MotoristaAbastecimentoRoute: typeof MotoristaAbastecimentoRoute
+  MotoristaChecklistRoute: typeof MotoristaChecklistRoute
+  MotoristaSolicitarRoute: typeof MotoristaSolicitarRoute
+  MotoristaViagemRoute: typeof MotoristaViagemRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  MotoristaIndexRoute: typeof MotoristaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,13 +189,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/motorista/': {
+      id: '/motorista/'
+      path: '/motorista'
+      fullPath: '/motorista/'
+      preLoaderRoute: typeof MotoristaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/viagem': {
+      id: '/motorista/viagem'
+      path: '/motorista/viagem'
+      fullPath: '/motorista/viagem'
+      preLoaderRoute: typeof MotoristaViagemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/solicitar': {
+      id: '/motorista/solicitar'
+      path: '/motorista/solicitar'
+      fullPath: '/motorista/solicitar'
+      preLoaderRoute: typeof MotoristaSolicitarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/checklist': {
+      id: '/motorista/checklist'
+      path: '/motorista/checklist'
+      fullPath: '/motorista/checklist'
+      preLoaderRoute: typeof MotoristaChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/abastecimento': {
+      id: '/motorista/abastecimento'
+      path: '/motorista/abastecimento'
+      fullPath: '/motorista/abastecimento'
+      preLoaderRoute: typeof MotoristaAbastecimentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/relatorios': {
+      id: '/admin/relatorios'
+      path: '/admin/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AdminRelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/financeiro': {
+      id: '/admin/financeiro'
+      path: '/admin/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AdminFinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/admin/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminFinanceiroRoute: AdminFinanceiroRoute,
+  AdminRelatoriosRoute: AdminRelatoriosRoute,
+  MotoristaAbastecimentoRoute: MotoristaAbastecimentoRoute,
+  MotoristaChecklistRoute: MotoristaChecklistRoute,
+  MotoristaSolicitarRoute: MotoristaSolicitarRoute,
+  MotoristaViagemRoute: MotoristaViagemRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  MotoristaIndexRoute: MotoristaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
