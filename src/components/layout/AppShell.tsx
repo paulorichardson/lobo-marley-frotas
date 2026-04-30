@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt } from "lucide-react";
+import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -30,8 +30,8 @@ const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
   ],
   motorista: [
     { to: "/motorista", label: "Início", icon: LayoutDashboard },
-    { to: "/motorista/checklist", label: "Checklist", icon: ClipboardCheck },
-    { to: "/motorista/viagem", label: "Viagem", icon: Map },
+    { to: "/motorista/foto", label: "Foto", icon: Camera },
+    { to: "/motorista/historico", label: "Histórico", icon: History },
     { to: "/motorista/solicitar", label: "Manutenção", icon: Wrench },
   ],
 };
