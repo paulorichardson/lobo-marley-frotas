@@ -147,7 +147,11 @@ function ListaVeiculos() {
                   <div className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-2xl font-mono font-bold tracking-wider">{formatPlaca(v.placa)}</p>
-                      {alerta && <AlertCircle className="w-5 h-5 text-destructive shrink-0" title="Documento vencendo" />}
+                      {alerta && (
+                        <span title="Documento vencendo">
+                          <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">{v.marca} {v.modelo}</p>
                     <div className="flex items-center justify-between gap-2 pt-1">
