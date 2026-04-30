@@ -27,6 +27,7 @@ import { Route as FornecedorAbastecimentoRouteImport } from './routes/fornecedor
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
+import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -118,6 +119,11 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/admin/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GestorVeiculosVeiculoIdRoute = GestorVeiculosVeiculoIdRouteImport.update({
+  id: '/$veiculoId',
+  path: '/$veiculoId',
+  getParentRoute: () => GestorVeiculosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -129,7 +135,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
-  '/gestor/veiculos': typeof GestorVeiculosRoute
+  '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/': typeof FornecedorIndexRoute
   '/gestor/': typeof GestorIndexRoute
   '/motorista/': typeof MotoristaIndexRoute
+  '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,7 +156,7 @@ export interface FileRoutesByTo {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
-  '/gestor/veiculos': typeof GestorVeiculosRoute
+  '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/fornecedor': typeof FornecedorIndexRoute
   '/gestor': typeof GestorIndexRoute
   '/motorista': typeof MotoristaIndexRoute
+  '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,7 +178,7 @@ export interface FileRoutesById {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
-  '/gestor/veiculos': typeof GestorVeiculosRoute
+  '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/fornecedor/': typeof FornecedorIndexRoute
   '/gestor/': typeof GestorIndexRoute
   '/motorista/': typeof MotoristaIndexRoute
+  '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/fornecedor/'
     | '/gestor/'
     | '/motorista/'
+    | '/gestor/veiculos/$veiculoId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/fornecedor'
     | '/gestor'
     | '/motorista'
+    | '/gestor/veiculos/$veiculoId'
   id:
     | '__root__'
     | '/'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/fornecedor/'
     | '/gestor/'
     | '/motorista/'
+    | '/gestor/veiculos/$veiculoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -253,7 +265,7 @@ export interface RootRouteChildren {
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
-  GestorVeiculosRoute: typeof GestorVeiculosRoute
+  GestorVeiculosRoute: typeof GestorVeiculosRouteWithChildren
   MotoristaAbastecimentoRoute: typeof MotoristaAbastecimentoRoute
   MotoristaChecklistRoute: typeof MotoristaChecklistRoute
   MotoristaSolicitarRoute: typeof MotoristaSolicitarRoute
@@ -392,8 +404,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gestor/veiculos/$veiculoId': {
+      id: '/gestor/veiculos/$veiculoId'
+      path: '/$veiculoId'
+      fullPath: '/gestor/veiculos/$veiculoId'
+      preLoaderRoute: typeof GestorVeiculosVeiculoIdRouteImport
+      parentRoute: typeof GestorVeiculosRoute
+    }
   }
 }
+
+interface GestorVeiculosRouteChildren {
+  GestorVeiculosVeiculoIdRoute: typeof GestorVeiculosVeiculoIdRoute
+}
+
+const GestorVeiculosRouteChildren: GestorVeiculosRouteChildren = {
+  GestorVeiculosVeiculoIdRoute: GestorVeiculosVeiculoIdRoute,
+}
+
+const GestorVeiculosRouteWithChildren = GestorVeiculosRoute._addFileChildren(
+  GestorVeiculosRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -405,7 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorDespesaRoute: FornecedorDespesaRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
-  GestorVeiculosRoute: GestorVeiculosRoute,
+  GestorVeiculosRoute: GestorVeiculosRouteWithChildren,
   MotoristaAbastecimentoRoute: MotoristaAbastecimentoRoute,
   MotoristaChecklistRoute: MotoristaChecklistRoute,
   MotoristaSolicitarRoute: MotoristaSolicitarRoute,
@@ -418,3 +449,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
