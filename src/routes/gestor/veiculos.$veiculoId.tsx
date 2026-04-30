@@ -321,7 +321,7 @@ function DocCard({ label, path, vencimento, veiculoId, placa, column, subdir, on
     const { error } = await supabase.storage.from("veiculos-docs").upload(newPath, f);
     if (error) { toast.error(error.message); return; }
     if (path) await supabase.storage.from("veiculos-docs").remove([path]);
-    await supabase.from("veiculos").update({ [column]: newPath }).eq("id", veiculoId);
+    await supabase.from("veiculos").update({ [column]: newPath } as any).eq("id", veiculoId);
     toast.success("Documento atualizado");
     onChanged();
     e.target.value = "";
