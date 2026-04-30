@@ -17,6 +17,7 @@ import { Route as FornecedorIndexRouteImport } from './routes/fornecedor/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MotoristaViagemRouteImport } from './routes/motorista/viagem'
 import { Route as MotoristaSolicitarRouteImport } from './routes/motorista/solicitar'
+import { Route as MotoristaIniciarJornadaRouteImport } from './routes/motorista/iniciar-jornada'
 import { Route as MotoristaChecklistRouteImport } from './routes/motorista/checklist'
 import { Route as MotoristaAbastecimentoRouteImport } from './routes/motorista/abastecimento'
 import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
@@ -67,6 +68,11 @@ const MotoristaViagemRoute = MotoristaViagemRouteImport.update({
 const MotoristaSolicitarRoute = MotoristaSolicitarRouteImport.update({
   id: '/motorista/solicitar',
   path: '/motorista/solicitar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotoristaIniciarJornadaRoute = MotoristaIniciarJornadaRouteImport.update({
+  id: '/motorista/iniciar-jornada',
+  path: '/motorista/iniciar-jornada',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MotoristaChecklistRoute = MotoristaChecklistRouteImport.update({
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin/': typeof AdminIndexRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin': typeof AdminIndexRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
+  '/motorista/iniciar-jornada': typeof MotoristaIniciarJornadaRoute
   '/motorista/solicitar': typeof MotoristaSolicitarRoute
   '/motorista/viagem': typeof MotoristaViagemRoute
   '/admin/': typeof AdminIndexRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/iniciar-jornada'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin/'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/iniciar-jornada'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
+    | '/motorista/iniciar-jornada'
     | '/motorista/solicitar'
     | '/motorista/viagem'
     | '/admin/'
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   GestorVeiculosRoute: typeof GestorVeiculosRouteWithChildren
   MotoristaAbastecimentoRoute: typeof MotoristaAbastecimentoRoute
   MotoristaChecklistRoute: typeof MotoristaChecklistRoute
+  MotoristaIniciarJornadaRoute: typeof MotoristaIniciarJornadaRoute
   MotoristaSolicitarRoute: typeof MotoristaSolicitarRoute
   MotoristaViagemRoute: typeof MotoristaViagemRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/motorista/solicitar'
       fullPath: '/motorista/solicitar'
       preLoaderRoute: typeof MotoristaSolicitarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/motorista/iniciar-jornada': {
+      id: '/motorista/iniciar-jornada'
+      path: '/motorista/iniciar-jornada'
+      fullPath: '/motorista/iniciar-jornada'
+      preLoaderRoute: typeof MotoristaIniciarJornadaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/motorista/checklist': {
@@ -439,6 +459,7 @@ const rootRouteChildren: RootRouteChildren = {
   GestorVeiculosRoute: GestorVeiculosRouteWithChildren,
   MotoristaAbastecimentoRoute: MotoristaAbastecimentoRoute,
   MotoristaChecklistRoute: MotoristaChecklistRoute,
+  MotoristaIniciarJornadaRoute: MotoristaIniciarJornadaRoute,
   MotoristaSolicitarRoute: MotoristaSolicitarRoute,
   MotoristaViagemRoute: MotoristaViagemRoute,
   AdminIndexRoute: AdminIndexRoute,
