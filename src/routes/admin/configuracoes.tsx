@@ -71,54 +71,67 @@ function Configuracoes() {
       <header className="flex items-center gap-3">
         <ShieldCheck className="w-7 h-7 text-accent" />
         <div>
-          <h1 className="text-2xl font-bold">Gestão de Usuários</h1>
-          <p className="text-sm text-muted-foreground">Defina o perfil de cada usuário do sistema</p>
+          <h1 className="text-2xl font-bold">Configurações</h1>
+          <p className="text-sm text-muted-foreground">Gestão de usuários e fornecedores</p>
         </div>
       </header>
 
-      <Card className="overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center gap-2">
-          <Users className="w-4 h-4 text-muted-foreground" />
-          <p className="font-medium">Usuários cadastrados ({users.length})</p>
-          <Button size="sm" variant="ghost" className="ml-auto" onClick={carregar}>
-            Atualizar
-          </Button>
-        </div>
+      <Tabs defaultValue="usuarios" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="usuarios"><Users className="w-4 h-4 mr-1.5" /> Usuários</TabsTrigger>
+          <TabsTrigger value="fornecedores"><Building2 className="w-4 h-4 mr-1.5" /> Fornecedores</TabsTrigger>
+        </TabsList>
 
-        {loading ? (
-          <div className="p-6 text-sm text-muted-foreground">Carregando...</div>
-        ) : (
-          <div className="divide-y divide-border">
-            {users.map((u) => (
-              <div key={u.id} className="p-4 flex flex-wrap items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{u.nome}</p>
-                  <p className="text-xs text-muted-foreground truncate">{u.email}</p>
-                </div>
-                <Badge variant={u.ativo ? "default" : "secondary"} className="text-[10px]">
-                  {u.ativo ? "Ativo" : "Inativo"}
-                </Badge>
-                <Select value={u.role} onValueChange={(v) => alterarRole(u.id, v as AppRole)}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="motorista">Motorista</SelectItem>
-                    <SelectItem value="fornecedor">Fornecedor</SelectItem>
-                    <SelectItem value="gestor_frota">Gestor de Frota</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            ))}
-            {users.length === 0 && (
-              <div className="p-6 text-sm text-muted-foreground text-center">
-                Nenhum usuário cadastrado ainda.
+        <TabsContent value="usuarios">
+          <Card className="overflow-hidden">
+            <div className="p-4 border-b border-border flex items-center gap-2">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              <p className="font-medium">Usuários cadastrados ({users.length})</p>
+              <Button size="sm" variant="ghost" className="ml-auto" onClick={carregar}>
+                Atualizar
+              </Button>
+            </div>
+
+            {loading ? (
+              <div className="p-6 text-sm text-muted-foreground">Carregando...</div>
+            ) : (
+              <div className="divide-y divide-border">
+                {users.map((u) => (
+                  <div key={u.id} className="p-4 flex flex-wrap items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{u.nome}</p>
+                      <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                    </div>
+                    <Badge variant={u.ativo ? "default" : "secondary"} className="text-[10px]">
+                      {u.ativo ? "Ativo" : "Inativo"}
+                    </Badge>
+                    <Select value={u.role} onValueChange={(v) => alterarRole(u.id, v as AppRole)}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="motorista">Motorista</SelectItem>
+                        <SelectItem value="fornecedor">Fornecedor</SelectItem>
+                        <SelectItem value="gestor_frota">Gestor de Frota</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+                {users.length === 0 && (
+                  <div className="p-6 text-sm text-muted-foreground text-center">
+                    Nenhum usuário cadastrado ainda.
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
-      </Card>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="fornecedores">
+          <FornecedoresAdmin />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
