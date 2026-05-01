@@ -15,6 +15,7 @@ import { useSignedUrl } from "@/hooks/useSignedUrl";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { QRCodeVeiculo } from "@/components/veiculos/QRCodeVeiculo";
 
 export const Route = createFileRoute("/gestor/veiculos/$veiculoId")({
   head: () => ({ meta: [{ title: "Detalhe do veículo — Lobo Marley" }] }),
@@ -94,7 +95,10 @@ function DetalheVeiculo() {
         <Button variant="ghost" size="sm" asChild>
           <Link to="/gestor/veiculos"><ArrowLeft className="w-4 h-4 mr-2" />Voltar</Link>
         </Button>
-        <Button onClick={() => setEditing(true)}><Edit className="w-4 h-4 mr-2" />Editar</Button>
+        <div className="flex gap-2">
+          <QRCodeVeiculo veiculoId={veiculo.id} placa={veiculo.placa} modelo={`${veiculo.marca} ${veiculo.modelo}`} />
+          <Button onClick={() => setEditing(true)}><Edit className="w-4 h-4 mr-2" />Editar</Button>
+        </div>
       </div>
 
       <Card className="overflow-hidden">

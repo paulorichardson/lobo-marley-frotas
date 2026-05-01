@@ -40,6 +40,7 @@ import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
+import { Route as AbastecerVeiculoIdRouteImport } from './routes/abastecer.$veiculoId'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
 import { Route as AdminFinanceiroFornecedoresRouteImport } from './routes/admin/financeiro.fornecedores'
 import { Route as AdminClientesEmpresaIdRouteImport } from './routes/admin/clientes.$empresaId'
@@ -200,6 +201,11 @@ const AdminClientesRoute = AdminClientesRouteImport.update({
   path: '/admin/clientes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AbastecerVeiculoIdRoute = AbastecerVeiculoIdRouteImport.update({
+  id: '/abastecer/$veiculoId',
+  path: '/abastecer/$veiculoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GestorVeiculosVeiculoIdRoute = GestorVeiculosVeiculoIdRouteImport.update({
   id: '/$veiculoId',
   path: '/$veiculoId',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/abastecer/$veiculoId'
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/abastecer/$veiculoId'
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/abastecer/$veiculoId'
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -441,6 +453,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CredenciamentoRoute: typeof CredenciamentoRoute
   LoginRoute: typeof LoginRoute
+  AbastecerVeiculoIdRoute: typeof AbastecerVeiculoIdRoute
   AdminClientesRoute: typeof AdminClientesRouteWithChildren
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
@@ -690,6 +703,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClientesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/abastecer/$veiculoId': {
+      id: '/abastecer/$veiculoId'
+      path: '/abastecer/$veiculoId'
+      fullPath: '/abastecer/$veiculoId'
+      preLoaderRoute: typeof AbastecerVeiculoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gestor/veiculos/$veiculoId': {
       id: '/gestor/veiculos/$veiculoId'
       path: '/$veiculoId'
@@ -754,6 +774,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CredenciamentoRoute: CredenciamentoRoute,
   LoginRoute: LoginRoute,
+  AbastecerVeiculoIdRoute: AbastecerVeiculoIdRoute,
   AdminClientesRoute: AdminClientesRouteWithChildren,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
@@ -786,12 +807,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
