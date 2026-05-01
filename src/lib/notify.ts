@@ -64,3 +64,22 @@ export async function notifyAdmins(opts: {
     })),
   );
 }
+
+/**
+ * Notifica um usuário específico.
+ */
+export async function notifyUser(opts: {
+  userId: string;
+  titulo: string;
+  mensagem: string;
+  tipo?: "info" | "sucesso" | "alerta";
+  link?: string;
+}) {
+  await supabase.from("notificacoes").insert({
+    para_id: opts.userId,
+    titulo: opts.titulo,
+    mensagem: opts.mensagem,
+    tipo: opts.tipo ?? "info",
+    link: opts.link ?? null,
+  });
+}
