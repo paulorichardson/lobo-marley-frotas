@@ -145,7 +145,7 @@ function FornecedorDashboard() {
             id: a.id,
             tipo: "abastecimento",
             data: a.data_hora,
-            veiculo: veicMap.get(a.veiculo_id)?.placa ?? "—",
+            veiculo: (a.veiculo_id ? veicMap.get(a.veiculo_id)?.placa : null) ?? "—",
             descricao: `Abastecimento ${a.posto ?? ""}`.trim(),
             valor: Number(a.valor_total ?? 0),
             status: "Concluída",
