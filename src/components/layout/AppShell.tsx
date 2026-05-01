@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
   Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
-  User as UserIcon, ListChecks,
+  User as UserIcon, ListChecks, Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
