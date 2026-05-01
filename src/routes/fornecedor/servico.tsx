@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
@@ -10,12 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { CameraInput } from "@/components/CameraInput";
 import { VeiculoPlacaSearch, type VeiculoBusca } from "@/components/fornecedor/VeiculoPlacaSearch";
 import { PecasEditor, type Peca } from "@/components/fornecedor/PecasEditor";
+import {
+  ChecklistServico,
+  TIPOS_SERVICO_CHAVES,
+  type TipoServicoChave,
+} from "@/components/fornecedor/ChecklistServico";
+import { SignaturePad, type SignaturePadHandle } from "@/components/SignaturePad";
 import { Wrench, Truck, Cog, ChevronLeft, ChevronRight, Loader2, CheckCircle2, Send, Save } from "lucide-react";
 import { toast } from "sonner";
 import { uploadFile } from "@/lib/upload";
@@ -32,10 +35,17 @@ export const Route = createFileRoute("/fornecedor/servico")({
   ),
 });
 
-const TIPOS_SERVICO = [
-  "Preventiva", "Corretiva", "Troca de Peça", "Funilaria/Pintura",
-  "Elétrica", "Pneu/Balanceamento", "Diagnóstico", "Lavagem", "Outros",
-];
+const TIPO_LABEL: Record<TipoServicoChave, string> = {
+  motor: "Motor",
+  freio: "Freios",
+  suspensao: "Suspensão",
+  eletrica: "Elétrica",
+  troca_oleo: "Troca de Óleo",
+  pneus: "Pneus/Balanceamento",
+  diagnostico: "Diagnóstico",
+  funilaria: "Funilaria/Pintura",
+  outros: "Outros",
+};
 
 const BRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -52,13 +62,14 @@ function ServicoPage() {
   const [patrimonio, setPatrimonio] = useState("");
 
   // Step 2
-  const [tipoServico, setTipoServico] = useState("Corretiva");
+  const [tipoChave, setTipoChave] = useState<TipoServicoChave>("outros");
   const [dataEntrada, setDataEntrada] = useState(() => new Date().toISOString().slice(0, 10));
   const [dataConclusao, setDataConclusao] = useState("");
   const [kmEntrada, setKmEntrada] = useState("");
   const [osNumero, setOsNumero] = useState("");
   const [diagnostico, setDiagnostico] = useState("");
   const [servicoExecutado, setServicoExecutado] = useState("");
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
 
   // Step 3
   const [pecas, setPecas] = useState<Peca[]>([]);
@@ -74,6 +85,7 @@ function ServicoPage() {
   const [fotoNF, setFotoNF] = useState<File | null>(null);
   const [fotoEquip, setFotoEquip] = useState<File | null>(null);
   const [observacoes, setObservacoes] = useState("");
+  const sigRef = useRef<SignaturePadHandle>(null);
 
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState<string | null>(null);
@@ -121,28 +133,51 @@ function ServicoPage() {
     if (modo === "executado" && !fotoNF) {
       toast.error("Nota fiscal é obrigatória para serviço executado"); return;
     }
+    if (modo === "executado" && (sigRef.current?.isEmpty() ?? true)) {
+      toast.error("Assinatura digital é obrigatória para concluir o serviço"); return;
+    }
 
     setSalvando(true);
     try {
       const prefix = `manutencao/${user.id}`;
-      const [orcUrl, nfUrl, equipUrl] = await Promise.all([
+
+      // Assinatura: dataURL -> File
+      let assinaturaFile: File | null = null;
+      if (modo === "executado" && sigRef.current && !sigRef.current.isEmpty()) {
+        const dataUrl = sigRef.current.toDataURL();
+        const blob = await (await fetch(dataUrl)).blob();
+        assinaturaFile = new File([blob], "assinatura.png", { type: "image/png" });
+      }
+
+      const [orcUrl, nfUrl, equipUrl, assinaturaUrl] = await Promise.all([
         fotoOrcamento ? uploadFile("comprovantes", `${prefix}/orcamento`, fotoOrcamento) : Promise.resolve(null),
         fotoNF ? uploadFile("comprovantes", `${prefix}/nf`, fotoNF) : Promise.resolve(null),
         fotoEquip ? uploadFile("comprovantes", `${prefix}/equip`, fotoEquip) : Promise.resolve(null),
+        assinaturaFile ? uploadFile("comprovantes", `${prefix}/assinatura`, assinaturaFile) : Promise.resolve(null),
       ]);
 
       const status = modo === "orcamento" ? "Aguardando Aprovação" : "Concluída";
       const empresaId = veiculo?.empresa_id ?? null;
 
+      const tipoLabel = TIPO_LABEL[tipoChave];
       const descricaoFinal = tipoEquip === "veiculo"
-        ? `${tipoServico} — ${veiculo?.placa}`
-        : `${tipoServico} — ${equipDesc}${patrimonio ? ` (${patrimonio})` : ""}`;
+        ? `${tipoLabel} — ${veiculo?.placa}`
+        : `${tipoLabel} — ${equipDesc}${patrimonio ? ` (${patrimonio})` : ""}`;
+
+      const checklistFeitos = Object.entries(checklist)
+        .filter(([, v]) => v)
+        .map(([k]) => k);
+      const checklistResumo = checklistFeitos.length > 0
+        ? `Checklist (${checklistFeitos.length}): ${checklistFeitos.join(", ")}`
+        : null;
 
       const obs = [
         observacoes,
         osNumero ? `OS: ${osNumero}` : null,
         equipUrl ? `Equip foto: ${equipUrl}` : null,
         nfUrl ? `NF: ${nfUrl}` : null,
+        assinaturaUrl ? `Assinatura: ${assinaturaUrl}` : null,
+        checklistResumo,
         modo === "executado" && aprovadoNome ? `Aprovado: ${aprovadoNome}` : null,
         tipoEquip !== "veiculo" ? `Equipamento: ${equipDesc}` : null,
       ].filter(Boolean).join(" | ");
@@ -153,7 +188,7 @@ function ServicoPage() {
           veiculo_id: veiculo?.id ?? null,
           fornecedor_id: user.id,
           empresa_id: empresaId,
-          tipo: tipoServico,
+          tipo: tipoLabel,
           status,
           prioridade: "Normal",
           descricao: descricaoFinal,
@@ -299,12 +334,24 @@ function ServicoPage() {
         <Card className="p-4 space-y-3">
           <div>
             <Label>Tipo de serviço</Label>
-            <Select value={tipoServico} onValueChange={setTipoServico}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {TIPOS_SERVICO.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-1">
+              {TIPOS_SERVICO_CHAVES.map((t) => {
+                const I = t.icone;
+                const ativo = tipoChave === t.chave;
+                return (
+                  <Button
+                    key={t.chave}
+                    type="button"
+                    variant={ativo ? "default" : "outline"}
+                    className="h-16 flex-col gap-1 px-1"
+                    onClick={() => { setTipoChave(t.chave); setChecklist({}); }}
+                  >
+                    <I className="w-5 h-5" />
+                    <span className="text-[10px] leading-tight text-center">{t.titulo}</span>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -334,6 +381,7 @@ function ServicoPage() {
             <Label>Serviço executado</Label>
             <Textarea value={servicoExecutado} onChange={(e) => setServicoExecutado(e.target.value)} rows={3} maxLength={1000} />
           </div>
+          <ChecklistServico tipo={tipoChave} marcados={checklist} onChange={setChecklist} />
         </Card>
       )}
 
@@ -403,6 +451,15 @@ function ServicoPage() {
             <Label>Observações</Label>
             <Textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={2} maxLength={500} />
           </div>
+          {modo === "executado" && (
+            <div className="space-y-2 pt-2 border-t">
+              <Label>Assinatura digital de conclusão *</Label>
+              <p className="text-xs text-muted-foreground">
+                Assine abaixo confirmando a conclusão do serviço.
+              </p>
+              <SignaturePad ref={sigRef} height={180} />
+            </div>
+          )}
         </Card>
       )}
 
