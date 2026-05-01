@@ -14,6 +14,7 @@ interface NavItem {
 const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
   admin: [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/clientes", label: "Clientes", icon: Building2 },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/financeiro", label: "Financeiro", icon: Receipt },
     { to: "/admin/configuracoes", label: "Config", icon: Settings },
