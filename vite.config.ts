@@ -1,9 +1,61 @@
-// @lovable.dev/vite-tanstack-config already includes the following — do NOT add them manually
-// or the app will break with duplicate plugins:
-//   - tanstackStart, viteReact, tailwindcss, tsConfigPaths, cloudflare (build-only),
-//     componentTagger (dev-only), VITE_* env injection, @ path alias, React/TanStack dedupe,
-//     error logger plugins, and sandbox detection (port/host/strictPort).
-// You can pass additional config via defineConfig({ vite: { ... } }) if needed.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+import path from "path";
 
-export default defineConfig();
+// https://vitejs.dev/config/
+export default defineConfig({
+    plugins: [
+          react(),
+          VitePWA({
+                  registerType: "autoUpdate",
+                  includeAssets: ["favicon.ico", "icons/*.png"],
+                  manifest: {
+                            name: "Lobo Marley Frotas",
+                            short_name: "LM Frotas",
+                            description: "Sistema de gestao de frotas Lobo Marley",
+                            theme_color: "#1a1a2e",
+                            background_color: "#ffffff",
+                            display: "standalone",
+                            orientation: "portrait",
+                            scope: "/",
+                            start_url: "/",
+                            icons: [
+                              {
+                                            src: "/icons/icon-192x192.png",
+                                            sizes: "192x192",
+                                            type: "image/png",
+                                            purpose: "any maskable",
+                              },
+                              {
+                                            src: "/icons/icon-512x512.png",
+                                            sizes: "512x512",
+                                            type: "image/png",
+                                            purpose: "any maskable",
+                              },
+                                      ],
+                  },
+                  workbox: {
+                            globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+                            runtimeCaching: [
+                              {
+                                            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
+                                            handler: "NetworkFirst",
+                                            options: {
+                                                            cacheName: "supabase-cache",
+                                                            expiration: {
+                                                                              maxEntries: 50,
+                                                                              maxAgeSeconds: 60 * 60 * 24,
+                                                            },
+                                            },
+                              },
+                                      ],
+                  },
+          }),
+        ],
+    resolve: {
+          alias: {
+                  "@": path.resolve(__dirname, "./src"),
+          },
+    },
+});
