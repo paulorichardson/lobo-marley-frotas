@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.submit-credenciamento]
 verify_jwt = false
+
+[functions.criar-cliente-empresa]
+verify_jwt = true

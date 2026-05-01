@@ -213,6 +213,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         doc_seguro_url = await uploadArquivo("veiculos-docs", seguroFile, `${placaNorm}/seguro`);
       }
 
+      // empresa do gestor logado (multi-tenant)
+      const { data: empresaIdData } = await supabase.rpc("get_empresa_id");
+      const empresa_id = empresaIdData ?? null;
+
       const payload: any = {
         placa: placaNorm,
         marca: values.marca.trim(),
@@ -235,6 +239,7 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         doc_crlv_url: doc_crlv_url || null,
         doc_seguro_url: doc_seguro_url || null,
         cadastrado_por: user.id,
+        empresa_id,
       };
 
       let veiculoId = values.id;
@@ -261,6 +266,7 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
               url,
               tipo: fx.tipo,
               enviado_por: user.id,
+              empresa_id,
             });
           } catch (err) {
             console.error("Erro upload foto extra:", err);

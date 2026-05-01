@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History } from "lucide-react";
+import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
 
@@ -14,6 +14,7 @@ interface NavItem {
 const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
   admin: [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin/clientes", label: "Clientes", icon: Building2 },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/financeiro", label: "Financeiro", icon: Receipt },
     { to: "/admin/configuracoes", label: "Config", icon: Settings },
