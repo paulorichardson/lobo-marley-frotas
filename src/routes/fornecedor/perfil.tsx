@@ -12,10 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, User as UserIcon, Building2, Landmark, MapPin, AlertTriangle } from "lucide-react";
+import { Loader2, Save, User as UserIcon, Building2, Landmark, MapPin, AlertTriangle, Image as ImageIcon, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { maskCEP, maskPhone, BANCOS_BR } from "@/lib/br-validators";
 import { notifyAdmins } from "@/lib/notify";
+import { uploadFile } from "@/lib/upload";
 
 export const Route = createFileRoute("/fornecedor/perfil")({
   head: () => ({ meta: [{ title: "Perfil — Fornecedor" }] }),
@@ -43,6 +44,8 @@ type Cad = {
   responsavel_nome: string; responsavel_cargo: string | null;
   status: "pendente" | "aprovado" | "reprovado";
   tipos_fornecimento: string[];
+  logo_url: string | null;
+  data_aprovacao: string | null;
 };
 
 const BANK_FIELDS: (keyof Cad)[] = ["banco", "agencia", "conta", "tipo_conta", "pix_chave", "pix_tipo"];
