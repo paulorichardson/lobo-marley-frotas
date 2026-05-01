@@ -213,6 +213,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         doc_seguro_url = await uploadArquivo("veiculos-docs", seguroFile, `${placaNorm}/seguro`);
       }
 
+      // empresa do gestor logado (multi-tenant)
+      const { data: empresaIdData } = await supabase.rpc("get_empresa_id");
+      const empresa_id = empresaIdData ?? null;
+
       const payload: any = {
         placa: placaNorm,
         marca: values.marca.trim(),
