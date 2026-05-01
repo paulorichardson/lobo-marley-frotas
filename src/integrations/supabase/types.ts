@@ -460,8 +460,44 @@ export type Database = {
         }
         Relationships: []
       }
+      manutencao_pecas: {
+        Row: {
+          criado_em: string
+          descricao: string
+          id: string
+          manutencao_id: string
+          quantidade: number
+          valor_unitario: number
+        }
+        Insert: {
+          criado_em?: string
+          descricao: string
+          id?: string
+          manutencao_id: string
+          quantidade?: number
+          valor_unitario: number
+        }
+        Update: {
+          criado_em?: string
+          descricao?: string
+          id?: string
+          manutencao_id?: string
+          quantidade?: number
+          valor_unitario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manutencao_pecas_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       manutencoes: {
         Row: {
+          aprovado_nome: string | null
           aprovado_por: string | null
           atualizado_em: string
           comprovante_url: string | null
@@ -470,7 +506,9 @@ export type Database = {
           data_conclusao: string | null
           data_inicio: string | null
           data_solicitacao: string
+          desconto: number | null
           descricao: string
+          diagnostico: string | null
           empresa_id: string | null
           fornecedor_id: string | null
           id: string
@@ -478,15 +516,20 @@ export type Database = {
           nota_fiscal: string | null
           observacoes: string | null
           oficina_nome: string | null
+          os_oficina: string | null
           prioridade: string
+          servico_executado: string | null
           solicitado_por: string | null
           status: string
           tipo: string
+          validade_orcamento: string | null
           valor_final: number | null
+          valor_mao_obra: number | null
           valor_previsto: number | null
           veiculo_id: string
         }
         Insert: {
+          aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
           comprovante_url?: string | null
@@ -495,7 +538,9 @@ export type Database = {
           data_conclusao?: string | null
           data_inicio?: string | null
           data_solicitacao?: string
+          desconto?: number | null
           descricao: string
+          diagnostico?: string | null
           empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
@@ -503,15 +548,20 @@ export type Database = {
           nota_fiscal?: string | null
           observacoes?: string | null
           oficina_nome?: string | null
+          os_oficina?: string | null
           prioridade?: string
+          servico_executado?: string | null
           solicitado_por?: string | null
           status?: string
           tipo: string
+          validade_orcamento?: string | null
           valor_final?: number | null
+          valor_mao_obra?: number | null
           valor_previsto?: number | null
           veiculo_id: string
         }
         Update: {
+          aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
           comprovante_url?: string | null
@@ -520,7 +570,9 @@ export type Database = {
           data_conclusao?: string | null
           data_inicio?: string | null
           data_solicitacao?: string
+          desconto?: number | null
           descricao?: string
+          diagnostico?: string | null
           empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
@@ -528,11 +580,15 @@ export type Database = {
           nota_fiscal?: string | null
           observacoes?: string | null
           oficina_nome?: string | null
+          os_oficina?: string | null
           prioridade?: string
+          servico_executado?: string | null
           solicitado_por?: string | null
           status?: string
           tipo?: string
+          validade_orcamento?: string | null
           valor_final?: number | null
+          valor_mao_obra?: number | null
           valor_previsto?: number | null
           veiculo_id?: string
         }
