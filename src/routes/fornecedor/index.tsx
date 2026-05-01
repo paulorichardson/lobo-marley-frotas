@@ -63,7 +63,7 @@ function FornecedorDashboard() {
         // Manutenções
         const { data: manuts } = await supabase
           .from("manutencoes")
-          .select("id, descricao, valor_final, valor_previsto, valor_mao_obra, desconto, status, data_solicitacao, data_conclusao, validade_orcamento, data_aprovacao, veiculo_id")
+          .select("id, descricao, valor_final, valor_previsto, valor_mao_obra, desconto, status, data_solicitacao, data_inicio, data_conclusao, validade_orcamento, data_aprovacao, veiculo_id")
           .eq("fornecedor_id", user.id)
           .gte("data_solicitacao", inicioISO)
           .order("data_solicitacao", { ascending: false });
