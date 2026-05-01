@@ -33,6 +33,7 @@ import { Route as FornecedorAbastecimentoRouteImport } from './routes/fornecedor
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
+import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
 
 const LoginRoute = LoginRouteImport.update({
@@ -156,6 +157,11 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/admin/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminClientesRoute = AdminClientesRouteImport.update({
+  id: '/admin/clientes',
+  path: '/admin/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GestorVeiculosVeiculoIdRoute = GestorVeiculosVeiculoIdRouteImport.update({
   id: '/$veiculoId',
   path: '/$veiculoId',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -221,6 +229,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
@@ -332,6 +344,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CredenciamentoRoute: typeof CredenciamentoRoute
   LoginRoute: typeof LoginRoute
+  AdminClientesRoute: typeof AdminClientesRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
@@ -525,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/clientes': {
+      id: '/admin/clientes'
+      path: '/admin/clientes'
+      fullPath: '/admin/clientes'
+      preLoaderRoute: typeof AdminClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gestor/veiculos/$veiculoId': {
       id: '/gestor/veiculos/$veiculoId'
       path: '/$veiculoId'
@@ -551,6 +571,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CredenciamentoRoute: CredenciamentoRoute,
   LoginRoute: LoginRoute,
+  AdminClientesRoute: AdminClientesRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
