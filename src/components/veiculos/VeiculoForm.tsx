@@ -266,6 +266,7 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
               url,
               tipo: fx.tipo,
               enviado_por: user.id,
+              empresa_id,
             });
           } catch (err) {
             console.error("Erro upload foto extra:", err);
