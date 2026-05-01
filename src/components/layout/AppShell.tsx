@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History, Building2 } from "lucide-react";
+import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History, Building2, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
 
