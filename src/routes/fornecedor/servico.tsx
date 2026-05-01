@@ -315,12 +315,24 @@ function ServicoPage() {
         <Card className="p-4 space-y-3">
           <div>
             <Label>Tipo de serviço</Label>
-            <Select value={tipoServico} onValueChange={setTipoServico}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {TIPOS_SERVICO.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-1">
+              {TIPOS_SERVICO_CHAVES.map((t) => {
+                const I = t.icone;
+                const ativo = tipoChave === t.chave;
+                return (
+                  <Button
+                    key={t.chave}
+                    type="button"
+                    variant={ativo ? "default" : "outline"}
+                    className="h-16 flex-col gap-1 px-1"
+                    onClick={() => { setTipoChave(t.chave); setChecklist({}); }}
+                  >
+                    <I className="w-5 h-5" />
+                    <span className="text-[10px] leading-tight text-center">{t.titulo}</span>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -350,6 +362,7 @@ function ServicoPage() {
             <Label>Serviço executado</Label>
             <Textarea value={servicoExecutado} onChange={(e) => setServicoExecutado(e.target.value)} rows={3} maxLength={1000} />
           </div>
+          <ChecklistServico tipo={tipoChave} marcados={checklist} onChange={setChecklist} />
         </Card>
       )}
 
