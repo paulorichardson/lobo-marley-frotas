@@ -1,7 +1,12 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
+import { useFornecedorTipos } from "@/hooks/useFornecedorTipos";
 import { Button } from "@/components/ui/button";
-import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History, Building2, CreditCard } from "lucide-react";
+import {
+  Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
+  Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
+  User as UserIcon, ListChecks,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
 
@@ -11,7 +16,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
+const STATIC_NAV: Record<Exclude<AppRole, "fornecedor">, NavItem[]> = {
   admin: [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { to: "/admin/clientes", label: "Clientes", icon: Building2 },
@@ -26,11 +31,6 @@ const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
     { to: "/gestor/motoristas", label: "Motoristas", icon: Users },
     { to: "/gestor/manutencoes", label: "Manutenções", icon: Wrench },
   ],
-  fornecedor: [
-    { to: "/fornecedor", label: "Início", icon: LayoutDashboard },
-    { to: "/fornecedor/abastecimento", label: "Abastecer", icon: Fuel },
-    { to: "/fornecedor/despesa", label: "Despesa", icon: Receipt },
-  ],
   motorista: [
     { to: "/motorista", label: "Início", icon: LayoutDashboard },
     { to: "/motorista/foto", label: "Foto", icon: Camera },
@@ -39,14 +39,46 @@ const NAV_BY_ROLE: Record<AppRole, NavItem[]> = {
   ],
 };
 
+function buildFornecedorNav(opts: {
+  isPosto: boolean;
+  isOficina: boolean;
+  isPecas: boolean;
+}): NavItem[] {
+  const items: NavItem[] = [
+    { to: "/fornecedor", label: "Início", icon: LayoutDashboard },
+  ];
+  if (opts.isPosto) {
+    items.push({ to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
+  }
+  if (opts.isOficina || opts.isPecas) {
+    items.push({ to: "/fornecedor/servico", label: "Novo Serviço", icon: Wrench });
+    items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+  }
+  items.push({ to: "/fornecedor/historico", label: "Histórico", icon: ListChecks });
+  // Defaults se nenhum tipo (fallback)
+  if (items.length === 2) {
+    items.splice(1, 0, { to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
+    items.splice(2, 0, { to: "/fornecedor/servico", label: "Serviço", icon: Wrench });
+  }
+  return items;
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, primaryRole, signOut } = useAuth();
+  const fornec = useFornecedorTipos();
   const location = useLocation();
   const navigate = useNavigate();
 
   if (!user || !primaryRole) return <>{children}</>;
 
-  const items = NAV_BY_ROLE[primaryRole];
+  const items: NavItem[] =
+    primaryRole === "fornecedor"
+      ? buildFornecedorNav({
+          isPosto: fornec.isPosto,
+          isOficina: fornec.isOficina,
+          isPecas: fornec.isPecas,
+        })
+      : STATIC_NAV[primaryRole];
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,7 +96,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Gestão de Frotas</p>
           </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {items.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.to ||
@@ -112,10 +144,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Conteúdo */}
       <main className="flex-1 pb-20 md:pb-0 overflow-auto">{children}</main>
 
-      {/* Bottom nav mobile */}
+      {/* Bottom nav mobile (limitado a 5 itens) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-50">
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>
-          {items.map((item) => {
+        <div
+          className="grid"
+          style={{ gridTemplateColumns: `repeat(${Math.min(items.length, 5)}, 1fr)` }}
+        >
+          {items.slice(0, 5).map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.to ||
               (item.to !== homeForRole(primaryRole) && location.pathname.startsWith(item.to));
