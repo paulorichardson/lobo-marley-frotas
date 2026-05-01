@@ -30,6 +30,7 @@ import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
 import { Route as FornecedorDespesaRouteImport } from './routes/fornecedor/despesa'
 import { Route as FornecedorAbastecimentoRouteImport } from './routes/fornecedor/abastecimento'
+import { Route as FornecedorAbastecerRouteImport } from './routes/fornecedor/abastecer'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
@@ -144,6 +145,11 @@ const FornecedorAbastecimentoRoute = FornecedorAbastecimentoRouteImport.update({
   path: '/fornecedor/abastecimento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorAbastecerRoute = FornecedorAbastecerRouteImport.update({
+  id: '/fornecedor/abastecer',
+  path: '/fornecedor/abastecer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
   id: '/admin/relatorios',
   path: '/admin/relatorios',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/abastecimento': typeof FornecedorAbastecimentoRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/abastecimento': typeof FornecedorAbastecimentoRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/abastecimento': typeof FornecedorAbastecimentoRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
+    | '/fornecedor/abastecer'
     | '/fornecedor/abastecimento'
     | '/fornecedor/despesa'
     | '/gestor/manutencoes'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
+    | '/fornecedor/abastecer'
     | '/fornecedor/abastecimento'
     | '/fornecedor/despesa'
     | '/gestor/manutencoes'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/relatorios'
+    | '/fornecedor/abastecer'
     | '/fornecedor/abastecimento'
     | '/fornecedor/despesa'
     | '/gestor/manutencoes'
@@ -373,6 +385,7 @@ export interface RootRouteChildren {
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
+  FornecedorAbastecerRoute: typeof FornecedorAbastecerRoute
   FornecedorAbastecimentoRoute: typeof FornecedorAbastecimentoRoute
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
@@ -542,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorAbastecimentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/abastecer': {
+      id: '/fornecedor/abastecer'
+      path: '/fornecedor/abastecer'
+      fullPath: '/fornecedor/abastecer'
+      preLoaderRoute: typeof FornecedorAbastecerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/relatorios': {
       id: '/admin/relatorios'
       path: '/admin/relatorios'
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
+  FornecedorAbastecerRoute: FornecedorAbastecerRoute,
   FornecedorAbastecimentoRoute: FornecedorAbastecimentoRoute,
   FornecedorDespesaRoute: FornecedorDespesaRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
