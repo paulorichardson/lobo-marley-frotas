@@ -1,0 +1,170 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
+import { AppShell } from "@/components/layout/AppShell";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Building2, ArrowLeft, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/admin/clientes/$empresaId")({
+  head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
+  component: () => (
+    <ProtectedRoute roles={["admin"]}>
+      <AppShell>
+        <ClienteDetalhe />
+      </AppShell>
+    </ProtectedRoute>
+  ),
+});
+
+function ClienteDetalhe() {
+  const { empresaId } = Route.useParams();
+  const [empresa, setEmpresa] = useState<any>(null);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [veiculos, setVeiculos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [acting, setActing] = useState(false);
+
+  async function load() {
+    setLoading(true);
+    const [e, u, v] = await Promise.all([
+      supabase.from("empresas").select("*").eq("id", empresaId).maybeSingle(),
+      supabase.from("perfis").select("id, nome, email, ativo").eq("empresa_id", empresaId),
+      supabase.from("veiculos").select("id, placa, marca, modelo, status").eq("empresa_id", empresaId),
+    ]);
+    setEmpresa(e.data);
+    setUsuarios(u.data ?? []);
+    setVeiculos(v.data ?? []);
+    setLoading(false);
+  }
+  useEffect(() => { load(); }, [empresaId]);
+
+  async function alternarStatus() {
+    if (!empresa) return;
+    const novo = empresa.status === "ativo" ? "suspenso" : "ativo";
+    setActing(true);
+    const { error } = await supabase.from("empresas").update({ status: novo }).eq("id", empresa.id);
+    setActing(false);
+    if (error) return toast.error(error.message);
+    toast.success(`Cliente ${novo === "ativo" ? "reativado" : "suspenso"}`);
+    load();
+  }
+
+  if (loading) {
+    return <div className="p-8"><Loader2 className="w-5 h-5 animate-spin" /></div>;
+  }
+  if (!empresa) {
+    return <div className="p-8 text-sm text-muted-foreground">Cliente não encontrado.</div>;
+  }
+
+  return (
+    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+      <Button asChild variant="ghost" size="sm">
+        <Link to="/admin/clientes"><ArrowLeft className="w-4 h-4 mr-1" /> Voltar</Link>
+      </Button>
+
+      <header className="flex items-start gap-4">
+        <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+          {empresa.logo_url
+            ? <img src={empresa.logo_url} alt={empresa.razao_social} className="w-full h-full object-cover" />
+            : <Building2 className="w-8 h-8 text-muted-foreground" />}
+        </div>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">{empresa.nome_fantasia || empresa.razao_social}</h1>
+          <p className="text-sm text-muted-foreground">
+            {empresa.cnpj ?? "Sem CNPJ"} · {empresa.cidade ?? "—"}/{empresa.estado ?? ""}
+          </p>
+          <div className="flex gap-2 mt-2">
+            <Badge variant={empresa.status === "ativo" ? "default" : "secondary"}>
+              {empresa.status === "ativo" ? "Ativo" : "Suspenso"}
+            </Badge>
+            <Badge variant="outline">{empresa.plano}</Badge>
+          </div>
+        </div>
+        <Button
+          variant={empresa.status === "ativo" ? "destructive" : "default"}
+          onClick={alternarStatus}
+          disabled={acting}
+        >
+          {empresa.status === "ativo" ? "Suspender" : "Reativar"}
+        </Button>
+      </header>
+
+      <Tabs defaultValue="dados" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="dados">Dados</TabsTrigger>
+          <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
+          <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
+          <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dados">
+          <Card className="p-4 space-y-2 text-sm">
+            <Row k="Razão social" v={empresa.razao_social} />
+            <Row k="Nome fantasia" v={empresa.nome_fantasia} />
+            <Row k="CNPJ" v={empresa.cnpj} />
+            <Row k="E-mail" v={empresa.email} />
+            <Row k="Telefone" v={empresa.telefone} />
+            <Row k="Endereço" v={`${empresa.logradouro ?? ""}, ${empresa.numero ?? ""} - ${empresa.bairro ?? ""}`} />
+            <Row k="Cidade/UF" v={`${empresa.cidade ?? ""}/${empresa.estado ?? ""}`} />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="usuarios">
+          <Card className="divide-y">
+            {usuarios.length === 0
+              ? <div className="p-6 text-sm text-muted-foreground text-center">Nenhum usuário.</div>
+              : usuarios.map((u) => (
+                <div key={u.id} className="p-3 flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="font-medium">{u.nome}</p>
+                    <p className="text-xs text-muted-foreground">{u.email}</p>
+                  </div>
+                  <Badge variant={u.ativo ? "default" : "secondary"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>
+                </div>
+              ))}
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="veiculos">
+          <Card className="divide-y">
+            {veiculos.length === 0
+              ? <div className="p-6 text-sm text-muted-foreground text-center">Nenhum veículo.</div>
+              : veiculos.map((v) => (
+                <div key={v.id} className="p-3 flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="font-medium">{v.placa}</p>
+                    <p className="text-xs text-muted-foreground">{v.marca} {v.modelo}</p>
+                  </div>
+                  <Badge variant="outline">{v.status}</Badge>
+                </div>
+              ))}
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="financeiro">
+          <Card className="p-4 space-y-2 text-sm">
+            <Row k="Plano" v={empresa.plano} />
+            <Row k="Valor mensal" v={empresa.valor_mensal ? `R$ ${Number(empresa.valor_mensal).toFixed(2)}` : "—"} />
+            <Row k="Início" v={empresa.data_inicio} />
+            <Row k="Vencimento" v={empresa.data_vencimento} />
+            <Row k="Observações" v={empresa.observacoes} />
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: any }) {
+  return (
+    <div className="flex gap-2">
+      <span className="text-muted-foreground w-32 shrink-0">{k}:</span>
+      <span>{v || "—"}</span>
+    </div>
+  );
+}
