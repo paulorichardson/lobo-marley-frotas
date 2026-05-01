@@ -38,3 +38,29 @@ export async function notifyEmpresaGestores(opts: {
     })),
   );
 }
+
+/**
+ * Notifica todos os usuários com role admin.
+ */
+export async function notifyAdmins(opts: {
+  titulo: string;
+  mensagem: string;
+  tipo?: "info" | "sucesso" | "alerta";
+  link?: string;
+}) {
+  const { data: roles } = await supabase
+    .from("user_roles")
+    .select("user_id")
+    .eq("role", "admin");
+  const ids = (roles ?? []).map((r) => r.user_id);
+  if (ids.length === 0) return;
+  await supabase.from("notificacoes").insert(
+    ids.map((id) => ({
+      para_id: id,
+      titulo: opts.titulo,
+      mensagem: opts.mensagem,
+      tipo: opts.tipo ?? "info",
+      link: opts.link ?? null,
+    })),
+  );
+}
