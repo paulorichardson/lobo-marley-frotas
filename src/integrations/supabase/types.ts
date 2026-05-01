@@ -615,6 +615,77 @@ export type Database = {
           },
         ]
       }
+      pagamento_itens: {
+        Row: {
+          criado_em: string
+          id: string
+          pagamento_id: string
+          servico_id: string
+          tipo_servico: string
+          valor_aplicado: number
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          pagamento_id: string
+          servico_id: string
+          tipo_servico: string
+          valor_aplicado: number
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          pagamento_id?: string
+          servico_id?: string
+          tipo_servico?: string
+          valor_aplicado?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pagamento_itens_pagamento_id_fkey"
+            columns: ["pagamento_id"]
+            isOneToOne: false
+            referencedRelation: "pagamentos_fornecedor"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pagamentos_fornecedor: {
+        Row: {
+          comprovante_url: string | null
+          criado_em: string
+          data_pagamento: string
+          forma_pagamento: string
+          fornecedor_id: string
+          id: string
+          observacoes: string | null
+          pago_por: string | null
+          valor: number
+        }
+        Insert: {
+          comprovante_url?: string | null
+          criado_em?: string
+          data_pagamento?: string
+          forma_pagamento: string
+          fornecedor_id: string
+          id?: string
+          observacoes?: string | null
+          pago_por?: string | null
+          valor: number
+        }
+        Update: {
+          comprovante_url?: string | null
+          criado_em?: string
+          data_pagamento?: string
+          forma_pagamento?: string
+          fornecedor_id?: string
+          id?: string
+          observacoes?: string | null
+          pago_por?: string | null
+          valor?: number
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           ativo: boolean
