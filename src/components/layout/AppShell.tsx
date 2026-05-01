@@ -1,4 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { useFornecedorTipos } from "@/hooks/useFornecedorTipos";
 import { Button } from "@/components/ui/button";
@@ -76,6 +79,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const fornec = useFornecedorTipos();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Realtime: toast em novas notificações para o usuário
+  useEffect(() => {
+    if (!user) return;
+    const ch = supabase
+      .channel(`shell-notif-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notificacoes", filter: `para_id=eq.${user.id}` },
+        (payload) => {
+          const n = payload.new as { titulo: string; mensagem: string; tipo: string; link: string | null };
+          const opts = { description: n.mensagem };
+          if (n.tipo === "alerta") toast.warning(n.titulo, opts);
+          else if (n.tipo === "sucesso") toast.success(n.titulo, opts);
+          else toast(n.titulo, opts);
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [user]);
 
   if (!user || !primaryRole) return <>{children}</>;
 
