@@ -34,6 +34,7 @@ export type Database = {
           valor_litro: number
           valor_total: number | null
           veiculo_id: string | null
+          via_qrcode: boolean
         }
         Insert: {
           bem_descricao?: string | null
@@ -54,6 +55,7 @@ export type Database = {
           valor_litro: number
           valor_total?: number | null
           veiculo_id?: string | null
+          via_qrcode?: boolean
         }
         Update: {
           bem_descricao?: string | null
@@ -74,6 +76,7 @@ export type Database = {
           valor_litro?: number
           valor_total?: number | null
           veiculo_id?: string | null
+          via_qrcode?: boolean
         }
         Relationships: [
           {
