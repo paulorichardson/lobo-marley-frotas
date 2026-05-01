@@ -152,15 +152,29 @@ function PerfilFornecedor() {
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Perfil</h1>
-          <p className="text-sm text-muted-foreground">
-            Mantenha seus dados atualizados. Alterações bancárias notificam o administrador.
-          </p>
+        <div className="flex items-center gap-4">
+          <LogoUpload
+            userId={cad.id}
+            currentUrl={cad.logo_url}
+            onChanged={(url) => set("logo_url", url)}
+          />
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Perfil</h1>
+            <p className="text-sm text-muted-foreground">
+              Mantenha seus dados atualizados. Alterações bancárias notificam o administrador.
+            </p>
+          </div>
         </div>
-        <span className={`px-2.5 py-1 rounded text-xs font-medium ${statusBadge.cls}`}>
-          {statusBadge.label}
-        </span>
+        <div className="text-right">
+          <span className={`px-2.5 py-1 rounded text-xs font-medium ${statusBadge.cls}`}>
+            {statusBadge.label}
+          </span>
+          {cad.data_aprovacao && (
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Aprovado em {new Date(cad.data_aprovacao).toLocaleDateString("pt-BR")}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Empresa (read-only) */}
