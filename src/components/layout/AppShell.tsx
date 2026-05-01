@@ -99,10 +99,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Topbar mobile */}
       <header className="md:hidden bg-sidebar border-b border-sidebar-border px-4 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-gradient-to-br from-primary to-[var(--primary-glow)] flex items-center justify-center">
-            <Truck className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-bold text-sidebar-foreground">Lobo Marley</span>
+          <img src={logoUrl} alt="Lobo Marley" className="w-9 h-9 rounded-md object-contain bg-background/40 p-0.5" />
+          <span className="font-bold text-sidebar-foreground tracking-wide">LOBO MARLEY</span>
         </div>
         <Button variant="ghost" size="icon" onClick={handleSignOut}>
           <LogOut className="w-4 h-4" />
