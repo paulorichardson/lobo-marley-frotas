@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Truck, Loader2, Shield, Briefcase, Wrench, User, FlaskConical } from "lucide-react";
+import { Loader2, Shield, Briefcase, Wrench, User, FlaskConical } from "lucide-react";
+import logoUrl from "@/assets/lobo-marley-logo.svg";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -116,12 +117,12 @@ function LoginPage() {
     >
       <div className="w-full max-w-md space-y-5">
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-[var(--primary-glow)] shadow-[var(--shadow-glow)]">
-            <Truck className="w-8 h-8 text-primary-foreground" />
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-card/60 backdrop-blur p-2 shadow-[var(--shadow-glow)] ring-1 ring-primary/30">
+            <img src={logoUrl} alt="Lobo Marley" className="w-full h-full object-contain" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Lobo Marley</h1>
-            <p className="text-sm text-muted-foreground mt-1">Gestão de Frotas</p>
+            <h1 className="text-3xl font-bold tracking-wide">LOBO MARLEY</h1>
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground mt-1">Gestão de Frotas</p>
           </div>
         </div>
 

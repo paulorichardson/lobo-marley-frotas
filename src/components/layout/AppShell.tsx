@@ -3,6 +3,7 @@ import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText, Users, Settings, Receipt, Camera, History } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logoUrl from "@/assets/lobo-marley-logo.svg";
 
 interface NavItem {
   to: string;
@@ -55,12 +56,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar desktop */}
       <aside className="hidden md:flex md:w-64 bg-sidebar border-r border-sidebar-border flex-col">
         <div className="p-5 border-b border-sidebar-border flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-[var(--primary-glow)] flex items-center justify-center">
-            <Truck className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src={logoUrl} alt="Lobo Marley" className="w-11 h-11 rounded-md object-contain bg-background/40 p-1" />
           <div>
-            <p className="font-bold text-sidebar-foreground leading-tight">Lobo Marley</p>
-            <p className="text-xs text-muted-foreground">Gestão de Frotas</p>
+            <p className="font-bold text-sidebar-foreground leading-tight tracking-wide">LOBO MARLEY</p>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Gestão de Frotas</p>
           </div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
@@ -100,10 +99,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Topbar mobile */}
       <header className="md:hidden bg-sidebar border-b border-sidebar-border px-4 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-gradient-to-br from-primary to-[var(--primary-glow)] flex items-center justify-center">
-            <Truck className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-bold text-sidebar-foreground">Lobo Marley</span>
+          <img src={logoUrl} alt="Lobo Marley" className="w-9 h-9 rounded-md object-contain bg-background/40 p-0.5" />
+          <span className="font-bold text-sidebar-foreground tracking-wide">LOBO MARLEY</span>
         </div>
         <Button variant="ghost" size="icon" onClick={handleSignOut}>
           <LogOut className="w-4 h-4" />
