@@ -50,9 +50,15 @@ function buildFornecedorNav(opts: {
   if (opts.isPosto) {
     items.push({ to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
   }
-  if (opts.isOficina || opts.isPecas) {
+  if (opts.isOficina) {
     items.push({ to: "/fornecedor/servico", label: "Novo Serviço", icon: Wrench });
     items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+  }
+  if (opts.isPecas) {
+    items.push({ to: "/fornecedor/lancar-pecas", label: "Lançar Peças", icon: Package });
+    if (!opts.isOficina) {
+      items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+    }
   }
   items.push({ to: "/fornecedor/historico", label: "Histórico", icon: ListChecks });
   items.push({ to: "/fornecedor/financeiro", label: "Financeiro", icon: Receipt });
