@@ -432,6 +432,15 @@ function ServicoPage() {
             <Label>Observações</Label>
             <Textarea value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows={2} maxLength={500} />
           </div>
+          {modo === "executado" && (
+            <div className="space-y-2 pt-2 border-t">
+              <Label>Assinatura digital de conclusão *</Label>
+              <p className="text-xs text-muted-foreground">
+                Assine abaixo confirmando a conclusão do serviço.
+              </p>
+              <SignaturePad ref={sigRef} height={180} />
+            </div>
+          )}
         </Card>
       )}
 
