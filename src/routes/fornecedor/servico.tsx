@@ -169,7 +169,7 @@ function ServicoPage() {
           veiculo_id: veiculo?.id ?? null,
           fornecedor_id: user.id,
           empresa_id: empresaId,
-          tipo: tipoServico,
+          tipo: tipoLabel,
           status,
           prioridade: "Normal",
           descricao: descricaoFinal,
