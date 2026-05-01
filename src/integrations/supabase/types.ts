@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       abastecimentos: {
         Row: {
+          bem_descricao: string | null
+          bem_identificacao: string | null
           combustivel: string | null
           comprovante_url: string | null
           criado_em: string
@@ -23,7 +25,7 @@ export type Database = {
           empresa_id: string | null
           fornecedor_id: string | null
           id: string
-          km_atual: number
+          km_atual: number | null
           litros: number
           motorista_id: string | null
           nota_fiscal: string | null
@@ -31,9 +33,11 @@ export type Database = {
           posto: string | null
           valor_litro: number
           valor_total: number | null
-          veiculo_id: string
+          veiculo_id: string | null
         }
         Insert: {
+          bem_descricao?: string | null
+          bem_identificacao?: string | null
           combustivel?: string | null
           comprovante_url?: string | null
           criado_em?: string
@@ -41,7 +45,7 @@ export type Database = {
           empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
-          km_atual: number
+          km_atual?: number | null
           litros: number
           motorista_id?: string | null
           nota_fiscal?: string | null
@@ -49,9 +53,11 @@ export type Database = {
           posto?: string | null
           valor_litro: number
           valor_total?: number | null
-          veiculo_id: string
+          veiculo_id?: string | null
         }
         Update: {
+          bem_descricao?: string | null
+          bem_identificacao?: string | null
           combustivel?: string | null
           comprovante_url?: string | null
           criado_em?: string
@@ -59,7 +65,7 @@ export type Database = {
           empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
-          km_atual?: number
+          km_atual?: number | null
           litros?: number
           motorista_id?: string | null
           nota_fiscal?: string | null
@@ -67,7 +73,7 @@ export type Database = {
           posto?: string | null
           valor_litro?: number
           valor_total?: number | null
-          veiculo_id?: string
+          veiculo_id?: string | null
         }
         Relationships: [
           {
@@ -371,6 +377,7 @@ export type Database = {
           email_login: string
           estado: string | null
           id: string
+          logo_url: string | null
           logradouro: string | null
           motivo_reprovacao: string | null
           nome_fantasia: string | null
@@ -406,6 +413,7 @@ export type Database = {
           email_login: string
           estado?: string | null
           id?: string
+          logo_url?: string | null
           logradouro?: string | null
           motivo_reprovacao?: string | null
           nome_fantasia?: string | null
@@ -441,6 +449,7 @@ export type Database = {
           email_login?: string
           estado?: string | null
           id?: string
+          logo_url?: string | null
           logradouro?: string | null
           motivo_reprovacao?: string | null
           nome_fantasia?: string | null
