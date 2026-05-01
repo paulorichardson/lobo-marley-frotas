@@ -55,8 +55,10 @@ function buildFornecedorNav(opts: {
     items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
   }
   items.push({ to: "/fornecedor/historico", label: "Histórico", icon: ListChecks });
-  // Defaults se nenhum tipo (fallback)
-  if (items.length === 2) {
+  items.push({ to: "/fornecedor/financeiro", label: "Financeiro", icon: Receipt });
+  items.push({ to: "/fornecedor/perfil", label: "Perfil", icon: UserIcon });
+  // Defaults se nenhum tipo (fallback) — adiciona Abastecer + Serviço
+  if (items.length === 4) {
     items.splice(1, 0, { to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
     items.splice(2, 0, { to: "/fornecedor/servico", label: "Serviço", icon: Wrench });
   }

@@ -29,8 +29,10 @@ import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
 import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas'
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
 import { Route as FornecedorServicoRouteImport } from './routes/fornecedor/servico'
+import { Route as FornecedorPerfilRouteImport } from './routes/fornecedor/perfil'
 import { Route as FornecedorOrcamentoRouteImport } from './routes/fornecedor/orcamento'
 import { Route as FornecedorHistoricoRouteImport } from './routes/fornecedor/historico'
+import { Route as FornecedorFinanceiroRouteImport } from './routes/fornecedor/financeiro'
 import { Route as FornecedorDespesaRouteImport } from './routes/fornecedor/despesa'
 import { Route as FornecedorAbastecerRouteImport } from './routes/fornecedor/abastecer'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
@@ -142,6 +144,11 @@ const FornecedorServicoRoute = FornecedorServicoRouteImport.update({
   path: '/fornecedor/servico',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorPerfilRoute = FornecedorPerfilRouteImport.update({
+  id: '/fornecedor/perfil',
+  path: '/fornecedor/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FornecedorOrcamentoRoute = FornecedorOrcamentoRouteImport.update({
   id: '/fornecedor/orcamento',
   path: '/fornecedor/orcamento',
@@ -150,6 +157,11 @@ const FornecedorOrcamentoRoute = FornecedorOrcamentoRouteImport.update({
 const FornecedorHistoricoRoute = FornecedorHistoricoRouteImport.update({
   id: '/fornecedor/historico',
   path: '/fornecedor/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FornecedorFinanceiroRoute = FornecedorFinanceiroRouteImport.update({
+  id: '/fornecedor/financeiro',
+  path: '/fornecedor/financeiro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FornecedorDespesaRoute = FornecedorDespesaRouteImport.update({
@@ -209,8 +221,10 @@ export interface FileRoutesByFullPath {
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
+  '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
@@ -242,8 +256,10 @@ export interface FileRoutesByTo {
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
+  '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
@@ -276,8 +292,10 @@ export interface FileRoutesById {
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
+  '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
@@ -311,8 +329,10 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
+    | '/fornecedor/financeiro'
     | '/fornecedor/historico'
     | '/fornecedor/orcamento'
+    | '/fornecedor/perfil'
     | '/fornecedor/servico'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
@@ -344,8 +364,10 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
+    | '/fornecedor/financeiro'
     | '/fornecedor/historico'
     | '/fornecedor/orcamento'
+    | '/fornecedor/perfil'
     | '/fornecedor/servico'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
@@ -377,8 +399,10 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
+    | '/fornecedor/financeiro'
     | '/fornecedor/historico'
     | '/fornecedor/orcamento'
+    | '/fornecedor/perfil'
     | '/fornecedor/servico'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
@@ -411,8 +435,10 @@ export interface RootRouteChildren {
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
   FornecedorAbastecerRoute: typeof FornecedorAbastecerRoute
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
+  FornecedorFinanceiroRoute: typeof FornecedorFinanceiroRoute
   FornecedorHistoricoRoute: typeof FornecedorHistoricoRoute
   FornecedorOrcamentoRoute: typeof FornecedorOrcamentoRoute
+  FornecedorPerfilRoute: typeof FornecedorPerfilRoute
   FornecedorServicoRoute: typeof FornecedorServicoRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
@@ -574,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorServicoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/perfil': {
+      id: '/fornecedor/perfil'
+      path: '/fornecedor/perfil'
+      fullPath: '/fornecedor/perfil'
+      preLoaderRoute: typeof FornecedorPerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fornecedor/orcamento': {
       id: '/fornecedor/orcamento'
       path: '/fornecedor/orcamento'
@@ -586,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/fornecedor/historico'
       fullPath: '/fornecedor/historico'
       preLoaderRoute: typeof FornecedorHistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fornecedor/financeiro': {
+      id: '/fornecedor/financeiro'
+      path: '/fornecedor/financeiro'
+      fullPath: '/fornecedor/financeiro'
+      preLoaderRoute: typeof FornecedorFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/despesa': {
@@ -700,8 +740,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRelatoriosRoute: AdminRelatoriosRoute,
   FornecedorAbastecerRoute: FornecedorAbastecerRoute,
   FornecedorDespesaRoute: FornecedorDespesaRoute,
+  FornecedorFinanceiroRoute: FornecedorFinanceiroRoute,
   FornecedorHistoricoRoute: FornecedorHistoricoRoute,
   FornecedorOrcamentoRoute: FornecedorOrcamentoRoute,
+  FornecedorPerfilRoute: FornecedorPerfilRoute,
   FornecedorServicoRoute: FornecedorServicoRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
