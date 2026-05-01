@@ -88,6 +88,7 @@ function ServicoPage() {
   const [fotoNF, setFotoNF] = useState<File | null>(null);
   const [fotoEquip, setFotoEquip] = useState<File | null>(null);
   const [observacoes, setObservacoes] = useState("");
+  const sigRef = useRef<SignaturePadHandle>(null);
 
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState<string | null>(null);
