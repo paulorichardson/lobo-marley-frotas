@@ -38,10 +38,17 @@ export const Route = createFileRoute("/fornecedor/servico")({
   ),
 });
 
-const TIPOS_SERVICO = [
-  "Preventiva", "Corretiva", "Troca de Peça", "Funilaria/Pintura",
-  "Elétrica", "Pneu/Balanceamento", "Diagnóstico", "Lavagem", "Outros",
-];
+const TIPO_LABEL: Record<TipoServicoChave, string> = {
+  motor: "Motor",
+  freio: "Freios",
+  suspensao: "Suspensão",
+  eletrica: "Elétrica",
+  troca_oleo: "Troca de Óleo",
+  pneus: "Pneus/Balanceamento",
+  diagnostico: "Diagnóstico",
+  funilaria: "Funilaria/Pintura",
+  outros: "Outros",
+};
 
 const BRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
