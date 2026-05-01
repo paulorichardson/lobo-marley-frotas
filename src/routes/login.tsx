@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Truck, Loader2, Shield, Briefcase, Wrench, User, FlaskConical } from "lucide-react";
+import { Loader2, Shield, Briefcase, Wrench, User, FlaskConical } from "lucide-react";
+import logoUrl from "@/assets/lobo-marley-logo.svg";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
