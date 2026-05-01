@@ -56,12 +56,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar desktop */}
       <aside className="hidden md:flex md:w-64 bg-sidebar border-r border-sidebar-border flex-col">
         <div className="p-5 border-b border-sidebar-border flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-[var(--primary-glow)] flex items-center justify-center">
-            <Truck className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src={logoUrl} alt="Lobo Marley" className="w-11 h-11 rounded-md object-contain bg-background/40 p-1" />
           <div>
-            <p className="font-bold text-sidebar-foreground leading-tight">Lobo Marley</p>
-            <p className="text-xs text-muted-foreground">Gestão de Frotas</p>
+            <p className="font-bold text-sidebar-foreground leading-tight tracking-wide">LOBO MARLEY</p>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Gestão de Frotas</p>
           </div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
