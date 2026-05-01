@@ -16,6 +16,12 @@ import {
 import { CameraInput } from "@/components/CameraInput";
 import { VeiculoPlacaSearch, type VeiculoBusca } from "@/components/fornecedor/VeiculoPlacaSearch";
 import { PecasEditor, type Peca } from "@/components/fornecedor/PecasEditor";
+import {
+  ChecklistServico,
+  TIPOS_SERVICO_CHAVES,
+  type TipoServicoChave,
+} from "@/components/fornecedor/ChecklistServico";
+import { SignaturePad, type SignaturePadHandle } from "@/components/SignaturePad";
 import { Wrench, Truck, Cog, ChevronLeft, ChevronRight, Loader2, CheckCircle2, Send, Save } from "lucide-react";
 import { toast } from "sonner";
 import { uploadFile } from "@/lib/upload";
