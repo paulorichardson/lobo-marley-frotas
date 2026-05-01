@@ -12,10 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, User as UserIcon, Building2, Landmark, MapPin, AlertTriangle } from "lucide-react";
+import { Loader2, Save, User as UserIcon, Building2, Landmark, MapPin, AlertTriangle, Image as ImageIcon, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { maskCEP, maskPhone, BANCOS_BR } from "@/lib/br-validators";
 import { notifyAdmins } from "@/lib/notify";
+import { uploadFile } from "@/lib/upload";
 
 export const Route = createFileRoute("/fornecedor/perfil")({
   head: () => ({ meta: [{ title: "Perfil — Fornecedor" }] }),
@@ -43,6 +44,8 @@ type Cad = {
   responsavel_nome: string; responsavel_cargo: string | null;
   status: "pendente" | "aprovado" | "reprovado";
   tipos_fornecimento: string[];
+  logo_url: string | null;
+  data_aprovacao: string | null;
 };
 
 const BANK_FIELDS: (keyof Cad)[] = ["banco", "agencia", "conta", "tipo_conta", "pix_chave", "pix_tipo"];
@@ -149,15 +152,29 @@ function PerfilFornecedor() {
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Perfil</h1>
-          <p className="text-sm text-muted-foreground">
-            Mantenha seus dados atualizados. Alterações bancárias notificam o administrador.
-          </p>
+        <div className="flex items-center gap-4">
+          <LogoUpload
+            userId={cad.id}
+            currentUrl={cad.logo_url}
+            onChanged={(url) => set("logo_url", url)}
+          />
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Perfil</h1>
+            <p className="text-sm text-muted-foreground">
+              Mantenha seus dados atualizados. Alterações bancárias notificam o administrador.
+            </p>
+          </div>
         </div>
-        <span className={`px-2.5 py-1 rounded text-xs font-medium ${statusBadge.cls}`}>
-          {statusBadge.label}
-        </span>
+        <div className="text-right">
+          <span className={`px-2.5 py-1 rounded text-xs font-medium ${statusBadge.cls}`}>
+            {statusBadge.label}
+          </span>
+          {cad.data_aprovacao && (
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Aprovado em {new Date(cad.data_aprovacao).toLocaleDateString("pt-BR")}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Empresa (read-only) */}
@@ -306,6 +323,9 @@ function PerfilFornecedor() {
         </div>
       </Card>
 
+      {/* Alterar senha */}
+      <PasswordChangeCard />
+
       <div className="sticky bottom-20 md:bottom-4 flex justify-end">
         <Button onClick={save} disabled={saving} size="lg" className="shadow-lg">
           {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -322,5 +342,125 @@ function Field({ label, value, readOnly }: { label: string; value: string; readO
       <Label>{label}</Label>
       <Input value={value} readOnly={readOnly} className={readOnly ? "bg-muted/40" : ""} />
     </div>
+  );
+}
+
+function LogoUpload({
+  userId, currentUrl, onChanged,
+}: { userId: string; currentUrl: string | null; onChanged: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(currentUrl);
+
+  async function onPick(file: File | null) {
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Logo deve ter até 2MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = (file.name.split(".").pop() || "png").toLowerCase();
+      const path = await uploadFile("fornecedores-logos", userId, file, ext);
+      const { data } = supabase.storage.from("fornecedores-logos").getPublicUrl(path);
+      const publicUrl = data.publicUrl;
+      const { error } = await supabase
+        .from("fornecedores_cadastro")
+        .update({ logo_url: publicUrl })
+        .eq("user_id", userId);
+      if (error) throw error;
+      setPreview(publicUrl);
+      onChanged(publicUrl);
+      toast.success("Logo atualizado");
+    } catch (err: any) {
+      toast.error("Erro no upload", { description: err.message });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <label className="relative w-20 h-20 rounded-lg border-2 border-dashed border-border hover:border-accent cursor-pointer flex items-center justify-center overflow-hidden bg-muted/40">
+      {preview ? (
+        <img src={preview} alt="Logo" className="w-full h-full object-contain" />
+      ) : (
+        <div className="text-center text-muted-foreground">
+          <ImageIcon className="w-6 h-6 mx-auto" />
+          <span className="text-[10px]">Logo</span>
+        </div>
+      )}
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => onPick(e.target.files?.[0] ?? null)}
+      />
+      {uploading && (
+        <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+          <Loader2 className="w-4 h-4 animate-spin" />
+        </div>
+      )}
+    </label>
+  );
+}
+
+function PasswordChangeCard() {
+  const [senha, setSenha] = useState("");
+  const [confirma, setConfirma] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function alterar() {
+    if (senha.length < 8) {
+      toast.error("Senha deve ter pelo menos 8 caracteres");
+      return;
+    }
+    if (senha !== confirma) {
+      toast.error("As senhas não coincidem");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ password: senha });
+    setSaving(false);
+    if (error) {
+      toast.error("Erro ao alterar senha", { description: error.message });
+      return;
+    }
+    toast.success("Senha alterada com sucesso");
+    setSenha("");
+    setConfirma("");
+  }
+
+  return (
+    <Card className="p-5 space-y-4">
+      <h2 className="font-semibold flex items-center gap-2">
+        <KeyRound className="w-4 h-4 text-accent" /> Alterar senha
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <Label>Nova senha</Label>
+          <Input
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            placeholder="Mínimo 8 caracteres"
+            autoComplete="new-password"
+          />
+        </div>
+        <div>
+          <Label>Confirmar nova senha</Label>
+          <Input
+            type="password"
+            value={confirma}
+            onChange={(e) => setConfirma(e.target.value)}
+            autoComplete="new-password"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <Button variant="outline" onClick={alterar} disabled={saving || !senha}>
+          {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          Alterar senha
+        </Button>
+      </div>
+    </Card>
   );
 }

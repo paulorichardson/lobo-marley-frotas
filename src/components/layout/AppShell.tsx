@@ -1,11 +1,14 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useAuth, homeForRole, type AppRole } from "@/hooks/useAuth";
 import { useFornecedorTipos } from "@/hooks/useFornecedorTipos";
 import { Button } from "@/components/ui/button";
 import {
   Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
   Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
-  User as UserIcon, ListChecks,
+  User as UserIcon, ListChecks, Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
@@ -50,9 +53,15 @@ function buildFornecedorNav(opts: {
   if (opts.isPosto) {
     items.push({ to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
   }
-  if (opts.isOficina || opts.isPecas) {
+  if (opts.isOficina) {
     items.push({ to: "/fornecedor/servico", label: "Novo Serviço", icon: Wrench });
     items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+  }
+  if (opts.isPecas) {
+    items.push({ to: "/fornecedor/lancar-pecas", label: "Lançar Peças", icon: Package });
+    if (!opts.isOficina) {
+      items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+    }
   }
   items.push({ to: "/fornecedor/historico", label: "Histórico", icon: ListChecks });
   items.push({ to: "/fornecedor/financeiro", label: "Financeiro", icon: Receipt });
@@ -70,6 +79,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const fornec = useFornecedorTipos();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Realtime: toast em novas notificações para o usuário
+  useEffect(() => {
+    if (!user) return;
+    const ch = supabase
+      .channel(`shell-notif-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notificacoes", filter: `para_id=eq.${user.id}` },
+        (payload) => {
+          const n = payload.new as { titulo: string; mensagem: string; tipo: string; link: string | null };
+          const opts = { description: n.mensagem };
+          if (n.tipo === "alerta") toast.warning(n.titulo, opts);
+          else if (n.tipo === "sucesso") toast.success(n.titulo, opts);
+          else toast(n.titulo, opts);
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [user]);
 
   if (!user || !primaryRole) return <>{children}</>;
 

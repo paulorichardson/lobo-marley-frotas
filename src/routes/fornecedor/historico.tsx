@@ -137,7 +137,7 @@ function HistoricoPage() {
         });
       }
       for (const a of abasts ?? []) {
-        const v = veicMap.get(a.veiculo_id);
+        const v = a.veiculo_id ? veicMap.get(a.veiculo_id) : undefined;
         lst.push({
           key: `a-${a.id}`,
           id: a.id,

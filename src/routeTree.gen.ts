@@ -31,6 +31,7 @@ import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutenco
 import { Route as FornecedorServicoRouteImport } from './routes/fornecedor/servico'
 import { Route as FornecedorPerfilRouteImport } from './routes/fornecedor/perfil'
 import { Route as FornecedorOrcamentoRouteImport } from './routes/fornecedor/orcamento'
+import { Route as FornecedorLancarPecasRouteImport } from './routes/fornecedor/lancar-pecas'
 import { Route as FornecedorHistoricoRouteImport } from './routes/fornecedor/historico'
 import { Route as FornecedorFinanceiroRouteImport } from './routes/fornecedor/financeiro'
 import { Route as FornecedorDespesaRouteImport } from './routes/fornecedor/despesa'
@@ -154,6 +155,11 @@ const FornecedorOrcamentoRoute = FornecedorOrcamentoRouteImport.update({
   path: '/fornecedor/orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorLancarPecasRoute = FornecedorLancarPecasRouteImport.update({
+  id: '/fornecedor/lancar-pecas',
+  path: '/fornecedor/lancar-pecas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FornecedorHistoricoRoute = FornecedorHistoricoRouteImport.update({
   id: '/fornecedor/historico',
   path: '/fornecedor/historico',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
+  '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
+  '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
   '/fornecedor/financeiro': typeof FornecedorFinanceiroRoute
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
+  '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/fornecedor/despesa'
     | '/fornecedor/financeiro'
     | '/fornecedor/historico'
+    | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/fornecedor/despesa'
     | '/fornecedor/financeiro'
     | '/fornecedor/historico'
+    | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/fornecedor/despesa'
     | '/fornecedor/financeiro'
     | '/fornecedor/historico'
+    | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
@@ -437,6 +449,7 @@ export interface RootRouteChildren {
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
   FornecedorFinanceiroRoute: typeof FornecedorFinanceiroRoute
   FornecedorHistoricoRoute: typeof FornecedorHistoricoRoute
+  FornecedorLancarPecasRoute: typeof FornecedorLancarPecasRoute
   FornecedorOrcamentoRoute: typeof FornecedorOrcamentoRoute
   FornecedorPerfilRoute: typeof FornecedorPerfilRoute
   FornecedorServicoRoute: typeof FornecedorServicoRoute
@@ -614,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorOrcamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/lancar-pecas': {
+      id: '/fornecedor/lancar-pecas'
+      path: '/fornecedor/lancar-pecas'
+      fullPath: '/fornecedor/lancar-pecas'
+      preLoaderRoute: typeof FornecedorLancarPecasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fornecedor/historico': {
       id: '/fornecedor/historico'
       path: '/fornecedor/historico'
@@ -742,6 +762,7 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorDespesaRoute: FornecedorDespesaRoute,
   FornecedorFinanceiroRoute: FornecedorFinanceiroRoute,
   FornecedorHistoricoRoute: FornecedorHistoricoRoute,
+  FornecedorLancarPecasRoute: FornecedorLancarPecasRoute,
   FornecedorOrcamentoRoute: FornecedorOrcamentoRoute,
   FornecedorPerfilRoute: FornecedorPerfilRoute,
   FornecedorServicoRoute: FornecedorServicoRoute,
