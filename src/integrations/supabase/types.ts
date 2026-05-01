@@ -235,6 +235,114 @@ export type Database = {
           },
         ]
       }
+      fornecedores_cadastro: {
+        Row: {
+          aceitou_dados_bancarios: boolean
+          aceitou_termos: boolean
+          agencia: string | null
+          aprovado_por: string | null
+          atualizado_em: string
+          bairro: string | null
+          banco: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string
+          complemento: string | null
+          conta: string | null
+          criado_em: string
+          data_aprovacao: string | null
+          email_login: string
+          estado: string | null
+          id: string
+          logradouro: string | null
+          motivo_reprovacao: string | null
+          nome_fantasia: string | null
+          numero: string | null
+          pix_chave: string | null
+          pix_tipo: string | null
+          razao_social: string
+          responsavel_cargo: string | null
+          responsavel_cpf: string | null
+          responsavel_nome: string
+          status: string
+          telefone: string | null
+          tipo_conta: string | null
+          tipos_fornecimento: string[]
+          user_id: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          aceitou_dados_bancarios?: boolean
+          aceitou_termos?: boolean
+          agencia?: string | null
+          aprovado_por?: string | null
+          atualizado_em?: string
+          bairro?: string | null
+          banco?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj: string
+          complemento?: string | null
+          conta?: string | null
+          criado_em?: string
+          data_aprovacao?: string | null
+          email_login: string
+          estado?: string | null
+          id?: string
+          logradouro?: string | null
+          motivo_reprovacao?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
+          razao_social: string
+          responsavel_cargo?: string | null
+          responsavel_cpf?: string | null
+          responsavel_nome: string
+          status?: string
+          telefone?: string | null
+          tipo_conta?: string | null
+          tipos_fornecimento?: string[]
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          aceitou_dados_bancarios?: boolean
+          aceitou_termos?: boolean
+          agencia?: string | null
+          aprovado_por?: string | null
+          atualizado_em?: string
+          bairro?: string | null
+          banco?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string
+          complemento?: string | null
+          conta?: string | null
+          criado_em?: string
+          data_aprovacao?: string | null
+          email_login?: string
+          estado?: string | null
+          id?: string
+          logradouro?: string | null
+          motivo_reprovacao?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
+          razao_social?: string
+          responsavel_cargo?: string | null
+          responsavel_cpf?: string | null
+          responsavel_nome?: string
+          status?: string
+          telefone?: string | null
+          tipo_conta?: string | null
+          tipos_fornecimento?: string[]
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       manutencoes: {
         Row: {
           aprovado_por: string | null
