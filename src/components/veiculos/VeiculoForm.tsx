@@ -239,6 +239,7 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         doc_crlv_url: doc_crlv_url || null,
         doc_seguro_url: doc_seguro_url || null,
         cadastrado_por: user.id,
+        empresa_id,
       };
 
       let veiculoId = values.id;
