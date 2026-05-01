@@ -136,14 +136,27 @@ function ServicoPage() {
     if (modo === "executado" && !fotoNF) {
       toast.error("Nota fiscal é obrigatória para serviço executado"); return;
     }
+    if (modo === "executado" && (sigRef.current?.isEmpty() ?? true)) {
+      toast.error("Assinatura digital é obrigatória para concluir o serviço"); return;
+    }
 
     setSalvando(true);
     try {
       const prefix = `manutencao/${user.id}`;
-      const [orcUrl, nfUrl, equipUrl] = await Promise.all([
+
+      // Assinatura: dataURL -> File
+      let assinaturaFile: File | null = null;
+      if (modo === "executado" && sigRef.current && !sigRef.current.isEmpty()) {
+        const dataUrl = sigRef.current.toDataURL();
+        const blob = await (await fetch(dataUrl)).blob();
+        assinaturaFile = new File([blob], "assinatura.png", { type: "image/png" });
+      }
+
+      const [orcUrl, nfUrl, equipUrl, assinaturaUrl] = await Promise.all([
         fotoOrcamento ? uploadFile("comprovantes", `${prefix}/orcamento`, fotoOrcamento) : Promise.resolve(null),
         fotoNF ? uploadFile("comprovantes", `${prefix}/nf`, fotoNF) : Promise.resolve(null),
         fotoEquip ? uploadFile("comprovantes", `${prefix}/equip`, fotoEquip) : Promise.resolve(null),
+        assinaturaFile ? uploadFile("comprovantes", `${prefix}/assinatura`, assinaturaFile) : Promise.resolve(null),
       ]);
 
       const status = modo === "orcamento" ? "Aguardando Aprovação" : "Concluída";
@@ -154,11 +167,20 @@ function ServicoPage() {
         ? `${tipoLabel} — ${veiculo?.placa}`
         : `${tipoLabel} — ${equipDesc}${patrimonio ? ` (${patrimonio})` : ""}`;
 
+      const checklistFeitos = Object.entries(checklist)
+        .filter(([, v]) => v)
+        .map(([k]) => k);
+      const checklistResumo = checklistFeitos.length > 0
+        ? `Checklist (${checklistFeitos.length}): ${checklistFeitos.join(", ")}`
+        : null;
+
       const obs = [
         observacoes,
         osNumero ? `OS: ${osNumero}` : null,
         equipUrl ? `Equip foto: ${equipUrl}` : null,
         nfUrl ? `NF: ${nfUrl}` : null,
+        assinaturaUrl ? `Assinatura: ${assinaturaUrl}` : null,
+        checklistResumo,
         modo === "executado" && aprovadoNome ? `Aprovado: ${aprovadoNome}` : null,
         tipoEquip !== "veiculo" ? `Equipamento: ${equipDesc}` : null,
       ].filter(Boolean).join(" | ");
