@@ -149,9 +149,10 @@ function ServicoPage() {
       const status = modo === "orcamento" ? "Aguardando Aprovação" : "Concluída";
       const empresaId = veiculo?.empresa_id ?? null;
 
+      const tipoLabel = TIPO_LABEL[tipoChave];
       const descricaoFinal = tipoEquip === "veiculo"
-        ? `${tipoServico} — ${veiculo?.placa}`
-        : `${tipoServico} — ${equipDesc}${patrimonio ? ` (${patrimonio})` : ""}`;
+        ? `${tipoLabel} — ${veiculo?.placa}`
+        : `${tipoLabel} — ${equipDesc}${patrimonio ? ` (${patrimonio})` : ""}`;
 
       const obs = [
         observacoes,
