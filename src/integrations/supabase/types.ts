@@ -20,6 +20,7 @@ export type Database = {
           comprovante_url: string | null
           criado_em: string
           data_hora: string
+          empresa_id: string | null
           fornecedor_id: string | null
           id: string
           km_atual: number
@@ -37,6 +38,7 @@ export type Database = {
           comprovante_url?: string | null
           criado_em?: string
           data_hora?: string
+          empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
           km_atual: number
@@ -54,6 +56,7 @@ export type Database = {
           comprovante_url?: string | null
           criado_em?: string
           data_hora?: string
+          empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
           km_atual?: number
@@ -67,6 +70,13 @@ export type Database = {
           veiculo_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "abastecimentos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "abastecimentos_fornecedor_id_fkey"
             columns: ["fornecedor_id"]
@@ -99,6 +109,7 @@ export type Database = {
           criado_em: string
           data_hora: string
           documentos_ok: boolean
+          empresa_id: string | null
           foto_hodometro_url: string | null
           freios_ok: boolean
           id: string
@@ -121,6 +132,7 @@ export type Database = {
           criado_em?: string
           data_hora?: string
           documentos_ok?: boolean
+          empresa_id?: string | null
           foto_hodometro_url?: string | null
           freios_ok?: boolean
           id?: string
@@ -143,6 +155,7 @@ export type Database = {
           criado_em?: string
           data_hora?: string
           documentos_ok?: boolean
+          empresa_id?: string | null
           foto_hodometro_url?: string | null
           freios_ok?: boolean
           id?: string
@@ -163,6 +176,13 @@ export type Database = {
             columns: ["aprovado_por"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklists_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
           {
@@ -187,6 +207,7 @@ export type Database = {
           criado_em: string
           data_despesa: string
           descricao: string | null
+          empresa_id: string | null
           id: string
           lancado_por: string | null
           observacoes: string | null
@@ -199,6 +220,7 @@ export type Database = {
           criado_em?: string
           data_despesa?: string
           descricao?: string | null
+          empresa_id?: string | null
           id?: string
           lancado_por?: string | null
           observacoes?: string | null
@@ -211,6 +233,7 @@ export type Database = {
           criado_em?: string
           data_despesa?: string
           descricao?: string | null
+          empresa_id?: string | null
           id?: string
           lancado_por?: string | null
           observacoes?: string | null
@@ -219,6 +242,13 @@ export type Database = {
           veiculo_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "despesas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "despesas_lancado_por_fkey"
             columns: ["lancado_por"]
@@ -234,6 +264,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      empresas: {
+        Row: {
+          atualizado_em: string
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string | null
+          complemento: string | null
+          criado_em: string
+          criado_por: string | null
+          data_inicio: string | null
+          data_vencimento: string | null
+          email: string | null
+          estado: string | null
+          id: string
+          inscricao_estadual: string | null
+          limite_veiculos: number | null
+          logo_url: string | null
+          logradouro: string | null
+          nome_fantasia: string | null
+          numero: string | null
+          observacoes: string | null
+          plano: string
+          razao_social: string
+          site: string | null
+          status: string
+          telefone: string | null
+          valor_mensal: number | null
+        }
+        Insert: {
+          atualizado_em?: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          data_inicio?: string | null
+          data_vencimento?: string | null
+          email?: string | null
+          estado?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          limite_veiculos?: number | null
+          logo_url?: string | null
+          logradouro?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          observacoes?: string | null
+          plano?: string
+          razao_social: string
+          site?: string | null
+          status?: string
+          telefone?: string | null
+          valor_mensal?: number | null
+        }
+        Update: {
+          atualizado_em?: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          data_inicio?: string | null
+          data_vencimento?: string | null
+          email?: string | null
+          estado?: string | null
+          id?: string
+          inscricao_estadual?: string | null
+          limite_veiculos?: number | null
+          logo_url?: string | null
+          logradouro?: string | null
+          nome_fantasia?: string | null
+          numero?: string | null
+          observacoes?: string | null
+          plano?: string
+          razao_social?: string
+          site?: string | null
+          status?: string
+          telefone?: string | null
+          valor_mensal?: number | null
+        }
+        Relationships: []
       }
       fornecedores_cadastro: {
         Row: {
@@ -354,6 +471,7 @@ export type Database = {
           data_inicio: string | null
           data_solicitacao: string
           descricao: string
+          empresa_id: string | null
           fornecedor_id: string | null
           id: string
           km_na_manutencao: number | null
@@ -378,6 +496,7 @@ export type Database = {
           data_inicio?: string | null
           data_solicitacao?: string
           descricao: string
+          empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
           km_na_manutencao?: number | null
@@ -402,6 +521,7 @@ export type Database = {
           data_inicio?: string | null
           data_solicitacao?: string
           descricao?: string
+          empresa_id?: string | null
           fornecedor_id?: string | null
           id?: string
           km_na_manutencao?: number | null
@@ -422,6 +542,13 @@ export type Database = {
             columns: ["aprovado_por"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
           {
@@ -495,6 +622,7 @@ export type Database = {
           avatar_url: string | null
           criado_em: string
           email: string
+          empresa_id: string | null
           id: string
           nome: string
           telefone: string | null
@@ -505,6 +633,7 @@ export type Database = {
           avatar_url?: string | null
           criado_em?: string
           email: string
+          empresa_id?: string | null
           id: string
           nome: string
           telefone?: string | null
@@ -515,17 +644,27 @@ export type Database = {
           avatar_url?: string | null
           criado_em?: string
           email?: string
+          empresa_id?: string | null
           id?: string
           nome?: string
           telefone?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "perfis_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       solicitacoes: {
         Row: {
           atualizado_em: string
           criado_em: string
           descricao: string
+          empresa_id: string | null
           foto_url: string | null
           id: string
           manutencao_id: string | null
@@ -540,6 +679,7 @@ export type Database = {
           atualizado_em?: string
           criado_em?: string
           descricao: string
+          empresa_id?: string | null
           foto_url?: string | null
           id?: string
           manutencao_id?: string | null
@@ -554,6 +694,7 @@ export type Database = {
           atualizado_em?: string
           criado_em?: string
           descricao?: string
+          empresa_id?: string | null
           foto_url?: string | null
           id?: string
           manutencao_id?: string | null
@@ -565,6 +706,13 @@ export type Database = {
           veiculo_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "solicitacoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "solicitacoes_manutencao_id_fkey"
             columns: ["manutencao_id"]
@@ -612,6 +760,7 @@ export type Database = {
       veiculo_fotos: {
         Row: {
           criado_em: string
+          empresa_id: string | null
           enviado_por: string | null
           id: string
           legenda: string | null
@@ -621,6 +770,7 @@ export type Database = {
         }
         Insert: {
           criado_em?: string
+          empresa_id?: string | null
           enviado_por?: string | null
           id?: string
           legenda?: string | null
@@ -630,6 +780,7 @@ export type Database = {
         }
         Update: {
           criado_em?: string
+          empresa_id?: string | null
           enviado_por?: string | null
           id?: string
           legenda?: string | null
@@ -638,6 +789,13 @@ export type Database = {
           veiculo_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "veiculo_fotos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "veiculo_fotos_enviado_por_fkey"
             columns: ["enviado_por"]
@@ -667,6 +825,7 @@ export type Database = {
           criado_em: string
           doc_crlv_url: string | null
           doc_seguro_url: string | null
+          empresa_id: string | null
           foto_principal_url: string | null
           id: string
           km_atual: number
@@ -693,6 +852,7 @@ export type Database = {
           criado_em?: string
           doc_crlv_url?: string | null
           doc_seguro_url?: string | null
+          empresa_id?: string | null
           foto_principal_url?: string | null
           id?: string
           km_atual?: number
@@ -719,6 +879,7 @@ export type Database = {
           criado_em?: string
           doc_crlv_url?: string | null
           doc_seguro_url?: string | null
+          empresa_id?: string | null
           foto_principal_url?: string | null
           id?: string
           km_atual?: number
@@ -742,6 +903,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "veiculos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "veiculos_motorista_id_fkey"
             columns: ["motorista_id"]
             isOneToOne: false
@@ -756,6 +924,7 @@ export type Database = {
           data_chegada: string | null
           data_saida: string
           destino: string | null
+          empresa_id: string | null
           finalidade: string | null
           id: string
           km_chegada: number | null
@@ -770,6 +939,7 @@ export type Database = {
           data_chegada?: string | null
           data_saida?: string
           destino?: string | null
+          empresa_id?: string | null
           finalidade?: string | null
           id?: string
           km_chegada?: number | null
@@ -784,6 +954,7 @@ export type Database = {
           data_chegada?: string | null
           data_saida?: string
           destino?: string | null
+          empresa_id?: string | null
           finalidade?: string | null
           id?: string
           km_chegada?: number | null
@@ -794,6 +965,13 @@ export type Database = {
           veiculo_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "viagens_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "viagens_motorista_id_fkey"
             columns: ["motorista_id"]
@@ -815,6 +993,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_empresa_id: { Args: never; Returns: string }
       get_my_roles: {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"][]
