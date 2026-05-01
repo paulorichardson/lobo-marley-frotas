@@ -65,13 +65,14 @@ function ServicoPage() {
   const [patrimonio, setPatrimonio] = useState("");
 
   // Step 2
-  const [tipoServico, setTipoServico] = useState("Corretiva");
+  const [tipoChave, setTipoChave] = useState<TipoServicoChave>("outros");
   const [dataEntrada, setDataEntrada] = useState(() => new Date().toISOString().slice(0, 10));
   const [dataConclusao, setDataConclusao] = useState("");
   const [kmEntrada, setKmEntrada] = useState("");
   const [osNumero, setOsNumero] = useState("");
   const [diagnostico, setDiagnostico] = useState("");
   const [servicoExecutado, setServicoExecutado] = useState("");
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
 
   // Step 3
   const [pecas, setPecas] = useState<Peca[]>([]);
