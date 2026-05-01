@@ -7,8 +7,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Users, ShieldCheck } from "lucide-react";
+import { Users, ShieldCheck, Building2 } from "lucide-react";
+import { FornecedoresAdmin } from "@/components/admin/FornecedoresAdmin";
 
 type AppRole = "admin" | "gestor_frota" | "fornecedor" | "motorista";
 
