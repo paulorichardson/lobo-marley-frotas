@@ -18,7 +18,7 @@ export const Route = createFileRoute("/motorista/notificacoes")({
 });
 
 function Notificacoes() {
-  const { items, loading, naoLidas, marcarLida, marcarTodasLidas } = useNotificacoes();
+  const { notificacoes: items, isLoading: loading, naoLidas, marcarLida, marcarTodasLidas } = useNotificacoes();
 
   return (
     <div className="p-4 max-w-2xl mx-auto space-y-4">
@@ -29,7 +29,7 @@ function Notificacoes() {
           <p className="text-xs text-muted-foreground">{naoLidas} não lida{naoLidas === 1 ? "" : "s"}</p>
         </div>
         {naoLidas > 0 && (
-          <Button variant="outline" size="sm" onClick={marcarTodasLidas}>
+          <Button variant="outline" size="sm" onClick={() => { marcarTodasLidas(); }}>
             <CheckCheck className="w-4 h-4 mr-1" /> Marcar tudo
           </Button>
         )}

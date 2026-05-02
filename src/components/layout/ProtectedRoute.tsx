@@ -1,11 +1,9 @@
 import { Navigate } from "@tanstack/react-router";
 import React from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, type AppRole } from "@/hooks/useAuth";
 
-export type AppRole = "admin_saas" | "gestor_frota" | "fornecedor" | "motorista";
-
-const roleRedirects: Record<string, string> = {
-  admin_saas: "/admin",
+const roleRedirects: Record<AppRole, string> = {
+  admin: "/admin",
   gestor_frota: "/gestor",
   fornecedor: "/fornecedor",
   motorista: "/motorista",
@@ -32,15 +30,12 @@ export function ProtectedRoute({
     return <Navigate to="/login" />;
   }
 
-  if (roles && roles.length > 0) {
-    const hasRequiredRole = hasAnyRole(roles);
-    if (!hasRequiredRole) {
-      const redirectTo =
-        primaryRole && roleRedirects[primaryRole]
-          ? (roleRedirects[primaryRole] as string)
-          : "/login";
-      return <Navigate to={redirectTo as never} />;
-    }
+  if (roles && roles.length > 0 && !hasAnyRole(roles)) {
+    const redirectTo =
+      primaryRole && roleRedirects[primaryRole]
+        ? roleRedirects[primaryRole]
+        : "/login";
+    return <Navigate to={redirectTo as never} />;
   }
 
   return <>{children}</>;
