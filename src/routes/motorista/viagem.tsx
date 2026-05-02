@@ -196,9 +196,8 @@ function ViagemPage() {
                                       {loading ? "Encerrando..." : "Encerrar Viagem"}
                                     </Button>
                       </form>
-                                  )}
-
-
-
-      );
+          )}
+        </AppShell>
+      </ProtectedRoute>
+  );
 }

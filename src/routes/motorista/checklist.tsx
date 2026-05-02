@@ -177,8 +177,7 @@ function ChecklistPage() {
                                   </Button>
                         </form>
                 </AppShell>
-
-      );
+        </ProtectedRoute>
+  );
 }
-
 export { ChecklistPage as EmBreve };
