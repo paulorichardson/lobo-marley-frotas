@@ -57,6 +57,7 @@ function buildFornecedorNav(opts: {
     items.push({ to: "/fornecedor/servico", label: "Novo Serviço", icon: Wrench });
     items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
   }
+  items.push({ to: "/fornecedor/despesa", label: "Despesa", icon: Receipt });
   if (opts.isPecas) {
     items.push({ to: "/fornecedor/lancar-pecas", label: "Lançar Peças", icon: Package });
     if (!opts.isOficina) {
