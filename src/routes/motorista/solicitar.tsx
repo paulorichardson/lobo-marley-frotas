@@ -182,8 +182,8 @@ function SolicitarPage() {
                                   <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={loading}>
                                     {loading ? "Enviando..." : "Enviar Solicitacao"}
                                   </Button>
-                        </form>
-                </AppShell>
-          </ProtectedRoute>
+
+
+
         );
-}</AppShell>
+}

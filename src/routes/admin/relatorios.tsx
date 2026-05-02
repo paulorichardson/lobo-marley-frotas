@@ -216,8 +216,8 @@ function RelatoriosPage() {
                                                             )}
                                               </CardContent>
                                   </Card>
-                        </div>
-                </AppShell>
-        </ProtectedRoute>
+
+
+
       );
-}</AppShell>
+}

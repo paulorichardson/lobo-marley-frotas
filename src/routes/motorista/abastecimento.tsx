@@ -195,8 +195,8 @@ function AbastecimentoPage() {
                                               <Fuel className="mr-2" />
                                     {loading ? "Registrando..." : "Registrar Abastecimento"}
                                   </Button>
-                        </form>
-                </AppShell>
-        </ProtectedRoute>
+
+
+
       );
-}</AppShell>
+}
