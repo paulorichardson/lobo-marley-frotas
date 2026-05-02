@@ -110,9 +110,9 @@ function ChecklistPage() {
                                           }`}
                                         >
                           {t === "saida" ? "Saida" : "Retorno"}
-                        </button>button>
+                        </button>
                       ))}
-                                  </div>div>
+                                  </div>
                         
                                   <div className="grid grid-cols-2 gap-3">
                                     {ITENS.map(({ key, label, icon: Icon }) => (
@@ -124,15 +124,15 @@ function ChecklistPage() {
                                         >
                                         <div className="flex items-center gap-2">
                                                           <Icon size={20} className={itens[key] ? "text-green-600" : "text-red-500"} />
-                                                          <span className="text-sm font-medium">{label}</span>span>
-                                        </div>div>
+                                                          <span className="text-sm font-medium">{label}</span>
+                                        </div>
                                         <Switch checked={itens[key]} onCheckedChange={() => toggle(key)} />
-                        </div>div>
+                        </div>
                       ))}
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">KM Atual *</Label>Label>
+                                              <Label className="font-semibold">KM Atual *</Label>
                                               <Input
                                                               type="number"
                                                               value={km}
@@ -141,19 +141,19 @@ function ChecklistPage() {
                                                               required
                                                               className="mt-1 text-lg h-12"
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Foto do Hodometro *</Label>Label>
+                                              <Label className="font-semibold">Foto do Hodometro *</Label>
                                               <CameraInput
                                                               label="Tirar foto do hodometro"
                                                               onChange={setFotoHodometro}
                                                               required
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Observacoes</Label>Label>
+                                              <Label className="font-semibold">Observacoes</Label>
                                               <Textarea
                                                               value={obs}
                                                               onChange={(e) => setObs(e.target.value)}
@@ -161,12 +161,12 @@ function ChecklistPage() {
                                                               className="mt-1"
                                                               rows={3}
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Assinatura do Motorista *</Label>Label>
+                                              <Label className="font-semibold">Assinatura do Motorista *</Label>
                                               <SignaturePad onSave={setAssinatura} />
-                                  </div>div>
+                                  </div>
                         
                                   <Button
                                                 type="submit"
@@ -174,10 +174,10 @@ function ChecklistPage() {
                                                 disabled={loading}
                                               >
                                     {loading ? "Enviando..." : "Enviar Checklist"}
-                                  </Button>Button>
-                        </form>form>
-                </AppShell>AppShell>
-        </ProtectedRoute>ProtectedRoute>
+                                  </Button>
+                        </form>
+                </AppShell>
+        </ProtectedRoute>
       );
 }
 
