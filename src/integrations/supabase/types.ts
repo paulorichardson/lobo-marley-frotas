@@ -361,6 +361,74 @@ export type Database = {
         }
         Relationships: []
       }
+      faturas: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          criado_por: string | null
+          data_emissao: string | null
+          data_pagamento: string | null
+          empresa_id: string | null
+          id: string
+          observacoes: string | null
+          periodo_fim: string
+          periodo_inicio: string
+          status: string
+          taxa_gestao_percentual: number | null
+          valor_abastecimentos: number | null
+          valor_despesas: number | null
+          valor_servicos: number | null
+          valor_taxa: number | null
+          valor_total: number | null
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string | null
+          data_emissao?: string | null
+          data_pagamento?: string | null
+          empresa_id?: string | null
+          id?: string
+          observacoes?: string | null
+          periodo_fim: string
+          periodo_inicio: string
+          status?: string
+          taxa_gestao_percentual?: number | null
+          valor_abastecimentos?: number | null
+          valor_despesas?: number | null
+          valor_servicos?: number | null
+          valor_taxa?: number | null
+          valor_total?: number | null
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string | null
+          data_emissao?: string | null
+          data_pagamento?: string | null
+          empresa_id?: string | null
+          id?: string
+          observacoes?: string | null
+          periodo_fim?: string
+          periodo_inicio?: string
+          status?: string
+          taxa_gestao_percentual?: number | null
+          valor_abastecimentos?: number | null
+          valor_despesas?: number | null
+          valor_servicos?: number | null
+          valor_taxa?: number | null
+          valor_total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faturas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fornecedores_cadastro: {
         Row: {
           aceitou_dados_bancarios: boolean
