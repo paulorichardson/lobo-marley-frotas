@@ -7,6 +7,7 @@ export type AppRole = "admin" | "gestor_frota" | "fornecedor" | "motorista";
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
+  const [empresaId, setEmpresaId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,9 +16,13 @@ export function useAuth() {
       setUser(session?.user ?? null);
       if (session?.user) {
         // Defer pra evitar deadlock
-        setTimeout(() => fetchRoles(session.user.id), 0);
+        setTimeout(() => {
+          fetchRoles(session.user.id);
+          fetchEmpresa(session.user.id);
+        }, 0);
       } else {
         setRoles([]);
+        setEmpresaId(null);
       }
     });
 
@@ -25,7 +30,10 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRoles(session.user.id).finally(() => setLoading(false));
+        Promise.all([
+          fetchRoles(session.user.id),
+          fetchEmpresa(session.user.id),
+        ]).finally(() => setLoading(false));
       } else {
         setLoading(false);
       }
@@ -42,6 +50,15 @@ export function useAuth() {
     setRoles((data ?? []).map((r) => r.role as AppRole));
   }
 
+  async function fetchEmpresa(userId: string) {
+    const { data } = await supabase
+      .from("perfis")
+      .select("empresa_id")
+      .eq("id", userId)
+      .maybeSingle();
+    setEmpresaId(data?.empresa_id ?? null);
+  }
+
   const primaryRole: AppRole | null =
     roles.find((r) => r === "admin") ??
     roles.find((r) => r === "gestor_frota") ??
@@ -53,6 +70,7 @@ export function useAuth() {
     user,
     roles,
     primaryRole,
+    empresaId,
     loading,
     hasRole: (r: AppRole) => roles.includes(r),
     hasAnyRole: (rs: AppRole[]) => rs.some((r) => roles.includes(r)),

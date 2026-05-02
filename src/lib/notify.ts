@@ -1,5 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// Re-export do toast (sonner) para conveniência: permite `import { toast } from "@/lib/notify"`.
+export { toast } from "sonner";
+
 /**
  * Notifica todos os gestores (gestor_frota) de uma empresa.
  */
