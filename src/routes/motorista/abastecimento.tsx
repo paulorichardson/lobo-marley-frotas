@@ -114,14 +114,14 @@ function AbastecimentoPage() {
                 <AppShell title="Registrar Abastecimento">
                         <form onSubmit={handleSubmit} className="p-4 space-y-5 pb-24">
                                   <div className="bg-primary/10 rounded-2xl p-4 text-center">
-                                              <p className="text-sm text-muted-foreground">Total do Abastecimento</p>p>
+                                              <p className="text-sm text-muted-foreground">Total do Abastecimento</p>
                                               <p className="text-5xl font-extrabold text-primary mt-1">
                                                             R$ {total}
-                                              </p>p>
-                                  </div>div>
+                                              </p>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">KM Atual * (anterior: {kmAnterior})</Label>Label>
+                                              <Label className="font-semibold">KM Atual * (anterior: {kmAnterior})</Label>
                                               <Input
                                                               type="number"
                                                               value={kmAtual}
@@ -130,11 +130,11 @@ function AbastecimentoPage() {
                                                               required
                                                               className="mt-1 text-lg h-12"
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div className="grid grid-cols-2 gap-3">
                                               <div>
-                                                            <Label className="font-semibold">Litros *</Label>Label>
+                                                            <Label className="font-semibold">Litros *</Label>
                                                             <Input
                                                                               type="number"
                                                                               step="0.01"
@@ -143,9 +143,9 @@ function AbastecimentoPage() {
                                                                               placeholder="0.00"
                                                                               className="mt-1 text-lg h-12"
                                                                             />
-                                              </div>div>
+                                              </div>
                                               <div>
-                                                            <Label className="font-semibold">R$/Litro *</Label>Label>
+                                                            <Label className="font-semibold">R$/Litro *</Label>
                                                             <Input
                                                                               type="number"
                                                                               step="0.001"
@@ -154,49 +154,49 @@ function AbastecimentoPage() {
                                                                               placeholder="0.000"
                                                                               className="mt-1 text-lg h-12"
                                                                             />
-                                              </div>div>
-                                  </div>div>
+                                              </div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Combustivel *</Label>Label>
+                                              <Label className="font-semibold">Combustivel *</Label>
                                               <Select value={combustivel} onValueChange={setCombustivel}>
                                                             <SelectTrigger className="mt-1 h-12">
                                                                             <SelectValue placeholder="Selecione..." />
-                                                            </SelectTrigger>SelectTrigger>
+                                                            </SelectTrigger>
                                                             <SelectContent>
                                                               {COMBUSTIVEIS.map((c) => (
-                            <SelectItem key={c} value={c}>{c}</SelectItem>SelectItem>
+                            <SelectItem key={c} value={c}>{c}</SelectItem>
                           ))}
-                                                            </SelectContent>SelectContent>
-                                              </Select>Select>
-                                  </div>div>
+                                                            </SelectContent>
+                                              </Select>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Nome do Posto</Label>Label>
+                                              <Label className="font-semibold">Nome do Posto</Label>
                                               <Input
                                                               value={posto}
                                                               onChange={(e) => setPosto(e.target.value)}
                                                               placeholder="Ex: Posto Shell Centro"
                                                               className="mt-1"
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Foto do Hodometro *</Label>Label>
+                                              <Label className="font-semibold">Foto do Hodometro *</Label>
                                               <CameraInput label="Tirar foto do hodometro" onChange={setFotoHodometro} required />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Foto do Comprovante *</Label>Label>
+                                              <Label className="font-semibold">Foto do Comprovante *</Label>
                                               <CameraInput label="Tirar foto do comprovante" onChange={setFotoComprovante} required />
-                                  </div>div>
+                                  </div>
                         
                                   <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={loading}>
                                               <Fuel className="mr-2" />
                                     {loading ? "Registrando..." : "Registrar Abastecimento"}
-                                  </Button>Button>
-                        </form>form>
-                </AppShell>AppShell>
-        </ProtectedRoute>ProtectedRoute>
-      );
-}</AppShell>
+                                  </Button>
+        </form>
+      </AppShell>
+    </ProtectedRoute>
+  );
+}

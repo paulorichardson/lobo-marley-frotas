@@ -51,38 +51,38 @@ function RelatoriosPage() {
                         <div className="p-6 space-y-6 print:p-2">
                                   <div className="flex flex-wrap items-end gap-4 no-print">
                                               <div>
-                                                            <Label>Data Inicio</Label>Label>
+                                                            <Label>Data Inicio</Label>
                                                             <Input
                                                                               type="date"
                                                                               value={dataInicio}
                                                                               onChange={(e) => setDataInicio(e.target.value)}
                                                                               className="mt-1"
                                                                             />
-                                              </div>div>
+                                              </div>
                                               <div>
-                                                            <Label>Data Fim</Label>Label>
+                                                            <Label>Data Fim</Label>
                                                             <Input
                                                                               type="date"
                                                                               value={dataFim}
                                                                               onChange={(e) => setDataFim(e.target.value)}
                                                                               className="mt-1"
                                                                             />
-                                              </div>div>
+                                              </div>
                                               <Button onClick={exportarPDF} variant="outline" className="gap-2">
                                                             <Printer size={16} />
                                                             Exportar PDF
-                                              </Button>Button>
-                                  </div>div>
+                                              </Button>
+                                  </div>
                         
                                   <div className="print:block">
                                               <h2 className="text-xl font-bold mb-1 hidden print:block">
                                                             Relatorio de Frotas
-                                              </h2>h2>
+                                              </h2>
                                               <p className="text-sm text-muted-foreground hidden print:block mb-4">
                                                             Periodo: {format(new Date(dataInicio + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })} a{" "}
                                                 {format(new Date(dataFim + "T00:00:00"), "dd/MM/yyyy", { locale: ptBR })}
-                                              </p>p>
-                                  </div>div>
+                                              </p>
+                                  </div>
                         
                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                               <Card>
@@ -90,97 +90,97 @@ function RelatoriosPage() {
                                                                             <CardTitle className="flex items-center gap-2 text-base">
                                                                                               <Fuel size={18} className="text-blue-500" />
                                                                                               Abastecimentos
-                                                                            </CardTitle>CardTitle>
-                                                            </CardHeader>CardHeader>
+                                                                            </CardTitle>
+                                                            </CardHeader>
                                                             <CardContent>
                                                               {loadAb ? (
-                            <p className="text-muted-foreground text-sm">Carregando...</p>p>
+                            <p className="text-muted-foreground text-sm">Carregando...</p>
                           ) : (
                             <div className="space-y-1">
                                                 <p className="text-2xl font-bold">
                                                                       R$ {totalAbastecimentos.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                                                </p>p>
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
                                                   {abastecimentos.length} registros |{" "}
                                                   {totalLitros.toFixed(0)} litros
-                                                </p>p>
-                            </div>div>
+                                                </p>
+                            </div>
                                                                             )}
-                                                            </CardContent>CardContent>
-                                              </Card>Card>
+                                                            </CardContent>
+                                              </Card>
                                   
                                               <Card>
                                                             <CardHeader className="pb-2">
                                                                             <CardTitle className="flex items-center gap-2 text-base">
                                                                                               <Wrench size={18} className="text-orange-500" />
                                                                                               Manutencoes
-                                                                            </CardTitle>CardTitle>
-                                                            </CardHeader>CardHeader>
+                                                                            </CardTitle>
+                                                            </CardHeader>
                                                             <CardContent>
                                                               {loadMan ? (
-                            <p className="text-muted-foreground text-sm">Carregando...</p>p>
+                            <p className="text-muted-foreground text-sm">Carregando...</p>
                           ) : (
                             <div className="space-y-1">
                                                 <p className="text-2xl font-bold">
                                                                       R$ {totalManutencoes.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                                                </p>p>
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
                                                   {manutencoes.length} ordens de servico
-                                                </p>p>
-                            </div>div>
+                                                </p>
+                            </div>
                                                                             )}
-                                                            </CardContent>CardContent>
-                                              </Card>Card>
+                                                            </CardContent>
+                                              </Card>
                                   
                                               <Card>
                                                             <CardHeader className="pb-2">
                                                                             <CardTitle className="flex items-center gap-2 text-base">
                                                                                               <ClipboardCheck size={18} className="text-green-500" />
                                                                                               Checklists
-                                                                            </CardTitle>CardTitle>
-                                                            </CardHeader>CardHeader>
+                                                                            </CardTitle>
+                                                            </CardHeader>
                                                             <CardContent>
                                                               {loadCheck ? (
-                            <p className="text-muted-foreground text-sm">Carregando...</p>p>
+                            <p className="text-muted-foreground text-sm">Carregando...</p>
                           ) : (
                             <div className="space-y-1">
-                                                <p className="text-2xl font-bold">{checklists.length}</p>p>
+                                                <p className="text-2xl font-bold">{checklists.length}</p>
                                                 <p className="text-sm text-muted-foreground">
                                                                       checklists realizados
-                                                </p>p>
-                            </div>div>
+                                                </p>
+                            </div>
                                                                             )}
-                                                            </CardContent>CardContent>
-                                              </Card>Card>
-                                  </div>div>
+                                                            </CardContent>
+                                              </Card>
+                                  </div>
                         
                                   <Card>
                                               <CardHeader>
                                                             <CardTitle className="flex items-center gap-2">
                                                                             <Fuel size={18} className="text-blue-500" />
                                                                             Detalhamento de Abastecimentos
-                                                            </CardTitle>CardTitle>
-                                              </CardHeader>CardHeader>
+                                                            </CardTitle>
+                                              </CardHeader>
                                               <CardContent>
                                                 {loadAb ? (
-                          <p className="text-muted-foreground">Carregando...</p>p>
+                          <p className="text-muted-foreground">Carregando...</p>
                         ) : abastecimentos.length === 0 ? (
                           <p className="text-muted-foreground text-sm">
                                             Nenhum abastecimento no periodo selecionado
-                          </p>p>
+                          </p>
                         ) : (
                           <div className="overflow-x-auto">
                                             <table className="w-full text-sm">
                                                                 <thead>
                                                                                       <tr className="border-b">
-                                                                                                              <th className="text-left py-2 pr-4">Data</th>th>
-                                                                                                              <th className="text-left py-2 pr-4">Veiculo</th>th>
-                                                                                                              <th className="text-left py-2 pr-4">Motorista</th>th>
-                                                                                                              <th className="text-left py-2 pr-4">Litros</th>th>
-                                                                                                              <th className="text-left py-2 pr-4">Combustivel</th>th>
-                                                                                                              <th className="text-right py-2">Total</th>th>
-                                                                                        </tr>tr>
-                                                                </thead>thead>
+                                                                                                              <th className="text-left py-2 pr-4">Data</th>
+                                                                                                              <th className="text-left py-2 pr-4">Veiculo</th>
+                                                                                                              <th className="text-left py-2 pr-4">Motorista</th>
+                                                                                                              <th className="text-left py-2 pr-4">Litros</th>
+                                                                                                              <th className="text-left py-2 pr-4">Combustivel</th>
+                                                                                                              <th className="text-right py-2">Total</th>
+                                                                                        </tr>
+                                                                </thead>
                                                                 <tbody>
                                                                   {abastecimentos.map((a) => (
                                                     <tr key={a.id} className="border-b last:border-0">
@@ -188,36 +188,36 @@ function RelatoriosPage() {
                                                                                 {a.criado_em
                                                                                                                 ? format(new Date(a.criado_em), "dd/MM/yy", { locale: ptBR })
                                                                                                                 : "-"}
-                                                                                </td>td>
+                                                                                </td>
                                                                               <td className="py-2 pr-4">
                                                                                 {(a.veiculos as { placa?: string })?.placa ?? "-"}
-                                                                                </td>td>
+                                                                                </td>
                                                                               <td className="py-2 pr-4">
                                                                                 {(a.perfis as { nome?: string })?.nome ?? "-"}
-                                                                                </td>td>
-                                                                              <td className="py-2 pr-4">{a.litros}L</td>td>
-                                                                              <td className="py-2 pr-4">{a.tipo_combustivel ?? "-"}</td>td>
+                                                                                </td>
+                                                                              <td className="py-2 pr-4">{a.litros}L</td>
+                                                                              <td className="py-2 pr-4">{a.tipo_combustivel ?? "-"}</td>
                                                                               <td className="py-2 text-right font-semibold">
                                                                                                           R$ {Number(a.valor_total).toFixed(2)}
-                                                                                </td>td>
-                                                    </tr>tr>
+                                                                                </td>
+                                                    </tr>
                                                   ))}
-                                                                </tbody>tbody>
+                                                                </tbody>
                                                                 <tfoot>
                                                                                       <tr className="font-bold border-t-2">
-                                                                                                              <td colSpan={5} className="py-2 pr-4">Total</td>td>
+                                                                                                              <td colSpan={5} className="py-2 pr-4">Total</td>
                                                                                                               <td className="py-2 text-right">
                                                                                                                                         R$ {totalAbastecimentos.toFixed(2)}
-                                                                                                                </td>td>
-                                                                                        </tr>tr>
-                                                                </tfoot>tfoot>
-                                            </table>table>
-                          </div>div>
+                                                                                                                </td>
+                                                                                        </tr>
+                                                                </tfoot>
+                                            </table>
+                          </div>
                                                             )}
-                                              </CardContent>CardContent>
-                                  </Card>Card>
-                        </div>div>
-                </AppShell>AppShell>
-        </ProtectedRoute>ProtectedRoute>
-      );
-}</AppShell>
+                                              </CardContent>
+                                  </Card>
+      </div>
+    </AppShell>
+  </ProtectedRoute>
+  );
+}

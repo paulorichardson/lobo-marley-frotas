@@ -98,11 +98,11 @@ function ViagemPage() {
                       <form onSubmit={iniciarViagem} className="space-y-5">
                                     <div className="bg-muted rounded-2xl p-4 text-center">
                                                     <Navigation size={40} className="mx-auto text-muted-foreground mb-2" />
-                                                    <p className="text-muted-foreground">Nenhuma viagem em andamento</p>p>
-                                    </div>div>
+                                                    <p className="text-muted-foreground">Nenhuma viagem em andamento</p>
+                                    </div>
                       
                                     <div>
-                                                    <Label className="font-semibold">Destino *</Label>Label>
+                                                    <Label className="font-semibold">Destino *</Label>
                                                     <Input
                                                                         value={destino}
                                                                         onChange={(e) => setDestino(e.target.value)}
@@ -110,20 +110,20 @@ function ViagemPage() {
                                                                         required
                                                                         className="mt-1 h-12"
                                                                       />
-                                    </div>div>
+                                    </div>
                       
                                     <div>
-                                                    <Label className="font-semibold">Finalidade</Label>Label>
+                                                    <Label className="font-semibold">Finalidade</Label>
                                                     <Input
                                                                         value={finalidade}
                                                                         onChange={(e) => setFinalidade(e.target.value)}
                                                                         placeholder="Ex: Entrega de mercadoria"
                                                                         className="mt-1 h-12"
                                                                       />
-                                    </div>div>
+                                    </div>
                       
                                     <div>
-                                                    <Label className="font-semibold">KM de Saida *</Label>Label>
+                                                    <Label className="font-semibold">KM de Saida *</Label>
                                                     <Input
                                                                         type="number"
                                                                         value={kmSaida}
@@ -132,7 +132,7 @@ function ViagemPage() {
                                                                         required
                                                                         className="mt-1 text-lg h-12"
                                                                       />
-                                    </div>div>
+                                    </div>
                       
                                     <Button
                                                       type="submit"
@@ -141,36 +141,36 @@ function ViagemPage() {
                                                     >
                                                     <Navigation className="mr-2" />
                                       {loading ? "Iniciando..." : "Iniciar Viagem"}
-                                    </Button>Button>
-                      </form>form>
+                                    </Button>
+                      </form>
                     ) : (
                       <form onSubmit={encerrarViagem} className="space-y-5">
                                     <div className="bg-green-50 border-2 border-green-500 rounded-2xl p-5 space-y-3">
                                                     <div className="flex items-center gap-2 text-green-700 font-bold text-lg">
                                                                       <Navigation size={22} />
                                                                       Viagem em andamento
-                                                    </div>div>
+                                                    </div>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                                       <MapPin size={16} />
-                                                                      <span className="font-semibold">Destino:</span>span>
+                                                                      <span className="font-semibold">Destino:</span>
                                                       {viagemAtiva.destino}
-                                                    </div>div>
+                                                    </div>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                                       <Clock size={16} />
-                                                                      <span className="font-semibold">Saida:</span>span>
+                                                                      <span className="font-semibold">Saida:</span>
                                                       {viagemAtiva.hora_saida
                                                                             ? format(new Date(viagemAtiva.hora_saida), "dd/MM/yyyy HH:mm", { locale: ptBR })
                                                                             : "-"}
-                                                    </div>div>
+                                                    </div>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                                       <Gauge size={16} />
-                                                                      <span className="font-semibold">KM saida:</span>span>
+                                                                      <span className="font-semibold">KM saida:</span>
                                                       {viagemAtiva.km_saida}
-                                                    </div>div>
-                                    </div>div>
+                                                    </div>
+                                    </div>
                       
                                     <div>
-                                                    <Label className="font-semibold">KM de Chegada *</Label>Label>
+                                                    <Label className="font-semibold">KM de Chegada *</Label>
                                                     <Input
                                                                         type="number"
                                                                         value={kmChegada}
@@ -179,13 +179,13 @@ function ViagemPage() {
                                                                         required
                                                                         className="mt-1 text-lg h-12"
                                                                       />
-                                    </div>div>
+                                    </div>
                       
                         {kmPercorrido > 0 && (
                                         <div className="bg-primary/10 rounded-xl p-4 text-center">
-                                                          <p className="text-sm text-muted-foreground">KM percorrido</p>p>
-                                                          <p className="text-4xl font-extrabold text-primary">{kmPercorrido} km</p>p>
-                                        </div>div>
+                                                          <p className="text-sm text-muted-foreground">KM percorrido</p>
+                                                          <p className="text-4xl font-extrabold text-primary">{kmPercorrido} km</p>
+                                        </div>
                                     )}
                       
                                     <Button
@@ -194,11 +194,11 @@ function ViagemPage() {
                                                       disabled={loading}
                                                     >
                                       {loading ? "Encerrando..." : "Encerrar Viagem"}
-                                    </Button>Button>
-                      </form>form>
-                                  )}
-                        </div>div>
-                </AppShell>AppShell>
-        </ProtectedRoute>ProtectedRoute>
-      );
-}</AppShell>
+                                    </Button>
+                      </form>
+          )}
+        </div>
+      </AppShell>
+    </ProtectedRoute>
+  );
+}

@@ -96,23 +96,23 @@ function SolicitarPage() {
                           <AppShell title="Solicitacao Enviada">
                                     <div className="flex flex-col items-center justify-center p-8 text-center min-h-[60vh] gap-4">
                                                 <CheckCircle2 size={80} className="text-green-500" />
-                                                <h2 className="text-2xl font-bold">Solicitacao enviada!</h2>h2>
-                                                <p className="text-muted-foreground">Numero da solicitacao:</p>p>
+                                                <h2 className="text-2xl font-bold">Solicitacao enviada!</h2>
+                                                <p className="text-muted-foreground">Numero da solicitacao:</p>
                                                 <p className="text-4xl font-mono font-bold bg-muted rounded-xl px-6 py-3">
                                                               #{sucesso}
-                                                </p>p>
+                                                </p>
                                                 <p className="text-sm text-muted-foreground">
                                                               O gestor foi notificado e ira analisar seu chamado.
-                                                </p>p>
+                                                </p>
                                                 <Button
                                                                 className="mt-4 w-full"
                                                                 onClick={() => { setSucesso(null); setTipo(""); setDescricao(""); setUrgencia("normal"); }}
                                                               >
                                                               Nova Solicitacao
-                                                </Button>Button>
-                                    </div>div>
-                          </AppShell>AppShell>
-                </ProtectedRoute>ProtectedRoute>
+                                                </Button>
+                                    </div>
+                          </AppShell>
+                </ProtectedRoute>
               );
   }
   
@@ -121,21 +121,21 @@ function SolicitarPage() {
                 <AppShell title="Solicitar Manutencao">
                         <form onSubmit={handleSubmit} className="p-4 space-y-5 pb-24">
                                   <div>
-                                              <Label className="font-semibold">Tipo do Problema *</Label>Label>
+                                              <Label className="font-semibold">Tipo do Problema *</Label>
                                               <Select value={tipo} onValueChange={setTipo}>
                                                             <SelectTrigger className="mt-1 h-12">
                                                                             <SelectValue placeholder="Selecione o problema..." />
-                                                            </SelectTrigger>SelectTrigger>
+                                                            </SelectTrigger>
                                                             <SelectContent>
                                                               {TIPOS_PROBLEMA.map((t) => (
-                              <SelectItem key={t} value={t}>{t}</SelectItem>SelectItem>
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
                             ))}
-                                                            </SelectContent>SelectContent>
-                                              </Select>Select>
-                                  </div>div>
+                                                            </SelectContent>
+                                              </Select>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Descricao *</Label>Label>
+                                              <Label className="font-semibold">Descricao *</Label>
                                               <Textarea
                                                               value={descricao}
                                                               onChange={(e) => setDescricao(e.target.value)}
@@ -144,10 +144,10 @@ function SolicitarPage() {
                                                               rows={4}
                                                               className="mt-1"
                                                             />
-                                  </div>div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Urgencia</Label>Label>
+                                              <Label className="font-semibold">Urgencia</Label>
                                               <div className="grid grid-cols-2 gap-3 mt-2">
                                                 {URGENCIAS.map((u) => (
                             <button
@@ -161,13 +161,13 @@ function SolicitarPage() {
                                                 }`}
                                               >
                               {u.emoji} {u.label}
-                            </button>button>
+                            </button>
                           ))}
-                                              </div>div>
-                                  </div>div>
+                                              </div>
+                                  </div>
                         
                                   <div>
-                                              <Label className="font-semibold">Fotos (opcional)</Label>Label>
+                                              <Label className="font-semibold">Fotos (opcional)</Label>
                                               <div className="grid grid-cols-2 gap-3 mt-2">
                                                 {[0, 1, 2, 3].map((idx) => (
                             <CameraInput
@@ -176,14 +176,14 @@ function SolicitarPage() {
                                                 onChange={(f) => setFoto(idx, f)}
                                               />
                           ))}
-                                              </div>div>
-                                  </div>div>
+                                              </div>
+                                  </div>
                         
                                   <Button type="submit" className="w-full h-14 text-lg font-bold" disabled={loading}>
                                     {loading ? "Enviando..." : "Enviar Solicitacao"}
-                                  </Button>Button>
-                        </form>form>
-                </AppShell>AppShell>
-          </ProtectedRoute>ProtectedRoute>
-        );
-}</AppShell>
+                                  </Button>
+        </form>
+      </AppShell>
+    </ProtectedRoute>
+  );
+}
