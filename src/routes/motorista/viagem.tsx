@@ -197,7 +197,8 @@ function ViagemPage() {
                                     </Button>
                       </form>
           )}
-        </AppShell>
-      </ProtectedRoute>
+        </div>
+      </AppShell>
+    </ProtectedRoute>
   );
 }
