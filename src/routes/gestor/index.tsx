@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Truck, Plus, Wrench, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/gestor/")({
