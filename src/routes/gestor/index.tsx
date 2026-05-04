@@ -57,20 +57,18 @@ function GestorDashboard() {
         </Button>
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Mini label="Total" value={stats.total} icon={Truck} />
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <Mini label="Total de veículos" value={stats.total} icon={Truck} />
         <Mini label="Ativos" value={stats.ativos} icon={Truck} tone="success" />
         <Mini label="Em manutenção" value={stats.manutencao} icon={Wrench} tone="warning" />
-        <Mini label="Solicitações abertas" value={stats.solicitacoes} icon={AlertCircle} tone="destructive" />
+        <Mini label="Solicitações abertas" value={stats.solicitacoes} icon={AlertCircle} />
+        <Link to="/gestor/manutencoes" className="contents">
+          <Mini label="🟠 Orçamentos aguardando aprovação" value={stats.orcAprov} icon={Wrench} tone="warning" />
+        </Link>
+        <Link to="/gestor/manutencoes" className="contents">
+          <Mini label="🔴 Urgentes" value={stats.urgentes} icon={AlertCircle} tone="destructive" />
+        </Link>
       </div>
-
-      <Card className="p-6 text-center">
-        <Truck className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-        <h3 className="font-semibold mb-1">Cadastro completo de veículos em breve</h3>
-        <p className="text-sm text-muted-foreground">
-          Listagem com fotos, vinculação de motoristas e gestão de manutenções na próxima iteração.
-        </p>
-      </Card>
     </div>
   );
 }
