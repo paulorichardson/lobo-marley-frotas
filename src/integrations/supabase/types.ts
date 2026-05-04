@@ -1066,6 +1066,7 @@ export type Database = {
           motorista_id: string | null
           placa: string
           renavam: string | null
+          setor: string | null
           status: string
           vencimento_ipva: string | null
           vencimento_licenciamento: string | null
@@ -1093,6 +1094,7 @@ export type Database = {
           motorista_id?: string | null
           placa: string
           renavam?: string | null
+          setor?: string | null
           status?: string
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
@@ -1120,6 +1122,7 @@ export type Database = {
           motorista_id?: string | null
           placa?: string
           renavam?: string | null
+          setor?: string | null
           status?: string
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
