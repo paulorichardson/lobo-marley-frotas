@@ -329,24 +329,41 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
       {/* Identificação */}
       <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Identificação</h3>
+
+        <div className="space-y-1.5">
+          <Label>Tipo de bem *</Label>
+          <Select value={values.tipo_bem} onValueChange={(v) => set("tipo_bem", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {TIPOS_BEM.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Use "Máquina" para tratores, retroescavadeiras, pá-carregadeiras, etc. (sem placa veicular).
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-4">
           <div className="space-y-1.5 md:col-span-1">
-            <Label htmlFor="placa">Placa *</Label>
+            <Label htmlFor="placa">{getTipoBem(values.tipo_bem).placaLabel} *</Label>
             <div className="relative">
               <Input
                 id="placa"
-                value={formatarPlaca(values.placa)}
-                onChange={(e) => set("placa", normalizarPlaca(e.target.value))}
-                onBlur={handlePlacaBlur}
-                placeholder="AAA-0000"
-                maxLength={8}
+                value={getTipoBem(values.tipo_bem).validaPlaca ? formatarPlaca(values.placa) : values.placa}
+                onChange={(e) => {
+                  const t = getTipoBem(values.tipo_bem);
+                  set("placa", t.validaPlaca ? normalizarPlaca(e.target.value) : e.target.value.toUpperCase());
+                }}
+                onBlur={getTipoBem(values.tipo_bem).validaPlaca ? handlePlacaBlur : undefined}
+                placeholder={getTipoBem(values.tipo_bem).placaPlaceholder}
+                maxLength={20}
                 className="uppercase font-mono tracking-wider"
               />
               {consultandoPlaca && (
                 <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-accent" />
               )}
             </div>
-            {values.placa && !placaValida(values.placa) && (
+            {getTipoBem(values.tipo_bem).validaPlaca && values.placa && !placaValida(values.placa) && (
               <p className="text-xs text-destructive">Formato inválido</p>
             )}
           </div>
