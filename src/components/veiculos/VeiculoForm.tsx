@@ -257,6 +257,7 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         doc_seguro_url: doc_seguro_url || null,
         cadastrado_por: user.id,
         empresa_id,
+        setor: values.setor.trim() || null,
       };
 
       let veiculoId = values.id;
