@@ -64,6 +64,9 @@ interface Manut {
   avaliacao_estrelas: number | null;
   avaliacao_comentario: string | null;
   solicitacao_pai_id: string | null;
+  numero_os: string | null;
+  codigo_autorizacao: string | null;
+  confirmada_pelo_solicitante: boolean | null;
 }
 
 function tempoDecorrido(iso: string): string {
@@ -88,11 +91,13 @@ function urgenciaBadge(p: string) {
 
 function statusInfo(s: string) {
   if (s === "Solicitada") return { icon: "⏳", label: "Aguardando fornecedor" };
-  if (s === "Orçamento Enviado") return { icon: "📋", label: "Orçamento recebido" };
+  if (s === "Orçamento Enviado" || s === "Aguardando Aprovação") return { icon: "📋", label: "Orçamento recebido" };
   if (s === "Aprovada") return { icon: "✅", label: "Aprovada — aguardando execução" };
   if (s === "Em Andamento") return { icon: "🔧", label: "Em execução" };
   if (s === "Concluída") return { icon: "🏁", label: "Concluída" };
+  if (s === "Faturamento") return { icon: "🧾", label: "Enviada p/ faturamento" };
   if (s === "Recusada") return { icon: "❌", label: "Recusada" };
+  if (s === "Cancelada") return { icon: "🚫", label: "Cancelada" };
   return { icon: "•", label: s };
 }
 
