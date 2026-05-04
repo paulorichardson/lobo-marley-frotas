@@ -10,11 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Wallet, CheckCircle2, Clock, CreditCard, Fuel, Wrench, FileSpreadsheet,
-  AlertTriangle, Loader2,
+  AlertTriangle, Loader2, Bell, Megaphone,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fornecedor/")({
   head: () => ({ meta: [{ title: "Painel — Lobo Marley" }] }),
@@ -49,6 +50,8 @@ function FornecedorDashboard() {
   const [serieSemana, setSerieSemana] = useState<{ semana: string; valor: number }[]>([]);
   const [orcamentosVencendo, setOrcamentosVencendo] = useState<any[]>([]);
   const [aprovadosAguardando, setAprovadosAguardando] = useState<any[]>([]);
+  const [solicDiretas, setSolicDiretas] = useState(0);
+  const [solicRede, setSolicRede] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -186,6 +189,24 @@ function FornecedorDashboard() {
           (m) => m.status === "Aprovada" && !m.data_inicio,
         );
         setAprovadosAguardando(aguard);
+
+        // Solicitações pendentes
+        const [{ count: cDir }, { count: cRede }] = await Promise.all([
+          supabase
+            .from("manutencoes")
+            .select("id", { count: "exact", head: true })
+            .eq("fornecedor_id", user.id)
+            .eq("status", "Solicitada")
+            .is("solicitacao_pai_id", null),
+          supabase
+            .from("manutencoes")
+            .select("id", { count: "exact", head: true })
+            .eq("enviado_para_rede", true)
+            .eq("status", "Solicitada")
+            .is("solicitacao_pai_id", null),
+        ]);
+        setSolicDiretas(cDir ?? 0);
+        setSolicRede(cRede ?? 0);
       } finally {
         setLoading(false);
       }
@@ -221,12 +242,6 @@ function FornecedorDashboard() {
           {isPosto && (
             <Button asChild size="sm"><Link to="/fornecedor/abastecer"><Fuel className="w-4 h-4 mr-1" /> Abastecer</Link></Button>
           )}
-          {(isOficina || isPecas) && (
-            <>
-              <Button asChild size="sm"><Link to="/fornecedor/servico"><Wrench className="w-4 h-4 mr-1" /> Novo Serviço</Link></Button>
-              <Button asChild size="sm" variant="outline"><Link to="/fornecedor/orcamento"><FileSpreadsheet className="w-4 h-4 mr-1" /> Orçamento</Link></Button>
-            </>
-          )}
         </div>
       </header>
 
@@ -236,6 +251,56 @@ function FornecedorDashboard() {
         <Kpi icon={CheckCircle2} label="Aprovado/concluído" value={BRL(kpis.aprovado)} color="emerald" />
         <Kpi icon={Clock} label="Aguardando" value={BRL(kpis.pendente)} color="amber" />
         <Kpi icon={CreditCard} label="A receber" value={BRL(kpis.aReceber)} color="rose" highlight />
+      </div>
+
+      {/* Destaque solicitações */}
+      {(solicDiretas > 0 || solicRede > 0) && (
+        <div className="grid md:grid-cols-2 gap-3">
+          {solicDiretas > 0 && (
+            <Link to="/fornecedor/solicitacoes" className="block">
+              <Card className="p-4 border-2 border-red-500 bg-red-500/10 animate-pulse hover:animate-none">
+                <div className="flex items-center gap-3">
+                  <Bell className="w-8 h-8 text-red-600" />
+                  <div className="flex-1">
+                    <p className="font-bold text-base">🔔 {solicDiretas} solicitação(ões) aguardando sua resposta</p>
+                    <p className="text-xs text-muted-foreground">Toque para responder agora</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          )}
+          {solicRede > 0 && (
+            <Link to="/fornecedor/solicitacoes" className="block">
+              <Card className="p-4 border-2 border-amber-500 bg-amber-500/10">
+                <div className="flex items-center gap-3">
+                  <Megaphone className="w-8 h-8 text-amber-600" />
+                  <div className="flex-1">
+                    <p className="font-bold text-base">📢 {solicRede} solicitação(ões) abertas na rede</p>
+                    <p className="text-xs text-muted-foreground">Você pode enviar orçamento</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* 2 botões grandes de ação rápida */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Link to="/fornecedor/orcamento" search={{ solicitacaoId: "" }} className="block">
+          <Card className="p-6 hover:bg-primary/5 hover:border-primary transition cursor-pointer h-full">
+            <FileSpreadsheet className="w-10 h-10 text-primary mb-2" />
+            <p className="text-xl font-bold">📋 ENVIAR ORÇAMENTO</p>
+            <p className="text-sm text-muted-foreground mt-1">Para aprovação do gestor</p>
+          </Card>
+        </Link>
+        <Link to="/fornecedor/servico" className="block">
+          <Card className="p-6 hover:bg-emerald-500/5 hover:border-emerald-500 transition cursor-pointer h-full">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 mb-2" />
+            <p className="text-xl font-bold">✅ LANÇAR SERVIÇO EXECUTADO</p>
+            <p className="text-sm text-muted-foreground mt-1">Já concluído e aprovado</p>
+          </Card>
+        </Link>
       </div>
 
       {/* Alertas */}

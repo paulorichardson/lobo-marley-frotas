@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
   Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
-  User as UserIcon, ListChecks, Package,
+  User as UserIcon, ListChecks, Package, Bell, CheckCircle2, Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
@@ -48,30 +48,21 @@ function buildFornecedorNav(opts: {
   isPecas: boolean;
 }): NavItem[] {
   const items: NavItem[] = [
-    { to: "/fornecedor", label: "Início", icon: LayoutDashboard },
+    { to: "/fornecedor", label: "Início", icon: Home },
+    { to: "/fornecedor/solicitacoes", label: "Solicitações", icon: Bell },
+    { to: "/fornecedor/orcamentos", label: "Orçamentos", icon: FileSpreadsheet },
+    { to: "/fornecedor/servicos", label: "Serviços", icon: CheckCircle2 },
   ];
   if (opts.isPosto) {
     items.push({ to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
   }
-  if (opts.isOficina) {
-    items.push({ to: "/fornecedor/servico", label: "Novo Serviço", icon: Wrench });
-    items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
+  if (opts.isPecas) {
+    items.push({ to: "/fornecedor/lancar-pecas", label: "Peças", icon: Package });
   }
   items.push({ to: "/fornecedor/despesa", label: "Despesa", icon: Receipt });
-  if (opts.isPecas) {
-    items.push({ to: "/fornecedor/lancar-pecas", label: "Lançar Peças", icon: Package });
-    if (!opts.isOficina) {
-      items.push({ to: "/fornecedor/orcamento", label: "Orçamento", icon: FileSpreadsheet });
-    }
-  }
   items.push({ to: "/fornecedor/historico", label: "Histórico", icon: ListChecks });
   items.push({ to: "/fornecedor/financeiro", label: "Financeiro", icon: Receipt });
   items.push({ to: "/fornecedor/perfil", label: "Perfil", icon: UserIcon });
-  // Defaults se nenhum tipo (fallback) — adiciona Abastecer + Serviço
-  if (items.length === 4) {
-    items.splice(1, 0, { to: "/fornecedor/abastecer", label: "Abastecer", icon: Fuel });
-    items.splice(2, 0, { to: "/fornecedor/servico", label: "Serviço", icon: Wrench });
-  }
   return items;
 }
 

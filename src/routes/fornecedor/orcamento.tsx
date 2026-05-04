@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
@@ -22,6 +22,9 @@ import { notifyEmpresaGestores } from "@/lib/notify";
 
 export const Route = createFileRoute("/fornecedor/orcamento")({
   head: () => ({ meta: [{ title: "Novo Orçamento — Lobo Marley" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    solicitacaoId: typeof s.solicitacaoId === "string" ? s.solicitacaoId : "",
+  }),
   component: () => (
     <ProtectedRoute roles={["fornecedor"]}>
       <AppShell>
@@ -42,6 +45,7 @@ const BRL = (v: number) =>
 function OrcamentoPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { solicitacaoId } = Route.useSearch();
   const [veiculo, setVeiculo] = useState<VeiculoBusca | null>(null);
   const [tipoServico, setTipoServico] = useState("Corretiva");
   const [diagnostico, setDiagnostico] = useState("");
@@ -57,6 +61,25 @@ function OrcamentoPage() {
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [solicitacao, setSolicitacao] = useState<any>(null);
+
+  // Pré-carrega solicitação se vier por search param
+  useEffect(() => {
+    if (!solicitacaoId) return;
+    (async () => {
+      const { data: m } = await supabase
+        .from("manutencoes").select("*").eq("id", solicitacaoId).maybeSingle();
+      if (!m) return;
+      setSolicitacao(m);
+      setTipoServico(m.tipo || "Corretiva");
+      setDiagnostico(m.descricao || "");
+      const { data: v } = await supabase
+        .from("veiculos")
+        .select("id, placa, modelo, marca, cor, km_atual, motorista_id, empresa_id, foto_principal_url")
+        .eq("id", m.veiculo_id).maybeSingle();
+      if (v) setVeiculo(v as any);
+    })();
+  }, [solicitacaoId]);
 
   const totalPecas = useMemo(
     () => pecas.reduce((s, p) => s + p.quantidade * p.valor_unitario, 0),
