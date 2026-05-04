@@ -150,7 +150,8 @@ Deno.serve(async (req) => {
       cenario_inicial: snap1,
     }, null, 2), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ ok: false, error: e.message }), {
+    console.error("seed-simulacao error:", e?.message, e?.stack);
+    return new Response(JSON.stringify({ ok: false, error: e?.message, stack: e?.stack }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
