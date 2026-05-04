@@ -1058,16 +1058,20 @@ export type Database = {
           doc_seguro_url: string | null
           empresa_id: string | null
           foto_principal_url: string | null
+          horimetro: number | null
           id: string
           km_atual: number
           km_proxima_revisao: number | null
           marca: string
           modelo: string
           motorista_id: string | null
+          numero_patrimonio: string | null
+          numero_serie: string | null
           placa: string
           renavam: string | null
           setor: string | null
           status: string
+          tipo_bem: string
           vencimento_ipva: string | null
           vencimento_licenciamento: string | null
           vencimento_seguro: string | null
@@ -1086,16 +1090,20 @@ export type Database = {
           doc_seguro_url?: string | null
           empresa_id?: string | null
           foto_principal_url?: string | null
+          horimetro?: number | null
           id?: string
           km_atual?: number
           km_proxima_revisao?: number | null
           marca: string
           modelo: string
           motorista_id?: string | null
+          numero_patrimonio?: string | null
+          numero_serie?: string | null
           placa: string
           renavam?: string | null
           setor?: string | null
           status?: string
+          tipo_bem?: string
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
@@ -1114,16 +1122,20 @@ export type Database = {
           doc_seguro_url?: string | null
           empresa_id?: string | null
           foto_principal_url?: string | null
+          horimetro?: number | null
           id?: string
           km_atual?: number
           km_proxima_revisao?: number | null
           marca?: string
           modelo?: string
           motorista_id?: string | null
+          numero_patrimonio?: string | null
+          numero_serie?: string | null
           placa?: string
           renavam?: string | null
           setor?: string | null
           status?: string
+          tipo_bem?: string
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
