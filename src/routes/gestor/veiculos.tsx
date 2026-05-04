@@ -53,6 +53,7 @@ function ListaVeiculos() {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState<string>("todos");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
+  const [setorFiltro, setSetorFiltro] = useState<string>("todos");
   const [loading, setLoading] = useState(true);
   const [novoOpen, setNovoOpen] = useState(false);
 
@@ -60,7 +61,7 @@ function ListaVeiculos() {
     setLoading(true);
     const { data } = await supabase
       .from("veiculos")
-      .select("id, placa, marca, modelo, status, categoria, km_atual, motorista_id, foto_principal_url, vencimento_licenciamento, vencimento_ipva, vencimento_seguro")
+      .select("id, placa, marca, modelo, status, categoria, km_atual, motorista_id, foto_principal_url, vencimento_licenciamento, vencimento_ipva, vencimento_seguro, setor")
       .order("criado_em", { ascending: false });
     setVeiculos((data ?? []) as VeiculoRow[]);
     const ids = Array.from(new Set((data ?? []).map((v) => v.motorista_id).filter(Boolean))) as string[];
@@ -75,15 +76,22 @@ function ListaVeiculos() {
 
   useEffect(() => { carregar(); }, []);
 
+  const setoresDisponiveis = useMemo(() => {
+    const set = new Set<string>();
+    veiculos.forEach((v) => { if (v.setor) set.add(v.setor); });
+    return Array.from(set).sort();
+  }, [veiculos]);
+
   const filtrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
     return veiculos.filter((v) => {
       if (statusFiltro !== "todos" && v.status !== statusFiltro) return false;
       if (catFiltro !== "todas" && v.categoria !== catFiltro) return false;
+      if (setorFiltro !== "todos" && v.setor !== setorFiltro) return false;
       if (q && !`${v.placa} ${v.marca} ${v.modelo}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [veiculos, busca, statusFiltro, catFiltro]);
+  }, [veiculos, busca, statusFiltro, catFiltro, setorFiltro]);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
