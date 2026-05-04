@@ -68,13 +68,14 @@ Deno.serve(async (req) => {
 
     // 3) Contrato
     await admin.from("contratos_clientes").delete().eq("empresa_id", empresa_id).eq("numero_contrato", "087/2026");
-    const { data: contrato } = await admin.from("contratos_clientes").insert({
+    const { data: contrato, error: contratoErr } = await admin.from("contratos_clientes").insert({
       empresa_id, numero_contrato: "087/2026", numero_licitacao: "Pregão Eletrônico 012/2026",
       valor_global: 1500000, tipo_taxa: "negativa", percentual_taxa: 38,
       data_inicio: "2026-06-01", data_fim: "2027-05-31",
       margem_minima: 12, margem_alerta: 6, permitir_prejuizo: false,
       exigir_justificativa: true, ativo: true,
     }).select("id").single();
+    if (contratoErr) throw new Error("contrato: " + contratoErr.message);
 
     // 4) Veículo
     let veiculo_id: string;
