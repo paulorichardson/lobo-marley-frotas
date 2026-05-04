@@ -154,6 +154,31 @@ function MotoristaHome() {
         </Card>
       )}
 
+      {/* OS aguardando confirmação do motorista */}
+      {osPendentes.map((os) => (
+        <Card key={os.id} className="p-4 border-warning/40 bg-warning/5">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground">
+                {os.numero_os} {os.codigo_autorizacao && `· ${os.codigo_autorizacao}`}
+              </p>
+              <p className="font-semibold text-sm">Veículo resolvido?</p>
+              <p className="text-xs text-muted-foreground line-clamp-2">{os.descricao}</p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => reabrirProblema(os.id)}>
+              Ainda tem problema
+            </Button>
+            <Button size="sm" className="flex-1 bg-success hover:bg-success/90 text-success-foreground"
+              onClick={() => confirmarResolvido(os.id)}>
+              <CheckCircle2 className="w-4 h-4 mr-1" /> Sim, resolvido
+            </Button>
+          </div>
+        </Card>
+      ))}
+
       {/* Atalhos */}
       <div>
         <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 px-1">Atalhos</p>
