@@ -6,10 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, ArrowLeft, Loader2, FileSignature } from "lucide-react";
+import { Building2, ArrowLeft, Loader2, FileSignature, Save } from "lucide-react";
 import { toast } from "sonner";
 import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiroSection";
+import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
@@ -107,15 +112,7 @@ function ClienteDetalhe() {
         </TabsList>
 
         <TabsContent value="dados">
-          <Card className="p-4 space-y-2 text-sm">
-            <Row k="Razão social" v={empresa.razao_social} />
-            <Row k="Nome fantasia" v={empresa.nome_fantasia} />
-            <Row k="CNPJ" v={empresa.cnpj} />
-            <Row k="E-mail" v={empresa.email} />
-            <Row k="Telefone" v={empresa.telefone} />
-            <Row k="Endereço" v={`${empresa.logradouro ?? ""}, ${empresa.numero ?? ""} - ${empresa.bairro ?? ""}`} />
-            <Row k="Cidade/UF" v={`${empresa.cidade ?? ""}/${empresa.estado ?? ""}`} />
-          </Card>
+          <DadosClienteEditor empresa={empresa} onSaved={load} />
         </TabsContent>
 
         <TabsContent value="usuarios">
@@ -160,11 +157,125 @@ function ClienteDetalhe() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="contrato">
+        <TabsContent value="contrato" className="space-y-4">
           <ContratoFinanceiroSection empresaId={empresaId} />
+          <ContratoAnexosSection empresaId={empresaId} />
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+const PLANOS = [
+  { value: "basico", label: "Básico" },
+  { value: "pro", label: "Pro" },
+  { value: "enterprise", label: "Enterprise" },
+];
+
+function DadosClienteEditor({ empresa, onSaved }: { empresa: any; onSaved: () => void }) {
+  const [f, setF] = useState({
+    razao_social: empresa.razao_social ?? "",
+    nome_fantasia: empresa.nome_fantasia ?? "",
+    cnpj: empresa.cnpj ?? "",
+    cidade: empresa.cidade ?? "",
+    estado: empresa.estado ?? "",
+    status: empresa.status ?? "ativo",
+    plano: empresa.plano ?? "basico",
+    email: empresa.email ?? "",
+    telefone: empresa.telefone ?? "",
+    observacoes: empresa.observacoes ?? "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  async function salvar() {
+    setSaving(true);
+    const { error } = await supabase.from("empresas").update(f).eq("id", empresa.id);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Dados atualizados");
+    onSaved();
+  }
+
+  function cancelar() {
+    setF({
+      razao_social: empresa.razao_social ?? "",
+      nome_fantasia: empresa.nome_fantasia ?? "",
+      cnpj: empresa.cnpj ?? "",
+      cidade: empresa.cidade ?? "",
+      estado: empresa.estado ?? "",
+      status: empresa.status ?? "ativo",
+      plano: empresa.plano ?? "basico",
+      email: empresa.email ?? "",
+      telefone: empresa.telefone ?? "",
+      observacoes: empresa.observacoes ?? "",
+    });
+  }
+
+  return (
+    <Card className="p-4 space-y-4">
+      <div className="grid md:grid-cols-2 gap-3">
+        <div>
+          <Label>Razão social *</Label>
+          <Input value={f.razao_social} onChange={(e) => setF({ ...f, razao_social: e.target.value })} />
+        </div>
+        <div>
+          <Label>Nome fantasia</Label>
+          <Input value={f.nome_fantasia} onChange={(e) => setF({ ...f, nome_fantasia: e.target.value })} />
+        </div>
+        <div>
+          <Label>CNPJ</Label>
+          <Input value={f.cnpj} onChange={(e) => setF({ ...f, cnpj: e.target.value })} />
+        </div>
+        <div className="grid grid-cols-[1fr_80px] gap-2">
+          <div>
+            <Label>Cidade</Label>
+            <Input value={f.cidade} onChange={(e) => setF({ ...f, cidade: e.target.value })} />
+          </div>
+          <div>
+            <Label>UF</Label>
+            <Input maxLength={2} value={f.estado} onChange={(e) => setF({ ...f, estado: e.target.value.toUpperCase() })} />
+          </div>
+        </div>
+        <div>
+          <Label>Status</Label>
+          <Select value={f.status} onValueChange={(v) => setF({ ...f, status: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ativo">Ativo</SelectItem>
+              <SelectItem value="suspenso">Inativo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Plano</Label>
+          <Select value={f.plano} onValueChange={(v) => setF({ ...f, plano: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {PLANOS.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>E-mail principal</Label>
+          <Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+        </div>
+        <div>
+          <Label>Telefone</Label>
+          <Input value={f.telefone} onChange={(e) => setF({ ...f, telefone: e.target.value })} />
+        </div>
+      </div>
+      <div>
+        <Label>Observações</Label>
+        <Textarea rows={3} value={f.observacoes} onChange={(e) => setF({ ...f, observacoes: e.target.value })} />
+      </div>
+      <div className="flex justify-end gap-2 pt-2 border-t">
+        <Button variant="outline" onClick={cancelar} disabled={saving}>Cancelar</Button>
+        <Button onClick={salvar} disabled={saving}>
+          {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+          Salvar alterações
+        </Button>
+      </div>
+    </Card>
   );
 }
 
