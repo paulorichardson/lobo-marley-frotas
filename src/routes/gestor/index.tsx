@@ -51,7 +51,7 @@ function GestorDashboard() {
           .eq("empresa_id", empresaId)
           .eq("ativo", true)
           .maybeSingle();
-        setContrato(c ?? null);
+        setContrato(c ? { ...c, valor_global: Number(c.valor_global ?? 0) } : null);
 
         // gestor vê só o valor faturado (não o lucro)
         const { data: ms } = await supabase
