@@ -32,6 +32,25 @@ function LoginPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [showDemo, setShowDemo] = useState(false);
+  const [demoUnlocked, setDemoUnlocked] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (new URLSearchParams(window.location.search).get("demo") === "1") return true;
+    return localStorage.getItem("lm_demo_unlocked") === "1";
+  });
+  const [tapCount, setTapCount] = useState(0);
+  function handleSecretTap() {
+    setTapCount((c) => {
+      const n = c + 1;
+      if (n >= 5) {
+        setDemoUnlocked(true);
+        localStorage.setItem("lm_demo_unlocked", "1");
+        toast.success("Modo demo desbloqueado");
+        return 0;
+      }
+      return n;
+    });
+    setTimeout(() => setTapCount(0), 1500);
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
@@ -168,50 +187,59 @@ function LoginPage() {
           </form>
         </Card>
 
-        {/* Demo */}
-        <Card className="p-4 border-accent/30 bg-card/60 backdrop-blur space-y-3">
-          <button
-            type="button"
-            onClick={() => setShowDemo((v) => !v)}
-            className="w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:opacity-90"
-          >
-            <FlaskConical className="w-4 h-4" />
-            🧪 {showDemo ? "Ocultar acesso demo" : "Acessar como Demo"}
-          </button>
+        {/* Demo (oculto — desbloqueia com 5 cliques no rodapé secreto ou ?demo=1) */}
+        {demoUnlocked && (
+          <Card className="p-4 border-accent/30 bg-card/60 backdrop-blur space-y-3">
+            <button
+              type="button"
+              onClick={() => setShowDemo((v) => !v)}
+              className="w-full flex items-center justify-center gap-2 text-sm font-medium text-accent hover:opacity-90"
+            >
+              <FlaskConical className="w-4 h-4" />
+              🧪 {showDemo ? "Ocultar acesso demo" : "Acessar como Demo"}
+            </button>
 
-          {showDemo && (
-            <div className="space-y-2 pt-2 border-t border-border/60">
-              <p className="text-[11px] text-muted-foreground">
-                Clique em um perfil para entrar instantaneamente. Os usuários demo são criados automaticamente.
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {DEMO_USERS.map((u) => {
-                  const Icon = u.icon;
-                  const busy = demoLoading === u.email;
-                  return (
-                    <Button
-                      key={u.email}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => loginAs(u)}
-                      disabled={!!demoLoading || seeding}
-                      className="h-auto py-2.5 flex flex-col gap-1"
-                    >
-                      {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Icon className="w-4 h-4" />}
-                      <span className="text-xs font-medium">{u.label}</span>
-                    </Button>
-                  );
-                })}
+            {showDemo && (
+              <div className="space-y-2 pt-2 border-t border-border/60">
+                <p className="text-[11px] text-muted-foreground">
+                  Clique em um perfil para entrar instantaneamente. Os usuários demo são criados automaticamente.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {DEMO_USERS.map((u) => {
+                    const Icon = u.icon;
+                    const busy = demoLoading === u.email;
+                    return (
+                      <Button
+                        key={u.email}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loginAs(u)}
+                        disabled={!!demoLoading || seeding}
+                        className="h-auto py-2.5 flex flex-col gap-1"
+                      >
+                        {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Icon className="w-4 h-4" />}
+                        <span className="text-xs font-medium">{u.label}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+                <div className="text-[10px] text-muted-foreground/80 bg-secondary/40 rounded p-2 leading-relaxed font-mono">
+                  admin@lobomar.io · gestor@lobomar.io<br />
+                  fornecedor@lobomar.io · motorista@lobomar.io<br />
+                  senha: <span className="text-accent">Lobomar@2024</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setDemoUnlocked(false); setShowDemo(false); localStorage.removeItem("lm_demo_unlocked"); }}
+                  className="w-full text-[10px] text-muted-foreground/60 hover:text-muted-foreground"
+                >
+                  ocultar novamente
+                </button>
               </div>
-              <div className="text-[10px] text-muted-foreground/80 bg-secondary/40 rounded p-2 leading-relaxed font-mono">
-                admin@lobomar.io · gestor@lobomar.io<br />
-                fornecedor@lobomar.io · motorista@lobomar.io<br />
-                senha: <span className="text-accent">Lobomar@2024</span>
-              </div>
-            </div>
-          )}
-        </Card>
+            )}
+          </Card>
+        )}
 
         <p className="text-[11px] text-center text-muted-foreground/70">
           Novos cadastros entram como Motorista. O administrador define os demais perfis.
