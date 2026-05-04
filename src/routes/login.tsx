@@ -241,18 +241,18 @@ function LoginPage() {
           </Card>
         )}
 
-        <p className="text-[11px] text-center text-muted-foreground/70">
-          Novos cadastros entram como Motorista. O administrador define os demais perfis.
+        <p className="text-[11px] text-center text-muted-foreground/70 px-4">
+          O acesso é controlado por perfil. Motoristas, gestores e fornecedores possuem permissões específicas.
         </p>
 
         <Card className="p-4 bg-accent/5 border-accent/30 text-center space-y-2">
-          <p className="text-sm font-semibold">É uma oficina, posto ou fornecedor?</p>
-          <p className="text-xs text-muted-foreground">Cadastre sua empresa e seja credenciado pela Lobo Marley.</p>
+          <p className="text-sm font-semibold">É oficina, autopeças ou prestador automotivo?</p>
+          <p className="text-xs text-muted-foreground">Solicite seu credenciamento na rede Lobo Marley.</p>
           <a
             href="/credenciamento"
             className="inline-block text-sm font-semibold text-accent hover:underline"
           >
-            🤝 Seja um Fornecedor Credenciado →
+            🤝 Solicitar credenciamento →
           </a>
         </Card>
 
