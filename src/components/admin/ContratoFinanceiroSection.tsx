@@ -16,6 +16,7 @@ type Contrato = {
   id?: string;
   empresa_id: string;
   numero_contrato: string | null;
+  numero_licitacao: string | null;
   numero_processo: string | null;
   data_inicio: string | null;
   data_fim: string | null;
@@ -33,6 +34,7 @@ type Contrato = {
 const VAZIO = (empresaId: string): Contrato => ({
   empresa_id: empresaId,
   numero_contrato: "",
+  numero_licitacao: "",
   numero_processo: "",
   data_inicio: null,
   data_fim: null,
@@ -150,7 +152,11 @@ export function ContratoFinanceiroSection({ empresaId }: { empresaId: string }) 
             <Input value={c.numero_contrato ?? ""} onChange={(e) => setC({ ...c, numero_contrato: e.target.value })} />
           </div>
           <div>
-            <Label>Processo / licitação</Label>
+            <Label>Número do pregão / licitação</Label>
+            <Input value={c.numero_licitacao ?? ""} onChange={(e) => setC({ ...c, numero_licitacao: e.target.value })} />
+          </div>
+          <div>
+            <Label>Processo administrativo</Label>
             <Input value={c.numero_processo ?? ""} onChange={(e) => setC({ ...c, numero_processo: e.target.value })} />
           </div>
           <div>
