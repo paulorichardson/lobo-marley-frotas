@@ -340,7 +340,7 @@ function ManutencoesGestor() {
     carregar();
   }
 
-
+  function totalManut(m: Manut) {
     const pecas = (pecasMap[m.id] ?? []).reduce((s, p) => s + Number(p.quantidade) * Number(p.valor_unitario), 0);
     return pecas + Number(m.valor_mao_obra || 0);
   }
