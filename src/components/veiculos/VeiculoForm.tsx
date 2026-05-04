@@ -428,16 +428,33 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
             <Label htmlFor="chassi">Chassi</Label>
             <Input id="chassi" value={values.chassi} onChange={(e) => set("chassi", e.target.value)} />
           </div>
+          {getTipoBem(values.tipo_bem).validaPlaca && (
+            <div className="space-y-1.5">
+              <Label htmlFor="renavam">Renavam</Label>
+              <Input id="renavam" value={values.renavam} onChange={(e) => set("renavam", e.target.value)} />
+            </div>
+          )}
           <div className="space-y-1.5">
-            <Label htmlFor="renavam">Renavam</Label>
-            <Input id="renavam" value={values.renavam} onChange={(e) => set("renavam", e.target.value)} />
+            <Label htmlFor="patrimonio">Nº Patrimônio</Label>
+            <Input id="patrimonio" value={values.numero_patrimonio} onChange={(e) => set("numero_patrimonio", e.target.value)} placeholder="Ex.: 12345" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="km">KM atual</Label>
-            <Input id="km" type="number" value={values.km_atual} onChange={(e) => set("km_atual", e.target.value)} />
+            <Label htmlFor="serie">Nº Série</Label>
+            <Input id="serie" value={values.numero_serie} onChange={(e) => set("numero_serie", e.target.value)} />
           </div>
+          {getTipoBem(values.tipo_bem).usaHorimetro ? (
+            <div className="space-y-1.5">
+              <Label htmlFor="horimetro">Horímetro (horas de uso)</Label>
+              <Input id="horimetro" type="number" value={values.horimetro} onChange={(e) => set("horimetro", e.target.value)} placeholder="0" />
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label htmlFor="km">KM atual</Label>
+              <Input id="km" type="number" value={values.km_atual} onChange={(e) => set("km_atual", e.target.value)} />
+            </div>
+          )}
           <div className="space-y-1.5">
-            <Label htmlFor="km_rev">KM próxima revisão</Label>
+            <Label htmlFor="km_rev">{getTipoBem(values.tipo_bem).usaHorimetro ? "Horas próx. revisão" : "KM próxima revisão"}</Label>
             <Input
               id="km_rev"
               type="number"
