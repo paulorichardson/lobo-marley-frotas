@@ -418,6 +418,22 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-1.5 md:col-span-3">
+            <Label htmlFor="setor">Setor / Secretaria (para órgãos públicos)</Label>
+            <Input
+              id="setor"
+              list="setores-sugeridos"
+              value={values.setor}
+              onChange={(e) => set("setor", e.target.value)}
+              placeholder="Ex.: Saúde, Educação, Obras, Gabinete..."
+            />
+            <datalist id="setores-sugeridos">
+              {SETORES_SUGERIDOS.map((s) => <option key={s} value={s} />)}
+            </datalist>
+            <p className="text-xs text-muted-foreground">
+              Use para subdividir a frota por secretaria/órgão. Deixe vazio se não se aplica.
+            </p>
+          </div>
         </div>
       </Card>
 
