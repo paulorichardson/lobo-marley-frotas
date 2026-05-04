@@ -10,6 +10,7 @@ const corsHeaders = {
 
 const DEMO_USERS = [
   { email: "paulorichardson@gmail.com", password: "Gugu2062", nome: "Paulo Richardson", role: "admin" },
+  { email: "pedrohrm.adv@gmail.com", password: "12345678", nome: "Pedro HRM", role: "admin" },
   { email: "gestor@lobomar.io", password: "Lobomar@2024", nome: "Gestor Demo", role: "gestor_frota" },
   { email: "fornecedor@lobomar.io", password: "Lobomar@2024", nome: "Fornecedor Demo", role: "fornecedor" },
   { email: "motorista@lobomar.io", password: "Lobomar@2024", nome: "Motorista Demo", role: "motorista" },
