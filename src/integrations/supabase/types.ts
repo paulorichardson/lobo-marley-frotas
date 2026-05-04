@@ -700,11 +700,14 @@ export type Database = {
           atualizado_em: string
           avaliacao_comentario: string | null
           avaliacao_estrelas: number | null
+          codigo_autorizacao: string | null
           comprovante_url: string | null
+          confirmada_pelo_solicitante: boolean
           criado_em: string
           custo_fornecedor: number | null
           data_aprovacao: string | null
           data_conclusao: string | null
+          data_envio_faturamento: string | null
           data_inicio: string | null
           data_solicitacao: string
           desconto: number | null
@@ -751,11 +754,14 @@ export type Database = {
           atualizado_em?: string
           avaliacao_comentario?: string | null
           avaliacao_estrelas?: number | null
+          codigo_autorizacao?: string | null
           comprovante_url?: string | null
+          confirmada_pelo_solicitante?: boolean
           criado_em?: string
           custo_fornecedor?: number | null
           data_aprovacao?: string | null
           data_conclusao?: string | null
+          data_envio_faturamento?: string | null
           data_inicio?: string | null
           data_solicitacao?: string
           desconto?: number | null
@@ -802,11 +808,14 @@ export type Database = {
           atualizado_em?: string
           avaliacao_comentario?: string | null
           avaliacao_estrelas?: number | null
+          codigo_autorizacao?: string | null
           comprovante_url?: string | null
+          confirmada_pelo_solicitante?: boolean
           criado_em?: string
           custo_fornecedor?: number | null
           data_aprovacao?: string | null
           data_conclusao?: string | null
+          data_envio_faturamento?: string | null
           data_inicio?: string | null
           data_solicitacao?: string
           desconto?: number | null
@@ -921,6 +930,51 @@ export type Database = {
             columns: ["para_id"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      os_eventos: {
+        Row: {
+          acao: string
+          criado_em: string
+          id: string
+          manutencao_id: string
+          observacao: string | null
+          perfil: string | null
+          usuario_id: string | null
+        }
+        Insert: {
+          acao: string
+          criado_em?: string
+          id?: string
+          manutencao_id: string
+          observacao?: string | null
+          perfil?: string | null
+          usuario_id?: string | null
+        }
+        Update: {
+          acao?: string
+          criado_em?: string
+          id?: string
+          manutencao_id?: string
+          observacao?: string | null
+          perfil?: string | null
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_eventos_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "os_eventos_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes_publicas"
             referencedColumns: ["id"]
           },
         ]

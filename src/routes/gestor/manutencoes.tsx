@@ -64,6 +64,9 @@ interface Manut {
   avaliacao_estrelas: number | null;
   avaliacao_comentario: string | null;
   solicitacao_pai_id: string | null;
+  numero_os: string | null;
+  codigo_autorizacao: string | null;
+  confirmada_pelo_solicitante: boolean | null;
 }
 
 function tempoDecorrido(iso: string): string {
@@ -88,11 +91,13 @@ function urgenciaBadge(p: string) {
 
 function statusInfo(s: string) {
   if (s === "Solicitada") return { icon: "⏳", label: "Aguardando fornecedor" };
-  if (s === "Orçamento Enviado") return { icon: "📋", label: "Orçamento recebido" };
+  if (s === "Orçamento Enviado" || s === "Aguardando Aprovação") return { icon: "📋", label: "Orçamento recebido" };
   if (s === "Aprovada") return { icon: "✅", label: "Aprovada — aguardando execução" };
   if (s === "Em Andamento") return { icon: "🔧", label: "Em execução" };
   if (s === "Concluída") return { icon: "🏁", label: "Concluída" };
+  if (s === "Faturamento") return { icon: "🧾", label: "Enviada p/ faturamento" };
   if (s === "Recusada") return { icon: "❌", label: "Recusada" };
+  if (s === "Cancelada") return { icon: "🚫", label: "Cancelada" };
   return { icon: "•", label: s };
 }
 
@@ -322,6 +327,19 @@ function ManutencoesGestor() {
     }
   }
 
+  async function enviarFaturamento(m: Manut) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({
+        status: "Faturamento",
+        data_envio_faturamento: new Date().toISOString(),
+      })
+      .eq("id", m.id);
+    if (error) return toast.error(error.message);
+    toast.success("OS enviada para faturamento");
+    carregar();
+  }
+
   function totalManut(m: Manut) {
     const pecas = (pecasMap[m.id] ?? []).reduce((s, p) => s + Number(p.quantidade) * Number(p.valor_unitario), 0);
     return pecas + Number(m.valor_mao_obra || 0);
@@ -407,6 +425,16 @@ function ManutencoesGestor() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
+                        {m.numero_os && (
+                          <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                            {m.numero_os}
+                          </span>
+                        )}
+                        {m.codigo_autorizacao && (
+                          <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700">
+                            {m.codigo_autorizacao}
+                          </span>
+                        )}
                         <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded", ub.cls)}>{ub.color} {m.prioridade}</span>
                         <Badge variant="outline">{m.tipo}</Badge>
                         <Badge variant="secondary">{si.icon} {si.label}</Badge>
@@ -458,6 +486,12 @@ function ManutencoesGestor() {
                         <div className="flex justify-end mt-1">
                           <Estrelas valor={m.avaliacao_estrelas} readOnly />
                         </div>
+                      )}
+                      {m.status === "Concluída" && m.avaliacao_estrelas && (
+                        <Button size="sm" variant="outline" className="mt-2"
+                          onClick={(e) => { e.stopPropagation(); enviarFaturamento(m); }}>
+                          🧾 Enviar p/ faturamento
+                        </Button>
                       )}
                     </div>
                   </div>

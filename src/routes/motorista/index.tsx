@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Bell, ClipboardCheck, Fuel, Camera, Wrench, Map, History,
-  Truck, Gauge, PlayCircle, StopCircle, Clock,
+  Truck, Gauge, PlayCircle, StopCircle, Clock, CheckCircle2, AlertCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { StorageImage } from "@/components/veiculos/StorageImage";
 
 export const Route = createFileRoute("/motorista/")({
@@ -36,11 +37,48 @@ function MotoristaHome() {
   const { viagem, veiculo, loading } = useJornadaAtiva();
   const { naoLidas } = useNotificacoes();
   const [nome, setNome] = useState<string>("");
+  const [osPendentes, setOsPendentes] = useState<any[]>([]);
+
+  async function carregarOs() {
+    if (!user) return;
+    const { data } = await supabase
+      .from("manutencoes")
+      .select("id, numero_os, codigo_autorizacao, descricao, status, confirmada_pelo_solicitante")
+      .eq("solicitado_por", user.id)
+      .eq("status", "Concluída")
+      .eq("confirmada_pelo_solicitante", false)
+      .order("data_conclusao", { ascending: false });
+    setOsPendentes(data ?? []);
+  }
+
+  async function confirmarResolvido(osId: string) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({ confirmada_pelo_solicitante: true })
+      .eq("id", osId);
+    if (error) return toast.error(error.message);
+    toast.success("Obrigado pela confirmação!");
+    carregarOs();
+  }
+
+  async function reabrirProblema(osId: string) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({
+        status: "Em Andamento",
+        observacoes: "Motorista reportou que o problema persiste",
+      })
+      .eq("id", osId);
+    if (error) return toast.error(error.message);
+    toast.success("Avisamos o gestor — o veículo voltará para revisão");
+    carregarOs();
+  }
 
   useEffect(() => {
     if (!user) return;
     supabase.from("perfis").select("nome").eq("id", user.id).maybeSingle()
       .then(({ data }) => setNome((data as any)?.nome ?? user.email?.split("@")[0] ?? ""));
+    carregarOs();
   }, [user]);
 
   if (loading) {
@@ -115,6 +153,31 @@ function MotoristaHome() {
           </Button>
         </Card>
       )}
+
+      {/* OS aguardando confirmação do motorista */}
+      {osPendentes.map((os) => (
+        <Card key={os.id} className="p-4 border-warning/40 bg-warning/5">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground">
+                {os.numero_os} {os.codigo_autorizacao && `· ${os.codigo_autorizacao}`}
+              </p>
+              <p className="font-semibold text-sm">Veículo resolvido?</p>
+              <p className="text-xs text-muted-foreground line-clamp-2">{os.descricao}</p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => reabrirProblema(os.id)}>
+              Ainda tem problema
+            </Button>
+            <Button size="sm" className="flex-1 bg-success hover:bg-success/90 text-success-foreground"
+              onClick={() => confirmarResolvido(os.id)}>
+              <CheckCircle2 className="w-4 h-4 mr-1" /> Sim, resolvido
+            </Button>
+          </div>
+        </Card>
+      ))}
 
       {/* Atalhos */}
       <div>
