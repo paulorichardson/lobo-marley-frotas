@@ -25,6 +25,7 @@ const STATIC_NAV: Record<Exclude<AppRole, "fornecedor">, NavItem[]> = {
     { to: "/admin/clientes", label: "Clientes", icon: Building2 },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/financeiro", label: "Financeiro", icon: Receipt },
+    { to: "/admin/financeiro-contratual", label: "Motor Financeiro", icon: Crown },
     { to: "/admin/financeiro/fornecedores", label: "Pag. Fornec.", icon: CreditCard },
     { to: "/admin/configuracoes", label: "Config", icon: Settings },
   ],
