@@ -189,6 +189,24 @@ function FornecedorDashboard() {
           (m) => m.status === "Aprovada" && !m.data_inicio,
         );
         setAprovadosAguardando(aguard);
+
+        // Solicitações pendentes
+        const [{ count: cDir }, { count: cRede }] = await Promise.all([
+          supabase
+            .from("manutencoes")
+            .select("id", { count: "exact", head: true })
+            .eq("fornecedor_id", user.id)
+            .eq("status", "Solicitada")
+            .is("solicitacao_pai_id", null),
+          supabase
+            .from("manutencoes")
+            .select("id", { count: "exact", head: true })
+            .eq("enviado_para_rede", true)
+            .eq("status", "Solicitada")
+            .is("solicitacao_pai_id", null),
+        ]);
+        setSolicDiretas(cDir ?? 0);
+        setSolicRede(cRede ?? 0);
       } finally {
         setLoading(false);
       }
