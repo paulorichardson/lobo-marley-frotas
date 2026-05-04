@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
   Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
-  User as UserIcon, ListChecks, Package, Bell, CheckCircle2, Home,
+  User as UserIcon, ListChecks, Package, Bell, CheckCircle2, Home, Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
@@ -25,6 +25,7 @@ const STATIC_NAV: Record<Exclude<AppRole, "fornecedor">, NavItem[]> = {
     { to: "/admin/clientes", label: "Clientes", icon: Building2 },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/financeiro", label: "Financeiro", icon: Receipt },
+    { to: "/admin/financeiro-contratual", label: "Motor Financeiro", icon: Crown },
     { to: "/admin/financeiro/fornecedores", label: "Pag. Fornec.", icon: CreditCard },
     { to: "/admin/configuracoes", label: "Config", icon: Settings },
   ],

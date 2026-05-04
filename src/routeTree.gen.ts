@@ -40,6 +40,7 @@ import { Route as FornecedorFinanceiroRouteImport } from './routes/fornecedor/fi
 import { Route as FornecedorDespesaRouteImport } from './routes/fornecedor/despesa'
 import { Route as FornecedorAbastecerRouteImport } from './routes/fornecedor/abastecer'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
+import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/financeiro-contratual'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
@@ -204,6 +205,12 @@ const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
   path: '/admin/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFinanceiroContratualRoute =
+  AdminFinanceiroContratualRouteImport.update({
+    id: '/admin/financeiro-contratual',
+    path: '/admin/financeiro-contratual',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
   id: '/admin/financeiro',
   path: '/admin/financeiro',
@@ -249,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
+  '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -289,6 +297,7 @@ export interface FileRoutesByTo {
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
+  '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -330,6 +339,7 @@ export interface FileRoutesById {
   '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
+  '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
+    | '/admin/financeiro-contratual'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
+    | '/admin/financeiro-contratual'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -452,6 +464,7 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
+    | '/admin/financeiro-contratual'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -493,6 +506,7 @@ export interface RootRouteChildren {
   AdminClientesRoute: typeof AdminClientesRouteWithChildren
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
+  AdminFinanceiroContratualRoute: typeof AdminFinanceiroContratualRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
   FornecedorAbastecerRoute: typeof FornecedorAbastecerRoute
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
@@ -742,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/financeiro-contratual': {
+      id: '/admin/financeiro-contratual'
+      path: '/admin/financeiro-contratual'
+      fullPath: '/admin/financeiro-contratual'
+      preLoaderRoute: typeof AdminFinanceiroContratualRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/financeiro': {
       id: '/admin/financeiro'
       path: '/admin/financeiro'
@@ -838,6 +859,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClientesRoute: AdminClientesRouteWithChildren,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
+  AdminFinanceiroContratualRoute: AdminFinanceiroContratualRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
   FornecedorAbastecerRoute: FornecedorAbastecerRoute,
   FornecedorDespesaRoute: FornecedorDespesaRoute,

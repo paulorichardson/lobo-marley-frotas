@@ -109,6 +109,45 @@ export type Database = {
           },
         ]
       }
+      auditoria_financeira: {
+        Row: {
+          acao: string
+          contrato_id: string | null
+          criado_em: string
+          empresa_id: string | null
+          id: string
+          justificativa: string | null
+          manutencao_id: string | null
+          usuario_id: string | null
+          valores_antes: Json | null
+          valores_depois: Json | null
+        }
+        Insert: {
+          acao: string
+          contrato_id?: string | null
+          criado_em?: string
+          empresa_id?: string | null
+          id?: string
+          justificativa?: string | null
+          manutencao_id?: string | null
+          usuario_id?: string | null
+          valores_antes?: Json | null
+          valores_depois?: Json | null
+        }
+        Update: {
+          acao?: string
+          contrato_id?: string | null
+          criado_em?: string
+          empresa_id?: string | null
+          id?: string
+          justificativa?: string | null
+          manutencao_id?: string | null
+          usuario_id?: string | null
+          valores_antes?: Json | null
+          valores_depois?: Json | null
+        }
+        Relationships: []
+      }
       checklists: {
         Row: {
           agua_ok: boolean
@@ -206,6 +245,77 @@ export type Database = {
             columns: ["veiculo_id"]
             isOneToOne: false
             referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contratos_clientes: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          criado_em: string
+          criado_por: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          empresa_id: string
+          exigir_justificativa: boolean
+          id: string
+          margem_alerta: number
+          margem_minima: number
+          numero_contrato: string | null
+          numero_processo: string | null
+          observacoes: string | null
+          percentual_taxa: number
+          permitir_prejuizo: boolean
+          tipo_taxa: string
+          valor_global: number | null
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id: string
+          exigir_justificativa?: boolean
+          id?: string
+          margem_alerta?: number
+          margem_minima?: number
+          numero_contrato?: string | null
+          numero_processo?: string | null
+          observacoes?: string | null
+          percentual_taxa?: number
+          permitir_prejuizo?: boolean
+          tipo_taxa?: string
+          valor_global?: number | null
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          criado_por?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id?: string
+          exigir_justificativa?: boolean
+          id?: string
+          margem_alerta?: number
+          margem_minima?: number
+          numero_contrato?: string | null
+          numero_processo?: string | null
+          observacoes?: string | null
+          percentual_taxa?: number
+          permitir_prejuizo?: boolean
+          tipo_taxa?: string
+          valor_global?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contratos_clientes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
@@ -573,10 +683,18 @@ export type Database = {
             referencedRelation: "manutencoes"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "manutencao_pecas_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       manutencoes: {
         Row: {
+          aprovado_admin_id: string | null
           aprovado_nome: string | null
           aprovado_por: string | null
           atualizado_em: string
@@ -584,6 +702,7 @@ export type Database = {
           avaliacao_estrelas: number | null
           comprovante_url: string | null
           criado_em: string
+          custo_fornecedor: number | null
           data_aprovacao: string | null
           data_conclusao: string | null
           data_inicio: string | null
@@ -596,27 +715,37 @@ export type Database = {
           exigir_orcamento: boolean | null
           fornecedor_id: string | null
           id: string
+          justificativa_prejuizo: string | null
           km_na_manutencao: number | null
+          lucro_bruto: number | null
+          margem_percentual: number | null
           nota_fiscal: string | null
+          numero_os: string | null
           observacoes: string | null
           oficina_nome: string | null
           os_oficina: string | null
+          percentual_aplicado: number | null
           prazo_esperado: string | null
           prioridade: string
           servico_executado: string | null
           solicitacao_pai_id: string | null
           solicitado_por: string | null
           status: string
+          status_financeiro: string | null
           tipo: string
           total_orcamentos_recebidos: number | null
           validade_orcamento: string | null
+          valor_bruto_pecas: number | null
+          valor_bruto_servicos: number | null
           valor_final: number | null
+          valor_liquido_faturavel: number | null
           valor_mao_obra: number | null
           valor_maximo_autorizado: number | null
           valor_previsto: number | null
           veiculo_id: string
         }
         Insert: {
+          aprovado_admin_id?: string | null
           aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
@@ -624,6 +753,7 @@ export type Database = {
           avaliacao_estrelas?: number | null
           comprovante_url?: string | null
           criado_em?: string
+          custo_fornecedor?: number | null
           data_aprovacao?: string | null
           data_conclusao?: string | null
           data_inicio?: string | null
@@ -636,27 +766,37 @@ export type Database = {
           exigir_orcamento?: boolean | null
           fornecedor_id?: string | null
           id?: string
+          justificativa_prejuizo?: string | null
           km_na_manutencao?: number | null
+          lucro_bruto?: number | null
+          margem_percentual?: number | null
           nota_fiscal?: string | null
+          numero_os?: string | null
           observacoes?: string | null
           oficina_nome?: string | null
           os_oficina?: string | null
+          percentual_aplicado?: number | null
           prazo_esperado?: string | null
           prioridade?: string
           servico_executado?: string | null
           solicitacao_pai_id?: string | null
           solicitado_por?: string | null
           status?: string
+          status_financeiro?: string | null
           tipo: string
           total_orcamentos_recebidos?: number | null
           validade_orcamento?: string | null
+          valor_bruto_pecas?: number | null
+          valor_bruto_servicos?: number | null
           valor_final?: number | null
+          valor_liquido_faturavel?: number | null
           valor_mao_obra?: number | null
           valor_maximo_autorizado?: number | null
           valor_previsto?: number | null
           veiculo_id: string
         }
         Update: {
+          aprovado_admin_id?: string | null
           aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
@@ -664,6 +804,7 @@ export type Database = {
           avaliacao_estrelas?: number | null
           comprovante_url?: string | null
           criado_em?: string
+          custo_fornecedor?: number | null
           data_aprovacao?: string | null
           data_conclusao?: string | null
           data_inicio?: string | null
@@ -676,21 +817,30 @@ export type Database = {
           exigir_orcamento?: boolean | null
           fornecedor_id?: string | null
           id?: string
+          justificativa_prejuizo?: string | null
           km_na_manutencao?: number | null
+          lucro_bruto?: number | null
+          margem_percentual?: number | null
           nota_fiscal?: string | null
+          numero_os?: string | null
           observacoes?: string | null
           oficina_nome?: string | null
           os_oficina?: string | null
+          percentual_aplicado?: number | null
           prazo_esperado?: string | null
           prioridade?: string
           servico_executado?: string | null
           solicitacao_pai_id?: string | null
           solicitado_por?: string | null
           status?: string
+          status_financeiro?: string | null
           tipo?: string
           total_orcamentos_recebidos?: number | null
           validade_orcamento?: string | null
+          valor_bruto_pecas?: number | null
+          valor_bruto_servicos?: number | null
           valor_final?: number | null
+          valor_liquido_faturavel?: number | null
           valor_mao_obra?: number | null
           valor_maximo_autorizado?: number | null
           valor_previsto?: number | null
@@ -949,6 +1099,13 @@ export type Database = {
             columns: ["manutencao_id"]
             isOneToOne: false
             referencedRelation: "manutencoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "solicitacoes_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes_publicas"
             referencedColumns: ["id"]
           },
           {
@@ -1236,7 +1393,168 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      manutencoes_publicas: {
+        Row: {
+          aprovado_nome: string | null
+          aprovado_por: string | null
+          atualizado_em: string | null
+          avaliacao_comentario: string | null
+          avaliacao_estrelas: number | null
+          comprovante_url: string | null
+          criado_em: string | null
+          data_aprovacao: string | null
+          data_conclusao: string | null
+          data_inicio: string | null
+          data_solicitacao: string | null
+          desconto: number | null
+          descricao: string | null
+          diagnostico: string | null
+          empresa_id: string | null
+          enviado_para_rede: boolean | null
+          exigir_orcamento: boolean | null
+          fornecedor_id: string | null
+          id: string | null
+          km_na_manutencao: number | null
+          nota_fiscal: string | null
+          numero_os: string | null
+          observacoes: string | null
+          oficina_nome: string | null
+          os_oficina: string | null
+          prazo_esperado: string | null
+          prioridade: string | null
+          servico_executado: string | null
+          solicitacao_pai_id: string | null
+          solicitado_por: string | null
+          status: string | null
+          tipo: string | null
+          total_orcamentos_recebidos: number | null
+          validade_orcamento: string | null
+          valor_final: number | null
+          valor_mao_obra: number | null
+          valor_maximo_autorizado: number | null
+          valor_previsto: number | null
+          veiculo_id: string | null
+        }
+        Insert: {
+          aprovado_nome?: string | null
+          aprovado_por?: string | null
+          atualizado_em?: string | null
+          avaliacao_comentario?: string | null
+          avaliacao_estrelas?: number | null
+          comprovante_url?: string | null
+          criado_em?: string | null
+          data_aprovacao?: string | null
+          data_conclusao?: string | null
+          data_inicio?: string | null
+          data_solicitacao?: string | null
+          desconto?: number | null
+          descricao?: string | null
+          diagnostico?: string | null
+          empresa_id?: string | null
+          enviado_para_rede?: boolean | null
+          exigir_orcamento?: boolean | null
+          fornecedor_id?: string | null
+          id?: string | null
+          km_na_manutencao?: number | null
+          nota_fiscal?: string | null
+          numero_os?: string | null
+          observacoes?: string | null
+          oficina_nome?: string | null
+          os_oficina?: string | null
+          prazo_esperado?: string | null
+          prioridade?: string | null
+          servico_executado?: string | null
+          solicitacao_pai_id?: string | null
+          solicitado_por?: string | null
+          status?: string | null
+          tipo?: string | null
+          total_orcamentos_recebidos?: number | null
+          validade_orcamento?: string | null
+          valor_final?: number | null
+          valor_mao_obra?: number | null
+          valor_maximo_autorizado?: number | null
+          valor_previsto?: number | null
+          veiculo_id?: string | null
+        }
+        Update: {
+          aprovado_nome?: string | null
+          aprovado_por?: string | null
+          atualizado_em?: string | null
+          avaliacao_comentario?: string | null
+          avaliacao_estrelas?: number | null
+          comprovante_url?: string | null
+          criado_em?: string | null
+          data_aprovacao?: string | null
+          data_conclusao?: string | null
+          data_inicio?: string | null
+          data_solicitacao?: string | null
+          desconto?: number | null
+          descricao?: string | null
+          diagnostico?: string | null
+          empresa_id?: string | null
+          enviado_para_rede?: boolean | null
+          exigir_orcamento?: boolean | null
+          fornecedor_id?: string | null
+          id?: string | null
+          km_na_manutencao?: number | null
+          nota_fiscal?: string | null
+          numero_os?: string | null
+          observacoes?: string | null
+          oficina_nome?: string | null
+          os_oficina?: string | null
+          prazo_esperado?: string | null
+          prioridade?: string | null
+          servico_executado?: string | null
+          solicitacao_pai_id?: string | null
+          solicitado_por?: string | null
+          status?: string | null
+          tipo?: string | null
+          total_orcamentos_recebidos?: number | null
+          validade_orcamento?: string | null
+          valor_final?: number | null
+          valor_mao_obra?: number | null
+          valor_maximo_autorizado?: number | null
+          valor_previsto?: number | null
+          veiculo_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manutencoes_aprovado_por_fkey"
+            columns: ["aprovado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_solicitado_por_fkey"
+            columns: ["solicitado_por"]
+            isOneToOne: false
+            referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_empresa_id: { Args: never; Returns: string }
@@ -1258,6 +1576,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      recalcular_financeiro_os: {
+        Args: { _manutencao_id: string }
+        Returns: undefined
       }
     }
     Enums: {
