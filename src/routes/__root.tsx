@@ -39,10 +39,14 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { name: "description", content: "Sistema de gestão de frota Lobo Marley: veículos, checklists, abastecimentos e manutenções." },
       { name: "author", content: "Lobo Marley" },
       { property: "og:title", content: "Lobo Marley — Gestão de Frotas" },
-      { property: "og:description", content: "Sistema de gestão de frota Lobo Marley." },
+      { property: "og:description", content: "Sistema de gestão de frota Lobo Marley: veículos, checklists, abastecimentos e manutenções." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Lobo Marley — Gestão de Frotas" },
+      { name: "twitter:description", content: "Sistema de gestão de frota Lobo Marley: veículos, checklists, abastecimentos e manutenções." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6ceae5a4-de7b-48f6-a163-9fa6c023de33/id-preview-3477c865--ebd8c1b1-760b-47f8-b6c1-535f34c1c0d1.lovable.app-1777904166658.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6ceae5a4-de7b-48f6-a163-9fa6c023de33/id-preview-3477c865--ebd8c1b1-760b-47f8-b6c1-535f34c1c0d1.lovable.app-1777904166658.png" },
     ],
     links: [
       {
