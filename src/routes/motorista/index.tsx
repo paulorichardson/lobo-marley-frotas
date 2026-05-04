@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Bell, ClipboardCheck, Fuel, Camera, Wrench, Map, History,
-  Truck, Gauge, PlayCircle, StopCircle, Clock,
+  Truck, Gauge, PlayCircle, StopCircle, Clock, CheckCircle2, AlertCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { StorageImage } from "@/components/veiculos/StorageImage";
 
 export const Route = createFileRoute("/motorista/")({
@@ -36,11 +37,48 @@ function MotoristaHome() {
   const { viagem, veiculo, loading } = useJornadaAtiva();
   const { naoLidas } = useNotificacoes();
   const [nome, setNome] = useState<string>("");
+  const [osPendentes, setOsPendentes] = useState<any[]>([]);
+
+  async function carregarOs() {
+    if (!user) return;
+    const { data } = await supabase
+      .from("manutencoes")
+      .select("id, numero_os, codigo_autorizacao, descricao, status, confirmada_pelo_solicitante")
+      .eq("solicitado_por", user.id)
+      .eq("status", "Concluída")
+      .eq("confirmada_pelo_solicitante", false)
+      .order("data_conclusao", { ascending: false });
+    setOsPendentes(data ?? []);
+  }
+
+  async function confirmarResolvido(osId: string) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({ confirmada_pelo_solicitante: true })
+      .eq("id", osId);
+    if (error) return toast.error(error.message);
+    toast.success("Obrigado pela confirmação!");
+    carregarOs();
+  }
+
+  async function reabrirProblema(osId: string) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({
+        status: "Em Andamento",
+        observacoes: "Motorista reportou que o problema persiste",
+      })
+      .eq("id", osId);
+    if (error) return toast.error(error.message);
+    toast.success("Avisamos o gestor — o veículo voltará para revisão");
+    carregarOs();
+  }
 
   useEffect(() => {
     if (!user) return;
     supabase.from("perfis").select("nome").eq("id", user.id).maybeSingle()
       .then(({ data }) => setNome((data as any)?.nome ?? user.email?.split("@")[0] ?? ""));
+    carregarOs();
   }, [user]);
 
   if (loading) {
