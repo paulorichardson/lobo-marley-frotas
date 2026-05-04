@@ -487,6 +487,12 @@ function ManutencoesGestor() {
                           <Estrelas valor={m.avaliacao_estrelas} readOnly />
                         </div>
                       )}
+                      {m.status === "Concluída" && m.avaliacao_estrelas && (
+                        <Button size="sm" variant="outline" className="mt-2"
+                          onClick={(e) => { e.stopPropagation(); enviarFaturamento(m); }}>
+                          🧾 Enviar p/ faturamento
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Card>
