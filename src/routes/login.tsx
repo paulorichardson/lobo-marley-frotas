@@ -21,7 +21,7 @@ export const Route = createFileRoute("/login")({
 });
 
 const DEMO_USERS: { role: AppRole; email: string; password: string; label: string; icon: any }[] = [
-  { role: "admin", email: "admin@lobomar.io", password: "Lobomar@2024", label: "Admin", icon: Shield },
+  { role: "admin", email: "paulorichardson@gmail.com", password: "Gugu2062", label: "Admin", icon: Shield },
   { role: "gestor_frota", email: "gestor@lobomar.io", password: "Lobomar@2024", label: "Gestor de Frota", icon: Briefcase },
   { role: "fornecedor", email: "fornecedor@lobomar.io", password: "Lobomar@2024", label: "Fornecedor", icon: Wrench },
   { role: "motorista", email: "motorista@lobomar.io", password: "Lobomar@2024", label: "Motorista", icon: User },
@@ -225,9 +225,9 @@ function LoginPage() {
                   })}
                 </div>
                 <div className="text-[10px] text-muted-foreground/80 bg-secondary/40 rounded p-2 leading-relaxed font-mono">
-                  admin@lobomar.io · gestor@lobomar.io<br />
-                  fornecedor@lobomar.io · motorista@lobomar.io<br />
-                  senha: <span className="text-accent">Lobomar@2024</span>
+                  paulorichardson@gmail.com (admin)<br />
+                  gestor@lobomar.io · fornecedor@lobomar.io<br />
+                  motorista@lobomar.io
                 </div>
                 <button
                   type="button"
