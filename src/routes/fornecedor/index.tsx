@@ -287,7 +287,7 @@ function FornecedorDashboard() {
 
       {/* 2 botões grandes de ação rápida */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Link to="/fornecedor/orcamento" className="block">
+        <Link to="/fornecedor/orcamento" search={{ solicitacaoId: "" }} className="block">
           <Card className="p-6 hover:bg-primary/5 hover:border-primary transition cursor-pointer h-full">
             <FileSpreadsheet className="w-10 h-10 text-primary mb-2" />
             <p className="text-xl font-bold">📋 ENVIAR ORÇAMENTO</p>

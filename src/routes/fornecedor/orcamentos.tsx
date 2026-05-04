@@ -172,7 +172,7 @@ function OrcamentosPage() {
           <p className="text-sm text-muted-foreground">Acompanhe os orçamentos enviados.</p>
         </div>
         <Button asChild>
-          <Link to="/fornecedor/orcamento"><Plus className="w-4 h-4 mr-2" />Novo Orçamento</Link>
+          <Link to="/fornecedor/orcamento" search={{ solicitacaoId: "" }}><Plus className="w-4 h-4 mr-2" />Novo Orçamento</Link>
         </Button>
       </header>
 
