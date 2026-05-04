@@ -425,6 +425,16 @@ function ManutencoesGestor() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
+                        {m.numero_os && (
+                          <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                            {m.numero_os}
+                          </span>
+                        )}
+                        {m.codigo_autorizacao && (
+                          <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700">
+                            {m.codigo_autorizacao}
+                          </span>
+                        )}
                         <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded", ub.cls)}>{ub.color} {m.prioridade}</span>
                         <Badge variant="outline">{m.tipo}</Badge>
                         <Badge variant="secondary">{si.icon} {si.label}</Badge>
