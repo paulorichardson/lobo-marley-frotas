@@ -55,6 +55,10 @@ export interface VeiculoFormValues {
   doc_crlv_url: string;
   doc_seguro_url: string;
   setor: string;
+  tipo_bem: string;
+  horimetro: string;
+  numero_patrimonio: string;
+  numero_serie: string;
 }
 
 const SETORES_SUGERIDOS = [
@@ -94,6 +98,10 @@ const EMPTY: VeiculoFormValues = {
   doc_crlv_url: "",
   doc_seguro_url: "",
   setor: "",
+  tipo_bem: "veiculo",
+  horimetro: "",
+  numero_patrimonio: "",
+  numero_serie: "",
 };
 
 interface FotoExtra {
