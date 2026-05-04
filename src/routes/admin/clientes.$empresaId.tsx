@@ -7,8 +7,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, ArrowLeft, Loader2 } from "lucide-react";
+import { Building2, ArrowLeft, Loader2, FileSignature } from "lucide-react";
 import { toast } from "sonner";
+import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiroSection";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
@@ -100,6 +101,9 @@ function ClienteDetalhe() {
           <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
           <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
           <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
+          <TabsTrigger value="contrato">
+            <FileSignature className="w-3.5 h-3.5 mr-1" /> Contrato
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dados">
@@ -154,6 +158,10 @@ function ClienteDetalhe() {
             <Row k="Vencimento" v={empresa.data_vencimento} />
             <Row k="Observações" v={empresa.observacoes} />
           </Card>
+        </TabsContent>
+
+        <TabsContent value="contrato">
+          <ContratoFinanceiroSection empresaId={empresaId} />
         </TabsContent>
       </Tabs>
     </div>
