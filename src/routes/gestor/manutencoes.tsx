@@ -620,6 +620,21 @@ function ManutencoesGestor() {
                       {detalhe.avaliacao_comentario && <p className="text-sm mt-1">{detalhe.avaliacao_comentario}</p>}
                     </div>
                   )}
+                  <Button variant="outline" size="sm" onClick={() => imprimirOS({
+                    numero_os: detalhe.numero_os,
+                    codigo_autorizacao: detalhe.codigo_autorizacao,
+                    veiculo: { placa: v?.placa ?? "", marca: v?.marca ?? "", modelo: v?.modelo ?? "" },
+                    km_na_manutencao: (detalhe as any).km_na_manutencao,
+                    data_solicitacao: detalhe.data_solicitacao,
+                    descricao: detalhe.descricao,
+                    diagnostico: detalhe.diagnostico,
+                    pecas: pecas,
+                    valor_mao_obra: detalhe.valor_mao_obra,
+                    fornecedor_nome: detalhe.fornecedor_id ? fornecedoresMap[detalhe.fornecedor_id]?.nome : detalhe.oficina_nome ?? undefined,
+                    aprovado_nome: detalhe.aprovado_nome,
+                  })}>
+                    <Printer className="w-4 h-4 mr-2" /> 🖨 Imprimir OS
+                  </Button>
                 </div>
                 {detalhe.status === "Orçamento Enviado" && !detalhe.enviado_para_rede && (
                   <DialogFooter className="gap-2">
