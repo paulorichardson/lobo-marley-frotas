@@ -327,7 +327,20 @@ function ManutencoesGestor() {
     }
   }
 
-  function totalManut(m: Manut) {
+  async function enviarFaturamento(m: Manut) {
+    const { error } = await supabase
+      .from("manutencoes")
+      .update({
+        status: "Faturamento",
+        data_envio_faturamento: new Date().toISOString(),
+      })
+      .eq("id", m.id);
+    if (error) return toast.error(error.message);
+    toast.success("OS enviada para faturamento");
+    carregar();
+  }
+
+
     const pecas = (pecasMap[m.id] ?? []).reduce((s, p) => s + Number(p.quantidade) * Number(p.valor_unitario), 0);
     return pecas + Number(m.valor_mao_obra || 0);
   }
