@@ -57,7 +57,13 @@ Deno.serve(async (req) => {
         email_confirm: true,
         user_metadata: { nome: motorista.nome, telefone: motorista.telefone ?? null },
       });
-      if (cErr || !created.user) return json({ error: cErr?.message ?? "Falha auth" }, 400);
+      if (cErr || !created.user) {
+        const msg = cErr?.message ?? "Falha auth";
+        const friendly = /already.*registered|already exists|email_exists/i.test(msg)
+          ? `Já existe um usuário com o e-mail ${motorista.email}. Use outro e-mail ou peça para o admin reativar/resetar a senha desse motorista.`
+          : msg;
+        return json({ error: friendly }, 400);
+      }
       const userId = created.user.id;
 
       await admin.from("perfis").update({
