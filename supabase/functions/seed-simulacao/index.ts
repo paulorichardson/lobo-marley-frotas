@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
       solicitado_por: ids["motorista"],
       tipo: "Corretiva", descricao: "Troca completa do sistema de freios",
       diagnostico: "Pastilhas e disco gastos, fluido contaminado",
-      status: "Aguardando Aprovação", prioridade: "Alta",
+      status: "Solicitada", prioridade: "Alta",
       km_na_manutencao: 87200,
       valor_mao_obra: 200,
       custo_fornecedor: 650,
