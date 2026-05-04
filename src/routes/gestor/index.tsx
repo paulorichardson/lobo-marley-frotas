@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Truck, Plus, Wrench, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/gestor/")({
@@ -20,21 +19,25 @@ export const Route = createFileRoute("/gestor/")({
 });
 
 function GestorDashboard() {
-  const [stats, setStats] = useState({ total: 0, ativos: 0, manutencao: 0, solicitacoes: 0 });
+  const [stats, setStats] = useState({ total: 0, ativos: 0, manutencao: 0, solicitacoes: 0, orcAprov: 0, urgentes: 0 });
 
   useEffect(() => {
     (async () => {
-      const [t, a, m, s] = await Promise.all([
+      const [t, a, m, s, o, u] = await Promise.all([
         supabase.from("veiculos").select("id", { count: "exact", head: true }),
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Ativo"),
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Em Manutenção"),
-        supabase.from("solicitacoes").select("id", { count: "exact", head: true }).eq("status", "Aberta"),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).in("status", ["Solicitada", "Orçamento Enviado"]),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).eq("status", "Orçamento Enviado"),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).eq("prioridade", "Urgente").not("status", "in", "(Concluída,Recusada)"),
       ]);
       setStats({
         total: t.count ?? 0,
         ativos: a.count ?? 0,
         manutencao: m.count ?? 0,
         solicitacoes: s.count ?? 0,
+        orcAprov: o.count ?? 0,
+        urgentes: u.count ?? 0,
       });
     })();
   }, []);
@@ -53,20 +56,18 @@ function GestorDashboard() {
         </Button>
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Mini label="Total" value={stats.total} icon={Truck} />
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <Mini label="Total de veículos" value={stats.total} icon={Truck} />
         <Mini label="Ativos" value={stats.ativos} icon={Truck} tone="success" />
         <Mini label="Em manutenção" value={stats.manutencao} icon={Wrench} tone="warning" />
-        <Mini label="Solicitações abertas" value={stats.solicitacoes} icon={AlertCircle} tone="destructive" />
+        <Mini label="Solicitações abertas" value={stats.solicitacoes} icon={AlertCircle} />
+        <Link to="/gestor/manutencoes" className="contents">
+          <Mini label="🟠 Orçamentos aguardando aprovação" value={stats.orcAprov} icon={Wrench} tone="warning" />
+        </Link>
+        <Link to="/gestor/manutencoes" className="contents">
+          <Mini label="🔴 Urgentes" value={stats.urgentes} icon={AlertCircle} tone="destructive" />
+        </Link>
       </div>
-
-      <Card className="p-6 text-center">
-        <Truck className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-        <h3 className="font-semibold mb-1">Cadastro completo de veículos em breve</h3>
-        <p className="text-sm text-muted-foreground">
-          Listagem com fotos, vinculação de motoristas e gestão de manutenções na próxima iteração.
-        </p>
-      </Card>
     </div>
   );
 }
