@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Truck, Plus, Wrench, AlertCircle, FileSignature } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { AlertasVencimento } from "@/components/veiculos/AlertasVencimento";
 
 export const Route = createFileRoute("/gestor/")({
   head: () => ({ meta: [{ title: "Gestor de Frota — Lobo Marley" }] }),
@@ -90,6 +91,8 @@ function GestorDashboard() {
           <Mini label="🔴 Urgentes" value={stats.urgentes} icon={AlertCircle} tone="destructive" />
         </Link>
       </div>
+
+      <AlertasVencimento />
 
       {contrato && contrato.valor_global > 0 && (
         <Card className="p-4">

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Truck, Wrench, AlertTriangle, DollarSign } from "lucide-react";
+import { AlertasVencimento } from "@/components/veiculos/AlertasVencimento";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Admin — Lobo Marley" }] }),
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminDashboard() {
-  const [stats, setStats] = useState({ veiculos: 0, manutencoes: 0, custoMes: 0, alertas: 0 });
+  const [stats, setStats] = useState({ veiculos: 0, manutencoes: 0, custoMes: 0, alertas: 0, vencimentos: 0 });
 
   useEffect(() => {
     (async () => {
@@ -26,12 +27,19 @@ function AdminDashboard() {
       inicioMes.setDate(1);
       inicioMes.setHours(0, 0, 0, 0);
 
-      const [v, m, ab, mn, ds] = await Promise.all([
+      const limite = new Date();
+      limite.setDate(limite.getDate() + 30);
+      const limiteStr = limite.toISOString().slice(0, 10);
+
+      const [v, m, ab, mn, ds, alertasFin, venc] = await Promise.all([
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Ativo"),
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Em Manutenção"),
         supabase.from("abastecimentos").select("valor_total").gte("data_hora", inicioMes.toISOString()),
         supabase.from("manutencoes").select("valor_final").gte("criado_em", inicioMes.toISOString()),
         supabase.from("despesas").select("valor").gte("data_despesa", inicioMes.toISOString().slice(0, 10)),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).in("status_financeiro", ["alerta", "prejuizo"]),
+        supabase.from("veiculos").select("id", { count: "exact", head: true })
+          .or(`vencimento_licenciamento.lte.${limiteStr},vencimento_ipva.lte.${limiteStr},vencimento_seguro.lte.${limiteStr}`),
       ]);
 
       const custo =
@@ -43,7 +51,8 @@ function AdminDashboard() {
         veiculos: v.count ?? 0,
         manutencoes: m.count ?? 0,
         custoMes: custo,
-        alertas: 0,
+        alertas: alertasFin.count ?? 0,
+        vencimentos: venc.count ?? 0,
       });
     })();
   }, []);
@@ -55,7 +64,7 @@ function AdminDashboard() {
         <p className="text-sm text-muted-foreground">Visão geral da frota</p>
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Stat label="Veículos ativos" value={stats.veiculos} icon={Truck} tone="primary" />
         <Stat label="Em manutenção" value={stats.manutencoes} icon={Wrench} tone="warning" />
         <Stat
@@ -64,12 +73,15 @@ function AdminDashboard() {
           icon={DollarSign}
           tone="success"
         />
-        <Stat label="Alertas" value={stats.alertas} icon={AlertTriangle} tone="destructive" />
+        <Stat label="OS em alerta/prejuízo" value={stats.alertas} icon={AlertTriangle} tone="destructive" />
+        <Stat label="Docs vencendo (30d)" value={stats.vencimentos} icon={AlertTriangle} tone="warning" />
       </div>
+
+      <AlertasVencimento />
 
       <Card className="p-6">
         <p className="text-sm text-muted-foreground">
-          Relatórios detalhados, gráficos e gestão financeira serão implementados nas próximas iterações.
+          Use o menu lateral para acessar Clientes, Financeiro, Configurações e Relatórios.
         </p>
       </Card>
     </div>
