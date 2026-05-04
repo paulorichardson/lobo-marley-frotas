@@ -257,14 +257,19 @@ function LoginPage() {
         </Card>
 
         {/* Gatilho secreto: 5 cliques para desbloquear demo */}
-        <button
-          type="button"
-          onClick={handleSecretTap}
-          aria-label="."
-          className="block mx-auto w-6 h-6 opacity-0 hover:opacity-10"
-        >
-          ·
-        </button>
+        <div className="flex flex-col items-center gap-1 pt-2">
+          <button
+            type="button"
+            onClick={handleSecretTap}
+            aria-label="Desbloquear demo"
+            className="w-8 h-8 rounded-full border border-dashed border-accent/40 text-accent/70 hover:border-accent hover:text-accent flex items-center justify-center text-sm transition"
+          >
+            ●
+          </button>
+          <span className="text-[9px] text-muted-foreground/50 tracking-wider uppercase">
+            {tapCount > 0 ? `${tapCount}/5` : "ponto secreto"}
+          </span>
+        </div>
       </div>
     </div>
   );
