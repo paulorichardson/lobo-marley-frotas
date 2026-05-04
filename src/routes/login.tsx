@@ -225,9 +225,9 @@ function LoginPage() {
                   })}
                 </div>
                 <div className="text-[10px] text-muted-foreground/80 bg-secondary/40 rounded p-2 leading-relaxed font-mono">
-                  admin@lobomar.io · gestor@lobomar.io<br />
-                  fornecedor@lobomar.io · motorista@lobomar.io<br />
-                  senha: <span className="text-accent">Lobomar@2024</span>
+                  paulorichardson@gmail.com (admin)<br />
+                  gestor@lobomar.io · fornecedor@lobomar.io<br />
+                  motorista@lobomar.io
                 </div>
                 <button
                   type="button"
