@@ -150,7 +150,7 @@ function ClienteDetalhe() {
         <TabsContent value="financeiro">
           <Card className="p-4 space-y-2 text-sm">
             <Row k="Plano" v={empresa.plano} />
-            <Row k="Valor mensal" v={empresa.valor_mensal ? `R$ ${Number(empresa.valor_mensal).toFixed(2)}` : "—"} />
+            <Row k="Valor mensal" v={empresa.valor_mensal ? `R$ ${Number(empresa.valor_mensal).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "—"} />
             <Row k="Início" v={empresa.data_inicio} />
             <Row k="Vencimento" v={empresa.data_vencimento} />
             <Row k="Observações" v={empresa.observacoes} />
