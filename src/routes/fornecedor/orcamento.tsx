@@ -22,6 +22,9 @@ import { notifyEmpresaGestores } from "@/lib/notify";
 
 export const Route = createFileRoute("/fornecedor/orcamento")({
   head: () => ({ meta: [{ title: "Novo Orçamento — Lobo Marley" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    solicitacaoId: typeof s.solicitacaoId === "string" ? s.solicitacaoId : undefined,
+  }),
   component: () => (
     <ProtectedRoute roles={["fornecedor"]}>
       <AppShell>
