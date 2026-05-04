@@ -91,6 +91,7 @@ const EMPTY: VeiculoFormValues = {
   foto_principal_url: "",
   doc_crlv_url: "",
   doc_seguro_url: "",
+  setor: "",
 };
 
 interface FotoExtra {
