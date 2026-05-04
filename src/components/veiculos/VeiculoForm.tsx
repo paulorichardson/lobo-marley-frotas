@@ -207,7 +207,12 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
   }
 
   function validar(): string | null {
-    if (!placaValida(values.placa)) return "Placa inválida (use AAA-0000 ou AAA0A00)";
+    const tipo = getTipoBem(values.tipo_bem);
+    if (tipo.validaPlaca) {
+      if (!placaValida(values.placa)) return "Placa inválida (use AAA-0000 ou AAA0A00)";
+    } else {
+      if (!values.placa.trim()) return `${tipo.placaLabel} é obrigatório`;
+    }
     if (!values.marca.trim()) return "Marca é obrigatória";
     if (!values.modelo.trim()) return "Modelo é obrigatório";
     return null;
