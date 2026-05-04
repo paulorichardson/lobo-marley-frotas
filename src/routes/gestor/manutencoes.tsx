@@ -386,6 +386,7 @@ function ManutencoesGestor() {
             <Plus className="w-4 h-4 mr-2" /> Nova Solicitação
           </Button>
         </div>
+      </header>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
