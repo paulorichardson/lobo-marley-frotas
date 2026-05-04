@@ -276,6 +276,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         cadastrado_por: user.id,
         empresa_id,
         setor: values.setor.trim() || null,
+        tipo_bem: values.tipo_bem || "veiculo",
+        horimetro: values.horimetro ? Number(values.horimetro) : null,
+        numero_patrimonio: values.numero_patrimonio.trim() || null,
+        numero_serie: values.numero_serie.trim() || null,
       };
 
       let veiculoId = values.id;
