@@ -580,6 +580,8 @@ export type Database = {
           aprovado_nome: string | null
           aprovado_por: string | null
           atualizado_em: string
+          avaliacao_comentario: string | null
+          avaliacao_estrelas: number | null
           comprovante_url: string | null
           criado_em: string
           data_aprovacao: string | null
@@ -590,6 +592,8 @@ export type Database = {
           descricao: string
           diagnostico: string | null
           empresa_id: string | null
+          enviado_para_rede: boolean | null
+          exigir_orcamento: boolean | null
           fornecedor_id: string | null
           id: string
           km_na_manutencao: number | null
@@ -597,14 +601,18 @@ export type Database = {
           observacoes: string | null
           oficina_nome: string | null
           os_oficina: string | null
+          prazo_esperado: string | null
           prioridade: string
           servico_executado: string | null
+          solicitacao_pai_id: string | null
           solicitado_por: string | null
           status: string
           tipo: string
+          total_orcamentos_recebidos: number | null
           validade_orcamento: string | null
           valor_final: number | null
           valor_mao_obra: number | null
+          valor_maximo_autorizado: number | null
           valor_previsto: number | null
           veiculo_id: string
         }
@@ -612,6 +620,8 @@ export type Database = {
           aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
+          avaliacao_comentario?: string | null
+          avaliacao_estrelas?: number | null
           comprovante_url?: string | null
           criado_em?: string
           data_aprovacao?: string | null
@@ -622,6 +632,8 @@ export type Database = {
           descricao: string
           diagnostico?: string | null
           empresa_id?: string | null
+          enviado_para_rede?: boolean | null
+          exigir_orcamento?: boolean | null
           fornecedor_id?: string | null
           id?: string
           km_na_manutencao?: number | null
@@ -629,14 +641,18 @@ export type Database = {
           observacoes?: string | null
           oficina_nome?: string | null
           os_oficina?: string | null
+          prazo_esperado?: string | null
           prioridade?: string
           servico_executado?: string | null
+          solicitacao_pai_id?: string | null
           solicitado_por?: string | null
           status?: string
           tipo: string
+          total_orcamentos_recebidos?: number | null
           validade_orcamento?: string | null
           valor_final?: number | null
           valor_mao_obra?: number | null
+          valor_maximo_autorizado?: number | null
           valor_previsto?: number | null
           veiculo_id: string
         }
@@ -644,6 +660,8 @@ export type Database = {
           aprovado_nome?: string | null
           aprovado_por?: string | null
           atualizado_em?: string
+          avaliacao_comentario?: string | null
+          avaliacao_estrelas?: number | null
           comprovante_url?: string | null
           criado_em?: string
           data_aprovacao?: string | null
@@ -654,6 +672,8 @@ export type Database = {
           descricao?: string
           diagnostico?: string | null
           empresa_id?: string | null
+          enviado_para_rede?: boolean | null
+          exigir_orcamento?: boolean | null
           fornecedor_id?: string | null
           id?: string
           km_na_manutencao?: number | null
@@ -661,14 +681,18 @@ export type Database = {
           observacoes?: string | null
           oficina_nome?: string | null
           os_oficina?: string | null
+          prazo_esperado?: string | null
           prioridade?: string
           servico_executado?: string | null
+          solicitacao_pai_id?: string | null
           solicitado_por?: string | null
           status?: string
           tipo?: string
+          total_orcamentos_recebidos?: number | null
           validade_orcamento?: string | null
           valor_final?: number | null
           valor_mao_obra?: number | null
+          valor_maximo_autorizado?: number | null
           valor_previsto?: number | null
           veiculo_id?: string
         }
