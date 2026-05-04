@@ -1,8 +1,5 @@
 project_id = "aovtcfqrksepytsfpqho"
 
-[functions.seed-demo-users]
-verify_jwt = false
-
 [functions.submit-credenciamento]
 verify_jwt = false
 
@@ -10,7 +7,4 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.abastecimento-publico]
-verify_jwt = false
-
-[functions.seed-simulacao]
 verify_jwt = false
