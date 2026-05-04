@@ -14,13 +14,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   Wrench, CheckCircle2, XCircle, Clock, Loader2, Plus, Megaphone, Package,
-  Star,
+  Star, Printer, Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { notifyUser } from "@/lib/notify";
 import { useAuth } from "@/hooks/useAuth";
 import { NovaSolicitacaoModal, Estrelas } from "@/components/manutencoes/NovaSolicitacaoModal";
 import { cn } from "@/lib/utils";
+import { imprimirOS } from "@/lib/imprimir-os";
+import { exportarXLSX } from "@/lib/export-xlsx";
 
 export const Route = createFileRoute("/gestor/manutencoes")({
   head: () => ({ meta: [{ title: "Manutenções — Lobo Marley" }] }),
@@ -363,10 +365,27 @@ function ManutencoesGestor() {
           </h1>
           <p className="text-sm text-muted-foreground">Solicite, aprove e acompanhe manutenções da frota.</p>
         </div>
-        <Button onClick={() => setNovaOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Nova Solicitação
-        </Button>
-      </header>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => {
+            const dados = items.map((m) => ({
+              OS: m.numero_os ?? "",
+              Veiculo: veiculosMap[m.veiculo_id]?.placa ?? "",
+              Tipo: m.tipo,
+              Descricao: m.descricao,
+              Status: m.status,
+              Prioridade: m.prioridade,
+              Fornecedor: m.fornecedor_id ? fornecedoresMap[m.fornecedor_id]?.nome ?? "" : (m.oficina_nome ?? ""),
+              Valor: Number(m.valor_final ?? totalManut(m) ?? 0),
+              Data: new Date(m.data_solicitacao).toLocaleDateString("pt-BR"),
+            }));
+            exportarXLSX(dados, "Manutencoes", "lobomarley_manutencoes");
+          }}>
+            <Download className="w-4 h-4 mr-2" /> Exportar
+          </Button>
+          <Button onClick={() => setNovaOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Nova Solicitação
+          </Button>
+        </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
