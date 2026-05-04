@@ -43,6 +43,7 @@ interface VeiculoRow {
   vencimento_licenciamento: string | null;
   vencimento_ipva: string | null;
   vencimento_seguro: string | null;
+  setor: string | null;
 }
 
 function ListaVeiculos() {
@@ -52,6 +53,7 @@ function ListaVeiculos() {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState<string>("todos");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
+  const [setorFiltro, setSetorFiltro] = useState<string>("todos");
   const [loading, setLoading] = useState(true);
   const [novoOpen, setNovoOpen] = useState(false);
 
@@ -59,7 +61,7 @@ function ListaVeiculos() {
     setLoading(true);
     const { data } = await supabase
       .from("veiculos")
-      .select("id, placa, marca, modelo, status, categoria, km_atual, motorista_id, foto_principal_url, vencimento_licenciamento, vencimento_ipva, vencimento_seguro")
+      .select("id, placa, marca, modelo, status, categoria, km_atual, motorista_id, foto_principal_url, vencimento_licenciamento, vencimento_ipva, vencimento_seguro, setor")
       .order("criado_em", { ascending: false });
     setVeiculos((data ?? []) as VeiculoRow[]);
     const ids = Array.from(new Set((data ?? []).map((v) => v.motorista_id).filter(Boolean))) as string[];
@@ -74,15 +76,22 @@ function ListaVeiculos() {
 
   useEffect(() => { carregar(); }, []);
 
+  const setoresDisponiveis = useMemo(() => {
+    const set = new Set<string>();
+    veiculos.forEach((v) => { if (v.setor) set.add(v.setor); });
+    return Array.from(set).sort();
+  }, [veiculos]);
+
   const filtrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
     return veiculos.filter((v) => {
       if (statusFiltro !== "todos" && v.status !== statusFiltro) return false;
       if (catFiltro !== "todas" && v.categoria !== catFiltro) return false;
+      if (setorFiltro !== "todos" && v.setor !== setorFiltro) return false;
       if (q && !`${v.placa} ${v.marca} ${v.modelo}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [veiculos, busca, statusFiltro, catFiltro]);
+  }, [veiculos, busca, statusFiltro, catFiltro, setorFiltro]);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -109,12 +118,21 @@ function ListaVeiculos() {
           </SelectContent>
         </Select>
         <Select value={catFiltro} onValueChange={setCatFiltro}>
-          <SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="md:w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="todas">Todas categorias</SelectItem>
             {CATEGORIAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
+        {setoresDisponiveis.length > 0 && (
+          <Select value={setorFiltro} onValueChange={setSetorFiltro}>
+            <SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos setores</SelectItem>
+              {setoresDisponiveis.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
       </Card>
 
       {loading ? (
@@ -158,6 +176,9 @@ function ListaVeiculos() {
                       <Badge variant="outline" className={cn("text-xs", badge.className)}>{badge.label}</Badge>
                       <span className="text-xs text-muted-foreground">{Number(v.km_atual).toLocaleString("pt-BR")} km</span>
                     </div>
+                    {v.setor && (
+                      <Badge variant="secondary" className="text-xs">🏛️ {v.setor}</Badge>
+                    )}
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1 border-t border-border">
                       <UserIcon className="w-3 h-3" />
                       <span className="truncate">{v.motorista_id ? motoristas[v.motorista_id] || "Motorista" : "Sem motorista"}</span>
