@@ -20,21 +20,25 @@ export const Route = createFileRoute("/gestor/")({
 });
 
 function GestorDashboard() {
-  const [stats, setStats] = useState({ total: 0, ativos: 0, manutencao: 0, solicitacoes: 0 });
+  const [stats, setStats] = useState({ total: 0, ativos: 0, manutencao: 0, solicitacoes: 0, orcAprov: 0, urgentes: 0 });
 
   useEffect(() => {
     (async () => {
-      const [t, a, m, s] = await Promise.all([
+      const [t, a, m, s, o, u] = await Promise.all([
         supabase.from("veiculos").select("id", { count: "exact", head: true }),
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Ativo"),
         supabase.from("veiculos").select("id", { count: "exact", head: true }).eq("status", "Em Manutenção"),
-        supabase.from("solicitacoes").select("id", { count: "exact", head: true }).eq("status", "Aberta"),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).in("status", ["Solicitada", "Orçamento Enviado"]),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).eq("status", "Orçamento Enviado"),
+        supabase.from("manutencoes").select("id", { count: "exact", head: true }).eq("prioridade", "Urgente").not("status", "in", "(Concluída,Recusada)"),
       ]);
       setStats({
         total: t.count ?? 0,
         ativos: a.count ?? 0,
         manutencao: m.count ?? 0,
         solicitacoes: s.count ?? 0,
+        orcAprov: o.count ?? 0,
+        urgentes: u.count ?? 0,
       });
     })();
   }, []);
