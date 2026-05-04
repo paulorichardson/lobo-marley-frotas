@@ -493,15 +493,17 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         </div>
       </Card>
 
-      {/* Vencimentos */}
-      <Card className="p-5 space-y-4">
-        <h3 className="font-semibold">Documentação</h3>
-        <div className="grid md:grid-cols-3 gap-4">
-          <DataField label="Vencimento Licenciamento" value={values.vencimento_licenciamento} onChange={(v) => set("vencimento_licenciamento", v)} />
-          <DataField label="Vencimento IPVA" value={values.vencimento_ipva} onChange={(v) => set("vencimento_ipva", v)} />
-          <DataField label="Vencimento Seguro" value={values.vencimento_seguro} onChange={(v) => set("vencimento_seguro", v)} />
-        </div>
-      </Card>
+      {/* Vencimentos — só para veículos com placa */}
+      {getTipoBem(values.tipo_bem).mostraDocs && (
+        <Card className="p-5 space-y-4">
+          <h3 className="font-semibold">Documentação</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <DataField label="Vencimento Licenciamento" value={values.vencimento_licenciamento} onChange={(v) => set("vencimento_licenciamento", v)} />
+            <DataField label="Vencimento IPVA" value={values.vencimento_ipva} onChange={(v) => set("vencimento_ipva", v)} />
+            <DataField label="Vencimento Seguro" value={values.vencimento_seguro} onChange={(v) => set("vencimento_seguro", v)} />
+          </div>
+        </Card>
+      )}
 
       {/* Foto principal */}
       <Card className="p-5 space-y-4">
