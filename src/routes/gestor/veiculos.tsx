@@ -176,6 +176,9 @@ function ListaVeiculos() {
                       <Badge variant="outline" className={cn("text-xs", badge.className)}>{badge.label}</Badge>
                       <span className="text-xs text-muted-foreground">{Number(v.km_atual).toLocaleString("pt-BR")} km</span>
                     </div>
+                    {v.setor && (
+                      <Badge variant="secondary" className="text-xs">🏛️ {v.setor}</Badge>
+                    )}
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1 border-t border-border">
                       <UserIcon className="w-3 h-3" />
                       <span className="truncate">{v.motorista_id ? motoristas[v.motorista_id] || "Motorista" : "Sem motorista"}</span>
