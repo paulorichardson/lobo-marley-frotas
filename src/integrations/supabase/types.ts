@@ -249,6 +249,45 @@ export type Database = {
           },
         ]
       }
+      contrato_anexos: {
+        Row: {
+          contrato_id: string | null
+          criado_em: string
+          empresa_id: string
+          id: string
+          nome_arquivo: string
+          storage_path: string | null
+          tamanho_bytes: number | null
+          tipo_documento: string
+          url_arquivo: string
+          usuario_upload: string | null
+        }
+        Insert: {
+          contrato_id?: string | null
+          criado_em?: string
+          empresa_id: string
+          id?: string
+          nome_arquivo: string
+          storage_path?: string | null
+          tamanho_bytes?: number | null
+          tipo_documento: string
+          url_arquivo: string
+          usuario_upload?: string | null
+        }
+        Update: {
+          contrato_id?: string | null
+          criado_em?: string
+          empresa_id?: string
+          id?: string
+          nome_arquivo?: string
+          storage_path?: string | null
+          tamanho_bytes?: number | null
+          tipo_documento?: string
+          url_arquivo?: string
+          usuario_upload?: string | null
+        }
+        Relationships: []
+      }
       contratos_clientes: {
         Row: {
           ativo: boolean
@@ -263,6 +302,7 @@ export type Database = {
           margem_alerta: number
           margem_minima: number
           numero_contrato: string | null
+          numero_licitacao: string | null
           numero_processo: string | null
           observacoes: string | null
           percentual_taxa: number
@@ -283,6 +323,7 @@ export type Database = {
           margem_alerta?: number
           margem_minima?: number
           numero_contrato?: string | null
+          numero_licitacao?: string | null
           numero_processo?: string | null
           observacoes?: string | null
           percentual_taxa?: number
@@ -303,6 +344,7 @@ export type Database = {
           margem_alerta?: number
           margem_minima?: number
           numero_contrato?: string | null
+          numero_licitacao?: string | null
           numero_processo?: string | null
           observacoes?: string | null
           percentual_taxa?: number
