@@ -13,10 +13,11 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Search, AlertCircle, User as UserIcon } from "lucide-react";
+import { Plus, Search, AlertCircle, User as UserIcon, Link2 } from "lucide-react";
 import { CATEGORIAS, STATUS_VEICULO, statusBadgeVariant, veiculoTemAlerta } from "@/lib/veiculo-constants";
 import { StorageImage } from "@/components/veiculos/StorageImage";
 import { VeiculoForm } from "@/components/veiculos/VeiculoForm";
+import { VincularMotoristasModal } from "@/components/veiculos/VincularMotoristasModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/gestor/veiculos")({
@@ -56,6 +57,7 @@ function ListaVeiculos() {
   const [setorFiltro, setSetorFiltro] = useState<string>("todos");
   const [loading, setLoading] = useState(true);
   const [novoOpen, setNovoOpen] = useState(false);
+  const [vincularOpen, setVincularOpen] = useState(false);
 
   async function carregar() {
     setLoading(true);
@@ -100,10 +102,25 @@ function ListaVeiculos() {
           <h1 className="text-3xl font-bold">Veículos</h1>
           <p className="text-sm text-muted-foreground">{filtrados.length} de {veiculos.length} veículo(s)</p>
         </div>
-        <Button onClick={() => setNovoOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Novo veículo
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setVincularOpen(true)}>
+            <Link2 className="w-4 h-4 mr-2" /> 🔗 Vincular Motoristas
+          </Button>
+          <Button onClick={() => setNovoOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Novo veículo
+          </Button>
+        </div>
       </header>
+
+      {(() => {
+        const semMot = veiculos.filter((v) => !v.motorista_id).length;
+        return semMot > 0 ? (
+          <Card className="p-3 bg-warning/10 border-warning/30 text-sm flex items-center justify-between">
+            <span>⚠ <strong>{semMot}</strong> veículo(s) sem motorista vinculado.</span>
+            <Button size="sm" variant="outline" onClick={() => setVincularOpen(true)}>Vincular agora</Button>
+          </Card>
+        ) : null;
+      })()}
 
       <Card className="p-4 flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
@@ -190,6 +207,12 @@ function ListaVeiculos() {
           })}
         </div>
       )}
+
+      <VincularMotoristasModal
+        open={vincularOpen}
+        onClose={() => setVincularOpen(false)}
+        onSaved={carregar}
+      />
 
       <Dialog open={novoOpen} onOpenChange={setNovoOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

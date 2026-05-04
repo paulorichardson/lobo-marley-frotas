@@ -30,7 +30,7 @@ interface UsuarioRow {
   email: string;
   telefone: string | null;
   ativo: boolean;
-  role: AppRole;
+  role: AppRole | null;
 }
 
 export const Route = createFileRoute("/admin/configuracoes")({
@@ -62,7 +62,7 @@ function Configuracoes() {
     const { data: roles } = await supabase.from("user_roles").select("user_id, role");
     const map = new Map<string, AppRole>();
     roles?.forEach((r: any) => map.set(r.user_id, r.role));
-    setUsers((perfis ?? []).map((p: any) => ({ ...p, role: map.get(p.id) ?? "motorista" })));
+    setUsers((perfis ?? []).map((p: any) => ({ ...p, role: map.get(p.id) ?? null as any })));
     setLoading(false);
   }
 
@@ -140,12 +140,15 @@ function Configuracoes() {
                         {u.email}{u.telefone ? ` · ${u.telefone}` : ""}
                       </p>
                     </div>
+                    {!u.role && (
+                      <Badge variant="destructive" className="text-[10px]">⚠ Sem perfil</Badge>
+                    )}
                     <Badge variant={u.ativo ? "default" : "secondary"} className="text-[10px]">
                       {u.ativo ? "Ativo" : "Inativo"}
                     </Badge>
-                    <Select value={u.role} onValueChange={(v) => alterarRole(u.id, v as AppRole)}>
-                      <SelectTrigger className="w-[170px] h-9">
-                        <SelectValue />
+                    <Select value={u.role ?? undefined} onValueChange={(v) => alterarRole(u.id, v as AppRole)}>
+                      <SelectTrigger className={`w-[170px] h-9 ${!u.role ? "border-destructive" : ""}`}>
+                        <SelectValue placeholder="⚠ Atribuir perfil" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="motorista">Motorista</SelectItem>

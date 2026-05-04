@@ -26,6 +26,7 @@ import { Route as MotoristaEncerrarJornadaRouteImport } from './routes/motorista
 import { Route as MotoristaChecklistRouteImport } from './routes/motorista/checklist'
 import { Route as MotoristaAbastecimentoRouteImport } from './routes/motorista/abastecimento'
 import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
+import { Route as GestorRelatoriosRouteImport } from './routes/gestor/relatorios'
 import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas'
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
 import { Route as FornecedorSolicitacoesRouteImport } from './routes/fornecedor/solicitacoes'
@@ -133,6 +134,11 @@ const MotoristaAbastecimentoRoute = MotoristaAbastecimentoRouteImport.update({
 const GestorVeiculosRoute = GestorVeiculosRouteImport.update({
   id: '/gestor/veiculos',
   path: '/gestor/veiculos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GestorRelatoriosRoute = GestorRelatoriosRouteImport.update({
+  id: '/gestor/relatorios',
+  path: '/gestor/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GestorMotoristasRoute = GestorMotoristasRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
+  '/gestor/relatorios': typeof GestorRelatoriosRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
+  '/gestor/relatorios': typeof GestorRelatoriosRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
+  '/gestor/relatorios': typeof GestorRelatoriosRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
+    | '/gestor/relatorios'
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
+    | '/gestor/relatorios'
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
+    | '/gestor/relatorios'
     | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
@@ -521,6 +533,7 @@ export interface RootRouteChildren {
   FornecedorSolicitacoesRoute: typeof FornecedorSolicitacoesRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
+  GestorRelatoriosRoute: typeof GestorRelatoriosRoute
   GestorVeiculosRoute: typeof GestorVeiculosRouteWithChildren
   MotoristaAbastecimentoRoute: typeof MotoristaAbastecimentoRoute
   MotoristaChecklistRoute: typeof MotoristaChecklistRoute
@@ -656,6 +669,13 @@ declare module '@tanstack/react-router' {
       path: '/gestor/veiculos'
       fullPath: '/gestor/veiculos'
       preLoaderRoute: typeof GestorVeiculosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gestor/relatorios': {
+      id: '/gestor/relatorios'
+      path: '/gestor/relatorios'
+      fullPath: '/gestor/relatorios'
+      preLoaderRoute: typeof GestorRelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gestor/motoristas': {
@@ -874,6 +894,7 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorSolicitacoesRoute: FornecedorSolicitacoesRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
+  GestorRelatoriosRoute: GestorRelatoriosRoute,
   GestorVeiculosRoute: GestorVeiculosRouteWithChildren,
   MotoristaAbastecimentoRoute: MotoristaAbastecimentoRoute,
   MotoristaChecklistRoute: MotoristaChecklistRoute,
@@ -892,12 +913,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
