@@ -118,12 +118,21 @@ function ListaVeiculos() {
           </SelectContent>
         </Select>
         <Select value={catFiltro} onValueChange={setCatFiltro}>
-          <SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="md:w-44"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="todas">Todas categorias</SelectItem>
             {CATEGORIAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
+        {setoresDisponiveis.length > 0 && (
+          <Select value={setorFiltro} onValueChange={setSetorFiltro}>
+            <SelectTrigger className="md:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos setores</SelectItem>
+              {setoresDisponiveis.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
       </Card>
 
       {loading ? (
