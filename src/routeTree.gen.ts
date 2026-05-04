@@ -28,8 +28,11 @@ import { Route as MotoristaAbastecimentoRouteImport } from './routes/motorista/a
 import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
 import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas'
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
+import { Route as FornecedorSolicitacoesRouteImport } from './routes/fornecedor/solicitacoes'
+import { Route as FornecedorServicosRouteImport } from './routes/fornecedor/servicos'
 import { Route as FornecedorServicoRouteImport } from './routes/fornecedor/servico'
 import { Route as FornecedorPerfilRouteImport } from './routes/fornecedor/perfil'
+import { Route as FornecedorOrcamentosRouteImport } from './routes/fornecedor/orcamentos'
 import { Route as FornecedorOrcamentoRouteImport } from './routes/fornecedor/orcamento'
 import { Route as FornecedorLancarPecasRouteImport } from './routes/fornecedor/lancar-pecas'
 import { Route as FornecedorHistoricoRouteImport } from './routes/fornecedor/historico'
@@ -141,6 +144,16 @@ const GestorManutencoesRoute = GestorManutencoesRouteImport.update({
   path: '/gestor/manutencoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorSolicitacoesRoute = FornecedorSolicitacoesRouteImport.update({
+  id: '/fornecedor/solicitacoes',
+  path: '/fornecedor/solicitacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FornecedorServicosRoute = FornecedorServicosRouteImport.update({
+  id: '/fornecedor/servicos',
+  path: '/fornecedor/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FornecedorServicoRoute = FornecedorServicoRouteImport.update({
   id: '/fornecedor/servico',
   path: '/fornecedor/servico',
@@ -149,6 +162,11 @@ const FornecedorServicoRoute = FornecedorServicoRouteImport.update({
 const FornecedorPerfilRoute = FornecedorPerfilRouteImport.update({
   id: '/fornecedor/perfil',
   path: '/fornecedor/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FornecedorOrcamentosRoute = FornecedorOrcamentosRouteImport.update({
+  id: '/fornecedor/orcamentos',
+  path: '/fornecedor/orcamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FornecedorOrcamentoRoute = FornecedorOrcamentoRouteImport.update({
@@ -238,8 +256,11 @@ export interface FileRoutesByFullPath {
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/orcamentos': typeof FornecedorOrcamentosRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
+  '/fornecedor/servicos': typeof FornecedorServicosRoute
+  '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
@@ -275,8 +296,11 @@ export interface FileRoutesByTo {
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/orcamentos': typeof FornecedorOrcamentosRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
+  '/fornecedor/servicos': typeof FornecedorServicosRoute
+  '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
@@ -313,8 +337,11 @@ export interface FileRoutesById {
   '/fornecedor/historico': typeof FornecedorHistoricoRoute
   '/fornecedor/lancar-pecas': typeof FornecedorLancarPecasRoute
   '/fornecedor/orcamento': typeof FornecedorOrcamentoRoute
+  '/fornecedor/orcamentos': typeof FornecedorOrcamentosRoute
   '/fornecedor/perfil': typeof FornecedorPerfilRoute
   '/fornecedor/servico': typeof FornecedorServicoRoute
+  '/fornecedor/servicos': typeof FornecedorServicosRoute
+  '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
@@ -352,8 +379,11 @@ export interface FileRouteTypes {
     | '/fornecedor/historico'
     | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
+    | '/fornecedor/orcamentos'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
+    | '/fornecedor/servicos'
+    | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/veiculos'
@@ -389,8 +419,11 @@ export interface FileRouteTypes {
     | '/fornecedor/historico'
     | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
+    | '/fornecedor/orcamentos'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
+    | '/fornecedor/servicos'
+    | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/veiculos'
@@ -426,8 +459,11 @@ export interface FileRouteTypes {
     | '/fornecedor/historico'
     | '/fornecedor/lancar-pecas'
     | '/fornecedor/orcamento'
+    | '/fornecedor/orcamentos'
     | '/fornecedor/perfil'
     | '/fornecedor/servico'
+    | '/fornecedor/servicos'
+    | '/fornecedor/solicitacoes'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/veiculos'
@@ -464,8 +500,11 @@ export interface RootRouteChildren {
   FornecedorHistoricoRoute: typeof FornecedorHistoricoRoute
   FornecedorLancarPecasRoute: typeof FornecedorLancarPecasRoute
   FornecedorOrcamentoRoute: typeof FornecedorOrcamentoRoute
+  FornecedorOrcamentosRoute: typeof FornecedorOrcamentosRoute
   FornecedorPerfilRoute: typeof FornecedorPerfilRoute
   FornecedorServicoRoute: typeof FornecedorServicoRoute
+  FornecedorServicosRoute: typeof FornecedorServicosRoute
+  FornecedorSolicitacoesRoute: typeof FornecedorSolicitacoesRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
   GestorVeiculosRoute: typeof GestorVeiculosRouteWithChildren
@@ -619,6 +658,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GestorManutencoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/solicitacoes': {
+      id: '/fornecedor/solicitacoes'
+      path: '/fornecedor/solicitacoes'
+      fullPath: '/fornecedor/solicitacoes'
+      preLoaderRoute: typeof FornecedorSolicitacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fornecedor/servicos': {
+      id: '/fornecedor/servicos'
+      path: '/fornecedor/servicos'
+      fullPath: '/fornecedor/servicos'
+      preLoaderRoute: typeof FornecedorServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fornecedor/servico': {
       id: '/fornecedor/servico'
       path: '/fornecedor/servico'
@@ -631,6 +684,13 @@ declare module '@tanstack/react-router' {
       path: '/fornecedor/perfil'
       fullPath: '/fornecedor/perfil'
       preLoaderRoute: typeof FornecedorPerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fornecedor/orcamentos': {
+      id: '/fornecedor/orcamentos'
+      path: '/fornecedor/orcamentos'
+      fullPath: '/fornecedor/orcamentos'
+      preLoaderRoute: typeof FornecedorOrcamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/orcamento': {
@@ -785,8 +845,11 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorHistoricoRoute: FornecedorHistoricoRoute,
   FornecedorLancarPecasRoute: FornecedorLancarPecasRoute,
   FornecedorOrcamentoRoute: FornecedorOrcamentoRoute,
+  FornecedorOrcamentosRoute: FornecedorOrcamentosRoute,
   FornecedorPerfilRoute: FornecedorPerfilRoute,
   FornecedorServicoRoute: FornecedorServicoRoute,
+  FornecedorServicosRoute: FornecedorServicosRoute,
+  FornecedorSolicitacoesRoute: FornecedorSolicitacoesRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
   GestorVeiculosRoute: GestorVeiculosRouteWithChildren,

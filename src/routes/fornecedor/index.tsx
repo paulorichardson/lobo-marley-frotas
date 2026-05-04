@@ -10,11 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Wallet, CheckCircle2, Clock, CreditCard, Fuel, Wrench, FileSpreadsheet,
-  AlertTriangle, Loader2,
+  AlertTriangle, Loader2, Bell, Megaphone,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/fornecedor/")({
   head: () => ({ meta: [{ title: "Painel — Lobo Marley" }] }),
@@ -49,6 +50,8 @@ function FornecedorDashboard() {
   const [serieSemana, setSerieSemana] = useState<{ semana: string; valor: number }[]>([]);
   const [orcamentosVencendo, setOrcamentosVencendo] = useState<any[]>([]);
   const [aprovadosAguardando, setAprovadosAguardando] = useState<any[]>([]);
+  const [solicDiretas, setSolicDiretas] = useState(0);
+  const [solicRede, setSolicRede] = useState(0);
 
   useEffect(() => {
     if (!user) return;
