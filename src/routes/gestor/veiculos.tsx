@@ -43,6 +43,7 @@ interface VeiculoRow {
   vencimento_licenciamento: string | null;
   vencimento_ipva: string | null;
   vencimento_seguro: string | null;
+  setor: string | null;
 }
 
 function ListaVeiculos() {
