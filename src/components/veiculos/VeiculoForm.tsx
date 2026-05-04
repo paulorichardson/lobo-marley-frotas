@@ -228,7 +228,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
     if (!user) return;
     setSalvando(true);
     try {
-      const placaNorm = normalizarPlaca(values.placa);
+      const tipo = getTipoBem(values.tipo_bem);
+      const placaNorm = tipo.validaPlaca
+        ? normalizarPlaca(values.placa)
+        : values.placa.trim().toUpperCase();
 
       // Uploads
       let foto_principal_url = values.foto_principal_url;
