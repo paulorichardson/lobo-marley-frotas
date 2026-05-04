@@ -24,6 +24,8 @@ import {
   COMBUSTIVEIS,
   STATUS_VEICULO,
   TIPOS_FOTO,
+  TIPOS_BEM,
+  getTipoBem,
   vencendoEmBreve,
 } from "@/lib/veiculo-constants";
 import { toast } from "sonner";
