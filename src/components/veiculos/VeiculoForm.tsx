@@ -52,7 +52,23 @@ export interface VeiculoFormValues {
   foto_principal_url: string;
   doc_crlv_url: string;
   doc_seguro_url: string;
+  setor: string;
 }
+
+const SETORES_SUGERIDOS = [
+  "Gabinete",
+  "Obras",
+  "Saúde",
+  "SAMU 192",
+  "Educação",
+  "Assistência Social",
+  "Infraestrutura",
+  "Agricultura",
+  "Meio Ambiente",
+  "Cultura",
+  "Esportes",
+  "Administração",
+];
 
 const EMPTY: VeiculoFormValues = {
   placa: "",
