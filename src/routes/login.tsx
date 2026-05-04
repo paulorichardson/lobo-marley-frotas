@@ -255,6 +255,16 @@ function LoginPage() {
             🤝 Seja um Fornecedor Credenciado →
           </a>
         </Card>
+
+        {/* Gatilho secreto: 5 cliques para desbloquear demo */}
+        <button
+          type="button"
+          onClick={handleSecretTap}
+          aria-label="."
+          className="block mx-auto w-6 h-6 opacity-0 hover:opacity-10"
+        >
+          ·
+        </button>
       </div>
     </div>
   );
