@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     }).select("id").single();
 
     // 7) OS (Manutenção) — inicialmente em prejuízo
-    const { data: manut } = await admin.from("manutencoes").insert({
+    const { data: manut, error: manutErr } = await admin.from("manutencoes").insert({
       empresa_id, veiculo_id,
       fornecedor_id: ids["fornecedor"],
       solicitado_por: ids["motorista"],
@@ -130,6 +130,7 @@ Deno.serve(async (req) => {
       custo_fornecedor: 650,
       oficina_nome: "Centro Automotivo Bahia Diesel",
     }).select("id, numero_os").single();
+    if (manutErr || !manut) throw new Error("manutencao: " + (manutErr?.message || "null"));
 
     await admin.from("manutencao_pecas").insert([
       { manutencao_id: manut!.id, descricao: "Pastilha de freio", quantidade: 1, valor_unitario: 180 },
