@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Truck, LayoutDashboard, ClipboardCheck, Fuel, Wrench, LogOut, Map, FileText,
   Users, Settings, Receipt, Camera, History, Building2, CreditCard, FileSpreadsheet,
-  User as UserIcon, ListChecks, Package,
+  User as UserIcon, ListChecks, Package, Bell, CheckCircle2, Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoUrl from "@/assets/lobo-marley-logo.svg";
