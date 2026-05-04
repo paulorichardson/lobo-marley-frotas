@@ -24,6 +24,8 @@ import {
   COMBUSTIVEIS,
   STATUS_VEICULO,
   TIPOS_FOTO,
+  TIPOS_BEM,
+  getTipoBem,
   vencendoEmBreve,
 } from "@/lib/veiculo-constants";
 import { toast } from "sonner";
@@ -53,6 +55,10 @@ export interface VeiculoFormValues {
   doc_crlv_url: string;
   doc_seguro_url: string;
   setor: string;
+  tipo_bem: string;
+  horimetro: string;
+  numero_patrimonio: string;
+  numero_serie: string;
 }
 
 const SETORES_SUGERIDOS = [
@@ -92,6 +98,10 @@ const EMPTY: VeiculoFormValues = {
   doc_crlv_url: "",
   doc_seguro_url: "",
   setor: "",
+  tipo_bem: "veiculo",
+  horimetro: "",
+  numero_patrimonio: "",
+  numero_serie: "",
 };
 
 interface FotoExtra {
@@ -197,7 +207,12 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
   }
 
   function validar(): string | null {
-    if (!placaValida(values.placa)) return "Placa inválida (use AAA-0000 ou AAA0A00)";
+    const tipo = getTipoBem(values.tipo_bem);
+    if (tipo.validaPlaca) {
+      if (!placaValida(values.placa)) return "Placa inválida (use AAA-0000 ou AAA0A00)";
+    } else {
+      if (!values.placa.trim()) return `${tipo.placaLabel} é obrigatório`;
+    }
     if (!values.marca.trim()) return "Marca é obrigatória";
     if (!values.modelo.trim()) return "Modelo é obrigatório";
     return null;
@@ -213,7 +228,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
     if (!user) return;
     setSalvando(true);
     try {
-      const placaNorm = normalizarPlaca(values.placa);
+      const tipo = getTipoBem(values.tipo_bem);
+      const placaNorm = tipo.validaPlaca
+        ? normalizarPlaca(values.placa)
+        : values.placa.trim().toUpperCase();
 
       // Uploads
       let foto_principal_url = values.foto_principal_url;
@@ -258,6 +276,10 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         cadastrado_por: user.id,
         empresa_id,
         setor: values.setor.trim() || null,
+        tipo_bem: values.tipo_bem || "veiculo",
+        horimetro: values.horimetro ? Number(values.horimetro) : null,
+        numero_patrimonio: values.numero_patrimonio.trim() || null,
+        numero_serie: values.numero_serie.trim() || null,
       };
 
       let veiculoId = values.id;
@@ -307,24 +329,41 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
       {/* Identificação */}
       <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Identificação</h3>
+
+        <div className="space-y-1.5">
+          <Label>Tipo de bem *</Label>
+          <Select value={values.tipo_bem} onValueChange={(v) => set("tipo_bem", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {TIPOS_BEM.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Use "Máquina" para tratores, retroescavadeiras, pá-carregadeiras, etc. (sem placa veicular).
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-4">
           <div className="space-y-1.5 md:col-span-1">
-            <Label htmlFor="placa">Placa *</Label>
+            <Label htmlFor="placa">{getTipoBem(values.tipo_bem).placaLabel} *</Label>
             <div className="relative">
               <Input
                 id="placa"
-                value={formatarPlaca(values.placa)}
-                onChange={(e) => set("placa", normalizarPlaca(e.target.value))}
-                onBlur={handlePlacaBlur}
-                placeholder="AAA-0000"
-                maxLength={8}
+                value={getTipoBem(values.tipo_bem).validaPlaca ? formatarPlaca(values.placa) : values.placa}
+                onChange={(e) => {
+                  const t = getTipoBem(values.tipo_bem);
+                  set("placa", t.validaPlaca ? normalizarPlaca(e.target.value) : e.target.value.toUpperCase());
+                }}
+                onBlur={getTipoBem(values.tipo_bem).validaPlaca ? handlePlacaBlur : undefined}
+                placeholder={getTipoBem(values.tipo_bem).placaPlaceholder}
+                maxLength={20}
                 className="uppercase font-mono tracking-wider"
               />
               {consultandoPlaca && (
                 <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-accent" />
               )}
             </div>
-            {values.placa && !placaValida(values.placa) && (
+            {getTipoBem(values.tipo_bem).validaPlaca && values.placa && !placaValida(values.placa) && (
               <p className="text-xs text-destructive">Formato inválido</p>
             )}
           </div>
@@ -389,16 +428,33 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
             <Label htmlFor="chassi">Chassi</Label>
             <Input id="chassi" value={values.chassi} onChange={(e) => set("chassi", e.target.value)} />
           </div>
+          {getTipoBem(values.tipo_bem).validaPlaca && (
+            <div className="space-y-1.5">
+              <Label htmlFor="renavam">Renavam</Label>
+              <Input id="renavam" value={values.renavam} onChange={(e) => set("renavam", e.target.value)} />
+            </div>
+          )}
           <div className="space-y-1.5">
-            <Label htmlFor="renavam">Renavam</Label>
-            <Input id="renavam" value={values.renavam} onChange={(e) => set("renavam", e.target.value)} />
+            <Label htmlFor="patrimonio">Nº Patrimônio</Label>
+            <Input id="patrimonio" value={values.numero_patrimonio} onChange={(e) => set("numero_patrimonio", e.target.value)} placeholder="Ex.: 12345" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="km">KM atual</Label>
-            <Input id="km" type="number" value={values.km_atual} onChange={(e) => set("km_atual", e.target.value)} />
+            <Label htmlFor="serie">Nº Série</Label>
+            <Input id="serie" value={values.numero_serie} onChange={(e) => set("numero_serie", e.target.value)} />
           </div>
+          {getTipoBem(values.tipo_bem).usaHorimetro ? (
+            <div className="space-y-1.5">
+              <Label htmlFor="horimetro">Horímetro (horas de uso)</Label>
+              <Input id="horimetro" type="number" value={values.horimetro} onChange={(e) => set("horimetro", e.target.value)} placeholder="0" />
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label htmlFor="km">KM atual</Label>
+              <Input id="km" type="number" value={values.km_atual} onChange={(e) => set("km_atual", e.target.value)} />
+            </div>
+          )}
           <div className="space-y-1.5">
-            <Label htmlFor="km_rev">KM próxima revisão</Label>
+            <Label htmlFor="km_rev">{getTipoBem(values.tipo_bem).usaHorimetro ? "Horas próx. revisão" : "KM próxima revisão"}</Label>
             <Input
               id="km_rev"
               type="number"
@@ -437,15 +493,17 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         </div>
       </Card>
 
-      {/* Vencimentos */}
-      <Card className="p-5 space-y-4">
-        <h3 className="font-semibold">Documentação</h3>
-        <div className="grid md:grid-cols-3 gap-4">
-          <DataField label="Vencimento Licenciamento" value={values.vencimento_licenciamento} onChange={(v) => set("vencimento_licenciamento", v)} />
-          <DataField label="Vencimento IPVA" value={values.vencimento_ipva} onChange={(v) => set("vencimento_ipva", v)} />
-          <DataField label="Vencimento Seguro" value={values.vencimento_seguro} onChange={(v) => set("vencimento_seguro", v)} />
-        </div>
-      </Card>
+      {/* Vencimentos — só para veículos com placa */}
+      {getTipoBem(values.tipo_bem).mostraDocs && (
+        <Card className="p-5 space-y-4">
+          <h3 className="font-semibold">Documentação</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <DataField label="Vencimento Licenciamento" value={values.vencimento_licenciamento} onChange={(v) => set("vencimento_licenciamento", v)} />
+            <DataField label="Vencimento IPVA" value={values.vencimento_ipva} onChange={(v) => set("vencimento_ipva", v)} />
+            <DataField label="Vencimento Seguro" value={values.vencimento_seguro} onChange={(v) => set("vencimento_seguro", v)} />
+          </div>
+        </Card>
+      )}
 
       {/* Foto principal */}
       <Card className="p-5 space-y-4">

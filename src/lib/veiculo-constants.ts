@@ -2,6 +2,19 @@ export const COMBUSTIVEIS = ["Gasolina", "Diesel", "Flex", "Elétrico", "GNV", "
 export const CATEGORIAS = ["Carro", "Caminhonete", "Van", "Ônibus", "Caminhão", "Moto", "Máquina", "Outro"] as const;
 export const STATUS_VEICULO = ["Ativo", "Em Manutenção", "Inativo", "Vendido"] as const;
 
+export const TIPOS_BEM = [
+  { value: "veiculo", label: "🚗 Veículo (com placa)", placaLabel: "Placa", placaPlaceholder: "AAA-0000", validaPlaca: true, usaHorimetro: false, mostraDocs: true },
+  { value: "maquina", label: "🚜 Máquina pesada", placaLabel: "Identificação / Patrimônio", placaPlaceholder: "TR-001", validaPlaca: false, usaHorimetro: true, mostraDocs: false },
+  { value: "implemento", label: "🔧 Implemento agrícola", placaLabel: "Identificação / Patrimônio", placaPlaceholder: "IM-001", validaPlaca: false, usaHorimetro: false, mostraDocs: false },
+  { value: "equipamento", label: "⚙️ Equipamento", placaLabel: "Identificação / Patrimônio", placaPlaceholder: "EQ-001", validaPlaca: false, usaHorimetro: true, mostraDocs: false },
+] as const;
+
+export type TipoBem = typeof TIPOS_BEM[number]["value"];
+
+export function getTipoBem(value: string) {
+  return TIPOS_BEM.find((t) => t.value === value) ?? TIPOS_BEM[0];
+}
+
 export const TIPOS_FOTO = [
   { value: "frontal", label: "Frontal" },
   { value: "traseira", label: "Traseira" },
