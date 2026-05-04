@@ -44,6 +44,8 @@ interface Manut {
   enviado_para_rede: boolean | null;
   total_orcamentos_recebidos: number | null;
   observacoes: string | null;
+  numero_os: string | null;
+  codigo_autorizacao: string | null;
 }
 
 function tempo(iso: string) {
@@ -200,6 +202,16 @@ function SolicitacoesPage() {
           )}
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-1 mb-1">
+              {m.numero_os && (
+                <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                  {m.numero_os}
+                </span>
+              )}
+              {m.codigo_autorizacao && (
+                <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700">
+                  ✓ {m.codigo_autorizacao}
+                </span>
+              )}
               <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded", urgenciaCls(m.prioridade))}>
                 {m.prioridade}
               </span>
