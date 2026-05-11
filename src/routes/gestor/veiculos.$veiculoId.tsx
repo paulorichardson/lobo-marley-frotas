@@ -78,6 +78,8 @@ function DetalheVeiculo() {
       foto_principal_url: veiculo.foto_principal_url || "",
       doc_crlv_url: veiculo.doc_crlv_url || "",
       doc_seguro_url: veiculo.doc_seguro_url || "",
+      codigo_siga: veiculo.codigo_siga || "",
+      tipo_combustivel_siga: veiculo.tipo_combustivel_siga || "",
     };
     return (
       <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-4">
@@ -173,6 +175,8 @@ function DadosTab({ veiculo, motoristaNome }: { veiculo: any; motoristaNome: str
       <DateField label="Vencimento Licenciamento" value={veiculo.vencimento_licenciamento} />
       <DateField label="Vencimento IPVA" value={veiculo.vencimento_ipva} />
       <DateField label="Vencimento Seguro" value={veiculo.vencimento_seguro} />
+      <Field label="Código SIGA-TCM" value={veiculo.codigo_siga} />
+      <Field label="Combustível SIGA-TCM" value={veiculo.tipo_combustivel_siga} />
     </Card>
   );
 }
