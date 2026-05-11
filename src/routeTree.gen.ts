@@ -30,6 +30,7 @@ import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
 import { Route as GestorRelatoriosRouteImport } from './routes/gestor/relatorios'
 import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas'
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
+import { Route as GestorFinanceiroRouteImport } from './routes/gestor/financeiro'
 import { Route as FornecedorSolicitacoesRouteImport } from './routes/fornecedor/solicitacoes'
 import { Route as FornecedorServicosRouteImport } from './routes/fornecedor/servicos'
 import { Route as FornecedorServicoRouteImport } from './routes/fornecedor/servico'
@@ -157,6 +158,11 @@ const GestorManutencoesRoute = GestorManutencoesRouteImport.update({
   path: '/gestor/manutencoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GestorFinanceiroRoute = GestorFinanceiroRouteImport.update({
+  id: '/gestor/financeiro',
+  path: '/gestor/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FornecedorSolicitacoesRoute = FornecedorSolicitacoesRouteImport.update({
   id: '/fornecedor/solicitacoes',
   path: '/fornecedor/solicitacoes',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -324,6 +331,7 @@ export interface FileRoutesByTo {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -368,6 +376,7 @@ export interface FileRoutesById {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -413,6 +422,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -543,6 +555,7 @@ export interface RootRouteChildren {
   FornecedorServicoRoute: typeof FornecedorServicoRoute
   FornecedorServicosRoute: typeof FornecedorServicosRoute
   FornecedorSolicitacoesRoute: typeof FornecedorSolicitacoesRoute
+  GestorFinanceiroRoute: typeof GestorFinanceiroRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
   GestorRelatoriosRoute: typeof GestorRelatoriosRoute
@@ -711,6 +724,13 @@ declare module '@tanstack/react-router' {
       path: '/gestor/manutencoes'
       fullPath: '/gestor/manutencoes'
       preLoaderRoute: typeof GestorManutencoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gestor/financeiro': {
+      id: '/gestor/financeiro'
+      path: '/gestor/financeiro'
+      fullPath: '/gestor/financeiro'
+      preLoaderRoute: typeof GestorFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/solicitacoes': {
@@ -901,6 +921,7 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorServicoRoute: FornecedorServicoRoute,
   FornecedorServicosRoute: FornecedorServicosRoute,
   FornecedorSolicitacoesRoute: FornecedorSolicitacoesRoute,
+  GestorFinanceiroRoute: GestorFinanceiroRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
   GestorRelatoriosRoute: GestorRelatoriosRoute,
