@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CredenciamentoRouteImport } from './routes/credenciamento'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,7 @@ import { Route as GestorVeiculosRouteImport } from './routes/gestor/veiculos'
 import { Route as GestorRelatoriosRouteImport } from './routes/gestor/relatorios'
 import { Route as GestorMotoristasRouteImport } from './routes/gestor/motoristas'
 import { Route as GestorManutencoesRouteImport } from './routes/gestor/manutencoes'
+import { Route as GestorFinanceiroRouteImport } from './routes/gestor/financeiro'
 import { Route as FornecedorSolicitacoesRouteImport } from './routes/fornecedor/solicitacoes'
 import { Route as FornecedorServicosRouteImport } from './routes/fornecedor/servicos'
 import { Route as FornecedorServicoRouteImport } from './routes/fornecedor/servico'
@@ -50,6 +52,11 @@ import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/vei
 import { Route as AdminFinanceiroFornecedoresRouteImport } from './routes/admin/financeiro.fornecedores'
 import { Route as AdminClientesEmpresaIdRouteImport } from './routes/admin/clientes.$empresaId'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -149,6 +156,11 @@ const GestorMotoristasRoute = GestorMotoristasRouteImport.update({
 const GestorManutencoesRoute = GestorManutencoesRouteImport.update({
   id: '/gestor/manutencoes',
   path: '/gestor/manutencoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GestorFinanceiroRoute = GestorFinanceiroRouteImport.update({
+  id: '/gestor/financeiro',
+  path: '/gestor/financeiro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FornecedorSolicitacoesRoute = FornecedorSolicitacoesRouteImport.update({
@@ -258,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -300,6 +314,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -316,6 +331,7 @@ export interface FileRoutesByTo {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -343,6 +359,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -359,6 +376,7 @@ export interface FileRoutesById {
   '/fornecedor/servico': typeof FornecedorServicoRoute
   '/fornecedor/servicos': typeof FornecedorServicosRoute
   '/fornecedor/solicitacoes': typeof FornecedorSolicitacoesRoute
+  '/gestor/financeiro': typeof GestorFinanceiroRoute
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
@@ -387,6 +405,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -403,6 +422,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -429,6 +449,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -445,6 +466,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -471,6 +493,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -487,6 +510,7 @@ export interface FileRouteTypes {
     | '/fornecedor/servico'
     | '/fornecedor/servicos'
     | '/fornecedor/solicitacoes'
+    | '/gestor/financeiro'
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
@@ -514,6 +538,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CredenciamentoRoute: typeof CredenciamentoRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AbastecerVeiculoIdRoute: typeof AbastecerVeiculoIdRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
@@ -530,6 +555,7 @@ export interface RootRouteChildren {
   FornecedorServicoRoute: typeof FornecedorServicoRoute
   FornecedorServicosRoute: typeof FornecedorServicosRoute
   FornecedorSolicitacoesRoute: typeof FornecedorSolicitacoesRoute
+  GestorFinanceiroRoute: typeof GestorFinanceiroRoute
   GestorManutencoesRoute: typeof GestorManutencoesRoute
   GestorMotoristasRoute: typeof GestorMotoristasRoute
   GestorRelatoriosRoute: typeof GestorRelatoriosRoute
@@ -553,6 +579,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -691,6 +724,13 @@ declare module '@tanstack/react-router' {
       path: '/gestor/manutencoes'
       fullPath: '/gestor/manutencoes'
       preLoaderRoute: typeof GestorManutencoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gestor/financeiro': {
+      id: '/gestor/financeiro'
+      path: '/gestor/financeiro'
+      fullPath: '/gestor/financeiro'
+      preLoaderRoute: typeof GestorFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/solicitacoes': {
@@ -864,6 +904,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CredenciamentoRoute: CredenciamentoRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   AbastecerVeiculoIdRoute: AbastecerVeiculoIdRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
@@ -880,6 +921,7 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorServicoRoute: FornecedorServicoRoute,
   FornecedorServicosRoute: FornecedorServicosRoute,
   FornecedorSolicitacoesRoute: FornecedorSolicitacoesRoute,
+  GestorFinanceiroRoute: GestorFinanceiroRoute,
   GestorManutencoesRoute: GestorManutencoesRoute,
   GestorMotoristasRoute: GestorMotoristasRoute,
   GestorRelatoriosRoute: GestorRelatoriosRoute,

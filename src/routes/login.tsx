@@ -173,6 +173,23 @@ function LoginPage() {
               {mode === "login" ? "Entrar" : "Criar conta"}
             </Button>
 
+            {mode === "login" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!email) return toast.error("Informe seu e-mail acima primeiro");
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) toast.error(error.message);
+                  else toast.success("Enviamos um link de redefinição para seu e-mail");
+                }}
+                className="w-full text-xs text-accent hover:underline text-center"
+              >
+                Esqueci minha senha
+              </button>
+            )}
+
             <p className="text-xs text-center text-muted-foreground">
               {mode === "login" ? (
                 <>Ainda não tem conta?{" "}

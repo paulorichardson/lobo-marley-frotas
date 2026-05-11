@@ -34,6 +34,8 @@ const STATIC_NAV: Record<Exclude<AppRole, "fornecedor">, NavItem[]> = {
     { to: "/gestor/veiculos", label: "Veículos", icon: Truck },
     { to: "/gestor/motoristas", label: "Motoristas", icon: Users },
     { to: "/gestor/manutencoes", label: "Manutenções", icon: Wrench },
+    { to: "/gestor/financeiro", label: "Financeiro", icon: Receipt },
+    { to: "/gestor/relatorios", label: "Relatórios", icon: FileText },
   ],
   motorista: [
     { to: "/motorista", label: "Início", icon: LayoutDashboard },
