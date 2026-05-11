@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CredenciamentoRouteImport } from './routes/credenciamento'
 import { Route as IndexRouteImport } from './routes/index'
@@ -50,6 +51,11 @@ import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/vei
 import { Route as AdminFinanceiroFornecedoresRouteImport } from './routes/admin/financeiro.fornecedores'
 import { Route as AdminClientesEmpresaIdRouteImport } from './routes/admin/clientes.$empresaId'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -429,6 +439,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -471,6 +482,7 @@ export interface FileRouteTypes {
     | '/'
     | '/credenciamento'
     | '/login'
+    | '/reset-password'
     | '/abastecer/$veiculoId'
     | '/admin/configuracoes'
     | '/admin/financeiro'
@@ -514,6 +526,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CredenciamentoRoute: typeof CredenciamentoRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AbastecerVeiculoIdRoute: typeof AbastecerVeiculoIdRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
@@ -553,6 +566,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -864,6 +884,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CredenciamentoRoute: CredenciamentoRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   AbastecerVeiculoIdRoute: AbastecerVeiculoIdRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
