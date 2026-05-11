@@ -249,9 +249,9 @@ const AdminFinanceiroFornecedoresRoute =
     getParentRoute: () => AdminFinanceiroRoute,
   } as any)
 const AdminClientesEmpresaIdRoute = AdminClientesEmpresaIdRouteImport.update({
-  id: '/$empresaId',
-  path: '/$empresaId',
-  getParentRoute: () => AdminClientesRoute,
+  id: '/admin/clientes/$empresaId',
+  path: '/admin/clientes/$empresaId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -547,6 +547,7 @@ export interface RootRouteChildren {
   FornecedorIndexRoute: typeof FornecedorIndexRoute
   GestorIndexRoute: typeof GestorIndexRoute
   MotoristaIndexRoute: typeof MotoristaIndexRoute
+  AdminClientesEmpresaIdRoute: typeof AdminClientesEmpresaIdRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
 }
 
@@ -827,10 +828,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/clientes/$empresaId': {
       id: '/admin/clientes/$empresaId'
-      path: '/$empresaId'
+      path: '/admin/clientes/$empresaId'
       fullPath: '/admin/clientes/$empresaId'
       preLoaderRoute: typeof AdminClientesEmpresaIdRouteImport
-      parentRoute: typeof AdminClientesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -896,17 +897,9 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorIndexRoute: FornecedorIndexRoute,
   GestorIndexRoute: GestorIndexRoute,
   MotoristaIndexRoute: MotoristaIndexRoute,
+  AdminClientesEmpresaIdRoute: AdminClientesEmpresaIdRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
