@@ -24,7 +24,8 @@ export function useFornecedorTipos() {
       setTipos(((data?.tipos_fornecimento as string[]) ?? []) as TipoFornecimento[]);
       setLoading(false);
     })();
-  }, [user, hasRole]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   return {
     tipos,
