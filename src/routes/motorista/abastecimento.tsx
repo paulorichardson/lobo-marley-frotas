@@ -33,9 +33,29 @@ function AbastecimentoPage() {
   const [combustivel, setCombustivel] = useState("");
   const [posto, setPosto] = useState("");
   const [fotoComprovante, setFotoComprovante] = useState<File | null>(null);
+  const [numeroTicket, setNumeroTicket] = useState("");
   const [loading, setLoading] = useState(false);
   const [kmAnterior, setKmAnterior] = useState<number>(0);
   const [veiculoId, setVeiculoId] = useState<string | null>(null);
+  const [cpfMotorista, setCpfMotorista] = useState<string>("");
+
+  // Carregar CPF do perfil quando disponível (campo opcional — coluna pode não existir)
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("perfis" as any)
+          .select("telefone")
+          .eq("id", user.id)
+          .maybeSingle();
+        // CPF não está no perfil padrão — fica vazio para o motorista preencher se desejar
+        void data;
+      } catch {
+        /* ignore */
+      }
+    })();
+  }, [user]);
 
   const total =
     litros && valorLitro
@@ -92,6 +112,8 @@ function AbastecimentoPage() {
         combustivel,
         posto: posto || null,
         comprovante_url: compUrl,
+        numero_ticket: numeroTicket.trim() || null,
+        cpf_motorista: cpfMotorista.replace(/\D/g, "") || null,
       });
       if (error) throw error;
 
@@ -177,6 +199,28 @@ function AbastecimentoPage() {
           placeholder="Ex: Shell Av. Paulista"
           className="mt-1 h-12"
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="font-semibold">Nº Ticket / NF</Label>
+          <Input
+            value={numeroTicket}
+            onChange={(e) => setNumeroTicket(e.target.value)}
+            placeholder="Opcional"
+            className="mt-1 h-12"
+          />
+        </div>
+        <div>
+          <Label className="font-semibold">CPF</Label>
+          <Input
+            value={cpfMotorista}
+            onChange={(e) => setCpfMotorista(e.target.value)}
+            placeholder="Opcional"
+            inputMode="numeric"
+            className="mt-1 h-12"
+          />
+        </div>
       </div>
 
       <div>
