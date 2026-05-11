@@ -59,7 +59,19 @@ export interface VeiculoFormValues {
   horimetro: string;
   numero_patrimonio: string;
   numero_serie: string;
+  codigo_siga: string;
+  tipo_combustivel_siga: string;
 }
+
+const TIPOS_COMBUSTIVEL_SIGA = [
+  "ALCOOL",
+  "GASOLINA",
+  "DIESEL",
+  "GNV",
+  "FLEX",
+  "ELETRICO",
+  "HIBRIDO",
+];
 
 const SETORES_SUGERIDOS = [
   "Gabinete",
@@ -102,6 +114,8 @@ const EMPTY: VeiculoFormValues = {
   horimetro: "",
   numero_patrimonio: "",
   numero_serie: "",
+  codigo_siga: "",
+  tipo_combustivel_siga: "",
 };
 
 interface FotoExtra {
@@ -280,6 +294,8 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         horimetro: values.horimetro ? Number(values.horimetro) : null,
         numero_patrimonio: values.numero_patrimonio.trim() || null,
         numero_serie: values.numero_serie.trim() || null,
+        codigo_siga: values.codigo_siga.trim() || null,
+        tipo_combustivel_siga: values.tipo_combustivel_siga || null,
       };
 
       let veiculoId = values.id;
@@ -489,6 +505,43 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
             <p className="text-xs text-muted-foreground">
               Use para subdividir a frota por secretaria/órgão. Deixe vazio se não se aplica.
             </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* SIGA-TCM */}
+      <Card className="p-5 space-y-4 border-amber-300/40 bg-amber-50/40 dark:bg-amber-950/10">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold flex items-center gap-2">
+            🏛️ Configuração SIGA-TCM
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">TCM/BA</span>
+          </h3>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Esses dados são usados na exportação para o Tribunal de Contas dos Municípios da Bahia. Preencha apenas se a prefeitura usa o SIGA-TCM.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="codigo_siga">Código SIGA</Label>
+            <Input
+              id="codigo_siga"
+              value={values.codigo_siga}
+              onChange={(e) => set("codigo_siga", e.target.value)}
+              placeholder="Código interno da prefeitura"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Tipo de Combustível SIGA</Label>
+            <Select
+              value={values.tipo_combustivel_siga || "none"}
+              onValueChange={(v) => set("tipo_combustivel_siga", v === "none" ? "" : v)}
+            >
+              <SelectTrigger><SelectValue placeholder="— não definido —" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">— não definido —</SelectItem>
+                {TIPOS_COMBUSTIVEL_SIGA.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </Card>

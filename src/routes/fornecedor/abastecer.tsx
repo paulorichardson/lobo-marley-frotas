@@ -59,6 +59,8 @@ function AbastecerPage() {
   const [autorizadoPor, setAutorizadoPor] = useState("");
   const [postoNome, setPostoNome] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [numeroTicket, setNumeroTicket] = useState("");
+  const [cpfMotorista, setCpfMotorista] = useState("");
 
   const [fotoHodometro, setFotoHodometro] = useState<File | null>(null);
   const [fotoComprovante, setFotoComprovante] = useState<File | null>(null);
@@ -173,6 +175,8 @@ function AbastecerPage() {
         km_atual: tipoAlvo === "veiculo" ? parseFloat(km.replace(",", ".")) : 0,
         posto: postoNome,
         comprovante_url: compUrl,
+        numero_ticket: numeroTicket.trim() || null,
+        cpf_motorista: cpfMotorista.replace(/\D/g, "") || null,
         observacoes: obs || null,
       } as any);
 
@@ -349,6 +353,28 @@ function AbastecerPage() {
             placeholder="Nome / cargo"
             maxLength={100}
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Nº Ticket / NF</Label>
+            <Input
+              value={numeroTicket}
+              onChange={(e) => setNumeroTicket(e.target.value)}
+              placeholder="Opcional — usado no SIGA-TCM"
+              maxLength={50}
+            />
+          </div>
+          <div>
+            <Label>CPF do motorista</Label>
+            <Input
+              value={cpfMotorista}
+              onChange={(e) => setCpfMotorista(e.target.value)}
+              placeholder="Somente números"
+              maxLength={14}
+              inputMode="numeric"
+            />
+          </div>
         </div>
       </Card>
 

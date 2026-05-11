@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Printer, Download } from "lucide-react";
+import { Printer, Download, FileDown } from "lucide-react";
 import { exportarXLSX } from "@/lib/export-xlsx";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/gestor/relatorios")({
   head: () => ({ meta: [{ title: "Relatórios — Lobo Marley" }] }),
@@ -143,7 +144,166 @@ function RelatoriosGestor() {
           </Card>
         </div>
       )}
+
+      <SigaTcmExport setores={setores} mesPadrao={mes} />
     </div>
+  );
+}
+
+function SigaTcmExport({ setores, mesPadrao }: { setores: string[]; mesPadrao: string }) {
+  const hoje = new Date();
+  const [anoMes, ano0] = mesPadrao.split("-");
+  const [mesSel, setMesSel] = useState(ano0 || String(hoje.getMonth() + 1).padStart(2, "0"));
+  const [anoSel, setAnoSel] = useState(anoMes || String(hoje.getFullYear()));
+  const [setor, setSetor] = useState("todos");
+  const [tipo, setTipo] = useState<"frota" | "abast" | "ambos">("ambos");
+  const [gerando, setGerando] = useState(false);
+
+  function baixar(conteudo: string, nome: string) {
+    const blob = new Blob([conteudo], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = nome; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function gerarFrota(linhas: any[]): string {
+    return linhas.map((v) => [
+      (v.cnpj_prefeitura || "").replace(/\D/g, ""),
+      (v.secretaria || "NAO_INFORMADO").toUpperCase(),
+      (v.placa || "").replace("-", ""),
+      (v.marca || "").toUpperCase(),
+      (v.modelo || "").toUpperCase(),
+      v.ano || "",
+      (v.combustivel || "FLEX").toUpperCase(),
+    ].join("|")).join("\r\n");
+  }
+
+  function gerarAbast(linhas: any[]): string {
+    return linhas.map((a) => [
+      (a.cnpj_prefeitura || "").replace(/\D/g, ""),
+      a.data,
+      (a.placa || "").replace("-", ""),
+      (a.cpf_motorista || "").replace(/\D/g, ""),
+      (a.secretaria || "NAO_INFORMADO").toUpperCase(),
+      (a.combustivel || "FLEX").toUpperCase(),
+      String(a.litros ?? "0").replace(".", ","),
+      String(a.valor_litro ?? "0").replace(".", ","),
+      a.ticket || "",
+    ].join("|")).join("\r\n");
+  }
+
+  async function gerar() {
+    setGerando(true);
+    try {
+      const ano = Number(anoSel); const mes = Number(mesSel);
+      const ini = `${ano}-${String(mes).padStart(2, "0")}-01`;
+      const fimMes = new Date(ano, mes, 0).getDate();
+      const fim = `${ano}-${String(mes).padStart(2, "0")}-${String(fimMes).padStart(2, "0")} 23:59:59`;
+      const setorSafe = setor === "todos" ? "TODAS" : setor.toUpperCase().replace(/\s+/g, "_");
+      const sufixo = `${String(mes).padStart(2, "0")}_${ano}_${setorSafe}.txt`;
+
+      let total = 0;
+
+      if (tipo === "frota" || tipo === "ambos") {
+        let q = supabase.from("vw_siga_frota" as any).select("*");
+        if (setor !== "todos") q = q.eq("setor_veiculo", setor);
+        const { data, error } = await q;
+        if (error) throw error;
+        if (!data || data.length === 0) {
+          toast.warning("Nenhum veículo encontrado para o filtro");
+        } else {
+          baixar(gerarFrota(data), `FROTA_${sufixo}`);
+          total += data.length;
+        }
+      }
+
+      if (tipo === "abast" || tipo === "ambos") {
+        let q = supabase
+          .from("vw_siga_abastecimentos" as any)
+          .select("*")
+          .gte("data_hora", ini)
+          .lte("data_hora", fim)
+          .order("data_hora");
+        if (setor !== "todos") q = q.eq("setor_veiculo", setor);
+        const { data, error } = await q;
+        if (error) throw error;
+        if (!data || data.length === 0) {
+          toast.warning("Nenhum abastecimento no período");
+        } else {
+          baixar(gerarAbast(data), `ABAST_${sufixo}`);
+          total += data.length;
+        }
+      }
+
+      if (total > 0) toast.success(`Arquivo SIGA-TCM gerado (${total} registros)`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Erro ao gerar arquivo");
+    } finally {
+      setGerando(false);
+    }
+  }
+
+  const meses = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+
+  return (
+    <Card className="p-5 space-y-4 border-amber-300/40 bg-amber-50/40 dark:bg-amber-950/10 no-print">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <h3 className="font-semibold flex items-center gap-2">
+            🏛️ Exportação SIGA-TCM
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-200 text-amber-900">TCM/BA</span>
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Gera arquivos no padrão do Tribunal de Contas dos Municípios da Bahia para prestação de contas.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-4 gap-3">
+        <div>
+          <Label className="text-xs">Mês</Label>
+          <Select value={mesSel} onValueChange={setMesSel}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {meses.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs">Ano</Label>
+          <Input type="number" value={anoSel} onChange={(e) => setAnoSel(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <Label className="text-xs">Secretaria / Setor</Label>
+          <Select value={setor} onValueChange={setSetor}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todas as secretarias</SelectItem>
+              {setores.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Label className="text-xs mb-2 block">Tipo de exportação</Label>
+        <div className="grid grid-cols-3 gap-2">
+          <Button type="button" variant={tipo === "frota" ? "default" : "outline"} onClick={() => setTipo("frota")}>🚗 Frota</Button>
+          <Button type="button" variant={tipo === "abast" ? "default" : "outline"} onClick={() => setTipo("abast")}>⛽ Abastecimentos</Button>
+          <Button type="button" variant={tipo === "ambos" ? "default" : "outline"} onClick={() => setTipo("ambos")}>📦 Ambos</Button>
+        </div>
+      </div>
+
+      <Button onClick={gerar} disabled={gerando} className="w-full">
+        <FileDown className="w-4 h-4 mr-2" />
+        {gerando ? "Gerando..." : "Gerar Arquivo SIGA-TCM"}
+      </Button>
+      <p className="text-[11px] text-muted-foreground">
+        Quando o veículo não tem setor preenchido, o sistema usa o código padrão da empresa.
+      </p>
+    </Card>
   );
 }
 
