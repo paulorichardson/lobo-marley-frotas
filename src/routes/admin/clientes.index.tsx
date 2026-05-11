@@ -22,7 +22,7 @@ import {
   isValidCNPJ, lookupCNPJ, lookupCEP,
 } from "@/lib/br-validators";
 
-export const Route = createFileRoute("/admin/clientes")({
+export const Route = createFileRoute("/admin/clientes/")({
   head: () => ({
     meta: [
       { title: "Clientes — Lobo Marley" },
@@ -319,14 +319,12 @@ function NovoClienteDialog({ onCreated }: { onCreated: () => void }) {
       <DialogHeader>
         <DialogTitle>Novo cliente — etapa {step} de 3</DialogTitle>
       </DialogHeader>
-
       {/* progress */}
       <div className="flex gap-2 mb-2">
         {[1, 2, 3].map((s) => (
           <div key={s} className={`flex-1 h-1.5 rounded-full ${s <= step ? "bg-primary" : "bg-muted"}`} />
         ))}
       </div>
-
       {step === 1 && (
         <div className="space-y-3">
           <div>
@@ -405,7 +403,6 @@ function NovoClienteDialog({ onCreated }: { onCreated: () => void }) {
           </div>
         </div>
       )}
-
       {step === 2 && (
         <div className="space-y-3">
           <div>
@@ -453,7 +450,6 @@ function NovoClienteDialog({ onCreated }: { onCreated: () => void }) {
           </div>
         </div>
       )}
-
       {step === 3 && (
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">
@@ -502,7 +498,6 @@ function NovoClienteDialog({ onCreated }: { onCreated: () => void }) {
           </label>
         </div>
       )}
-
       <DialogFooter className="gap-2">
         {step > 1 && (
           <Button variant="outline" onClick={() => setStep(step - 1)} disabled={saving}>
@@ -525,5 +520,5 @@ function NovoClienteDialog({ onCreated }: { onCreated: () => void }) {
         )}
       </DialogFooter>
     </DialogContent>
-  );
+  )
 }
