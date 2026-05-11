@@ -44,8 +44,8 @@ import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
 import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/financeiro-contratual'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
-import { Route as AdminClientesRouteImport } from './routes/admin/clientes'
 import { Route as AbastecerVeiculoIdRouteImport } from './routes/abastecer.$veiculoId'
+import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes.index'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
 import { Route as AdminFinanceiroFornecedoresRouteImport } from './routes/admin/financeiro.fornecedores'
 import { Route as AdminClientesEmpresaIdRouteImport } from './routes/admin/clientes.$empresaId'
@@ -227,14 +227,14 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/admin/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminClientesRoute = AdminClientesRouteImport.update({
-  id: '/admin/clientes',
-  path: '/admin/clientes',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AbastecerVeiculoIdRoute = AbastecerVeiculoIdRouteImport.update({
   id: '/abastecer/$veiculoId',
   path: '/abastecer/$veiculoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
+  id: '/admin/clientes/',
+  path: '/admin/clientes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GestorVeiculosVeiculoIdRoute = GestorVeiculosVeiculoIdRouteImport.update({
@@ -259,7 +259,6 @@ export interface FileRoutesByFullPath {
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
-  '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
@@ -295,13 +294,13 @@ export interface FileRoutesByFullPath {
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
-  '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
@@ -337,6 +336,7 @@ export interface FileRoutesByTo {
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
+  '/admin/clientes': typeof AdminClientesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -344,7 +344,6 @@ export interface FileRoutesById {
   '/credenciamento': typeof CredenciamentoRoute
   '/login': typeof LoginRoute
   '/abastecer/$veiculoId': typeof AbastecerVeiculoIdRoute
-  '/admin/clientes': typeof AdminClientesRouteWithChildren
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
@@ -380,6 +379,7 @@ export interface FileRoutesById {
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -388,7 +388,6 @@ export interface FileRouteTypes {
     | '/credenciamento'
     | '/login'
     | '/abastecer/$veiculoId'
-    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
@@ -424,13 +423,13 @@ export interface FileRouteTypes {
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
     | '/gestor/veiculos/$veiculoId'
+    | '/admin/clientes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/credenciamento'
     | '/login'
     | '/abastecer/$veiculoId'
-    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
@@ -466,13 +465,13 @@ export interface FileRouteTypes {
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
     | '/gestor/veiculos/$veiculoId'
+    | '/admin/clientes'
   id:
     | '__root__'
     | '/'
     | '/credenciamento'
     | '/login'
     | '/abastecer/$veiculoId'
-    | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
@@ -508,6 +507,7 @@ export interface FileRouteTypes {
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
     | '/gestor/veiculos/$veiculoId'
+    | '/admin/clientes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -515,7 +515,6 @@ export interface RootRouteChildren {
   CredenciamentoRoute: typeof CredenciamentoRoute
   LoginRoute: typeof LoginRoute
   AbastecerVeiculoIdRoute: typeof AbastecerVeiculoIdRoute
-  AdminClientesRoute: typeof AdminClientesRouteWithChildren
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminFinanceiroContratualRoute: typeof AdminFinanceiroContratualRoute
@@ -548,6 +547,7 @@ export interface RootRouteChildren {
   FornecedorIndexRoute: typeof FornecedorIndexRoute
   GestorIndexRoute: typeof GestorIndexRoute
   MotoristaIndexRoute: typeof MotoristaIndexRoute
+  AdminClientesIndexRoute: typeof AdminClientesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -797,18 +797,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/clientes': {
-      id: '/admin/clientes'
-      path: '/admin/clientes'
-      fullPath: '/admin/clientes'
-      preLoaderRoute: typeof AdminClientesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/abastecer/$veiculoId': {
       id: '/abastecer/$veiculoId'
       path: '/abastecer/$veiculoId'
       fullPath: '/abastecer/$veiculoId'
       preLoaderRoute: typeof AbastecerVeiculoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/clientes/': {
+      id: '/admin/clientes/'
+      path: '/admin/clientes'
+      fullPath: '/admin/clientes/'
+      preLoaderRoute: typeof AdminClientesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gestor/veiculos/$veiculoId': {
@@ -834,18 +834,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface AdminClientesRouteChildren {
-  AdminClientesEmpresaIdRoute: typeof AdminClientesEmpresaIdRoute
-}
-
-const AdminClientesRouteChildren: AdminClientesRouteChildren = {
-  AdminClientesEmpresaIdRoute: AdminClientesEmpresaIdRoute,
-}
-
-const AdminClientesRouteWithChildren = AdminClientesRoute._addFileChildren(
-  AdminClientesRouteChildren,
-)
 
 interface AdminFinanceiroRouteChildren {
   AdminFinanceiroFornecedoresRoute: typeof AdminFinanceiroFornecedoresRoute
@@ -876,7 +864,6 @@ const rootRouteChildren: RootRouteChildren = {
   CredenciamentoRoute: CredenciamentoRoute,
   LoginRoute: LoginRoute,
   AbastecerVeiculoIdRoute: AbastecerVeiculoIdRoute,
-  AdminClientesRoute: AdminClientesRouteWithChildren,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminFinanceiroContratualRoute: AdminFinanceiroContratualRoute,
@@ -909,7 +896,17 @@ const rootRouteChildren: RootRouteChildren = {
   FornecedorIndexRoute: FornecedorIndexRoute,
   GestorIndexRoute: GestorIndexRoute,
   MotoristaIndexRoute: MotoristaIndexRoute,
+  AdminClientesIndexRoute: AdminClientesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
