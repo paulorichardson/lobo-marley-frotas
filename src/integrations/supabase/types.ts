@@ -20,6 +20,7 @@ export type Database = {
           bem_identificacao: string | null
           combustivel: string | null
           comprovante_url: string | null
+          cpf_motorista: string | null
           criado_em: string
           data_hora: string
           empresa_id: string | null
@@ -29,6 +30,7 @@ export type Database = {
           litros: number
           motorista_id: string | null
           nota_fiscal: string | null
+          numero_ticket: string | null
           observacoes: string | null
           posto: string | null
           valor_litro: number
@@ -41,6 +43,7 @@ export type Database = {
           bem_identificacao?: string | null
           combustivel?: string | null
           comprovante_url?: string | null
+          cpf_motorista?: string | null
           criado_em?: string
           data_hora?: string
           empresa_id?: string | null
@@ -50,6 +53,7 @@ export type Database = {
           litros: number
           motorista_id?: string | null
           nota_fiscal?: string | null
+          numero_ticket?: string | null
           observacoes?: string | null
           posto?: string | null
           valor_litro: number
@@ -62,6 +66,7 @@ export type Database = {
           bem_identificacao?: string | null
           combustivel?: string | null
           comprovante_url?: string | null
+          cpf_motorista?: string | null
           criado_em?: string
           data_hora?: string
           empresa_id?: string | null
@@ -71,6 +76,7 @@ export type Database = {
           litros?: number
           motorista_id?: string | null
           nota_fiscal?: string | null
+          numero_ticket?: string | null
           observacoes?: string | null
           posto?: string | null
           valor_litro?: number
@@ -105,6 +111,13 @@ export type Database = {
             columns: ["veiculo_id"]
             isOneToOne: false
             referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "abastecimentos_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
             referencedColumns: ["id"]
           },
         ]
@@ -245,6 +258,13 @@ export type Database = {
             columns: ["veiculo_id"]
             isOneToOne: false
             referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checklists_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
             referencedColumns: ["id"]
           },
         ]
@@ -424,6 +444,13 @@ export type Database = {
             referencedRelation: "veiculos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "despesas_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
+            referencedColumns: ["id"]
+          },
         ]
       }
       empresas: {
@@ -433,6 +460,7 @@ export type Database = {
           cep: string | null
           cidade: string | null
           cnpj: string | null
+          codigo_secretaria_siga: string | null
           complemento: string | null
           criado_em: string
           criado_por: string | null
@@ -461,6 +489,7 @@ export type Database = {
           cep?: string | null
           cidade?: string | null
           cnpj?: string | null
+          codigo_secretaria_siga?: string | null
           complemento?: string | null
           criado_em?: string
           criado_por?: string | null
@@ -489,6 +518,7 @@ export type Database = {
           cep?: string | null
           cidade?: string | null
           cnpj?: string | null
+          codigo_secretaria_siga?: string | null
           complemento?: string | null
           criado_em?: string
           criado_por?: string | null
@@ -933,6 +963,13 @@ export type Database = {
             referencedRelation: "veiculos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "manutencoes_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
+            referencedColumns: ["id"]
+          },
         ]
       }
       notificacoes: {
@@ -1218,6 +1255,13 @@ export type Database = {
             referencedRelation: "veiculos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "solicitacoes_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_roles: {
@@ -1294,6 +1338,13 @@ export type Database = {
             referencedRelation: "veiculos"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "veiculo_fotos_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
+            referencedColumns: ["id"]
+          },
         ]
       }
       veiculos: {
@@ -1304,6 +1355,7 @@ export type Database = {
           cadastrado_por: string | null
           categoria: string | null
           chassi: string | null
+          codigo_siga: string | null
           combustivel: string | null
           cor: string | null
           criado_em: string
@@ -1325,6 +1377,7 @@ export type Database = {
           setor: string | null
           status: string
           tipo_bem: string
+          tipo_combustivel_siga: string | null
           vencimento_ipva: string | null
           vencimento_licenciamento: string | null
           vencimento_seguro: string | null
@@ -1336,6 +1389,7 @@ export type Database = {
           cadastrado_por?: string | null
           categoria?: string | null
           chassi?: string | null
+          codigo_siga?: string | null
           combustivel?: string | null
           cor?: string | null
           criado_em?: string
@@ -1357,6 +1411,7 @@ export type Database = {
           setor?: string | null
           status?: string
           tipo_bem?: string
+          tipo_combustivel_siga?: string | null
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
@@ -1368,6 +1423,7 @@ export type Database = {
           cadastrado_por?: string | null
           categoria?: string | null
           chassi?: string | null
+          codigo_siga?: string | null
           combustivel?: string | null
           cor?: string | null
           criado_em?: string
@@ -1389,6 +1445,7 @@ export type Database = {
           setor?: string | null
           status?: string
           tipo_bem?: string
+          tipo_combustivel_siga?: string | null
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
@@ -1483,6 +1540,13 @@ export type Database = {
             columns: ["veiculo_id"]
             isOneToOne: false
             referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "viagens_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
             referencedColumns: ["id"]
           },
         ]
@@ -1647,6 +1711,61 @@ export type Database = {
             columns: ["veiculo_id"]
             isOneToOne: false
             referencedRelation: "veiculos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_veiculo_id_fkey"
+            columns: ["veiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vw_siga_frota"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vw_siga_abastecimentos: {
+        Row: {
+          cnpj_prefeitura: string | null
+          combustivel: string | null
+          cpf_motorista: string | null
+          data: string | null
+          data_hora: string | null
+          empresa_id: string | null
+          litros: number | null
+          placa: string | null
+          secretaria: string | null
+          setor_veiculo: string | null
+          ticket: string | null
+          valor_litro: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abastecimentos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vw_siga_frota: {
+        Row: {
+          ano: string | null
+          cnpj_prefeitura: string | null
+          combustivel: string | null
+          empresa_id: string | null
+          id: string | null
+          marca: string | null
+          modelo: string | null
+          placa: string | null
+          secretaria: string | null
+          setor_veiculo: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "veiculos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
