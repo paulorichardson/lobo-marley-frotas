@@ -29,8 +29,9 @@ import {
   vencendoEmBreve,
 } from "@/lib/veiculo-constants";
 import { toast } from "sonner";
-import { Loader2, Upload, X, AlertTriangle, ImagePlus, FileText } from "lucide-react";
+import { Loader2, Upload, X, AlertTriangle, ImagePlus, FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseCrlv } from "@/lib/crlv.functions";
 
 export interface VeiculoFormValues {
   id?: string;
