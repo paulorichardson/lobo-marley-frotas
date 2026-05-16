@@ -29,8 +29,9 @@ import {
   vencendoEmBreve,
 } from "@/lib/veiculo-constants";
 import { toast } from "sonner";
-import { Loader2, Upload, X, AlertTriangle, ImagePlus, FileText } from "lucide-react";
+import { Loader2, Upload, X, AlertTriangle, ImagePlus, FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseCrlv } from "@/lib/crlv.functions";
 
 export interface VeiculoFormValues {
   id?: string;
@@ -147,7 +148,71 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
   const [crlvFile, setCrlvFile] = useState<File | null>(null);
   const [seguroFile, setSeguroFile] = useState<File | null>(null);
   const [fotosExtras, setFotosExtras] = useState<FotoExtra[]>([]);
+  const [importandoCrlv, setImportandoCrlv] = useState(false);
   const placaConsultada = useRef<string>("");
+
+  async function handleCrlvImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      toast.error("Envie o CRLV em PDF");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("PDF muito grande (máx 8MB)");
+      return;
+    }
+    setImportandoCrlv(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) {
+        toast.error("Sessão expirada, faça login novamente");
+        return;
+      }
+      // Converte para base64
+      const buf = await file.arrayBuffer();
+      let binary = "";
+      const bytes = new Uint8Array(buf);
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      const pdfBase64 = btoa(binary);
+
+      const res = await parseCrlv({
+        data: { pdfBase64, fileName: file.name, accessToken: token },
+      });
+      const d = res.dados ?? {};
+      setValues((v) => ({
+        ...v,
+        placa: d.placa || v.placa,
+        marca: d.marca || v.marca,
+        modelo: d.modelo || v.modelo,
+        ano_fabricacao: d.ano_fabricacao ? String(d.ano_fabricacao) : v.ano_fabricacao,
+        ano_modelo: d.ano_modelo ? String(d.ano_modelo) : v.ano_modelo,
+        cor: d.cor || v.cor,
+        combustivel: d.combustivel || v.combustivel,
+        categoria: d.categoria || v.categoria,
+        chassi: d.chassi || v.chassi,
+        renavam: d.renavam || v.renavam,
+        vencimento_licenciamento: d.licenciamento_data || v.vencimento_licenciamento,
+      }));
+      // Guarda o PDF como CRLV anexado também
+      setCrlvFile(file);
+      if (res.licenciamento_calculado) {
+        toast.success("CRLV importado. Vencimento calculado pela UF + final da placa.");
+      } else {
+        toast.success("CRLV importado com sucesso");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Falha ao importar CRLV");
+    } finally {
+      setImportandoCrlv(false);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -342,6 +407,38 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Importar via CRLV (IA) */}
+      <Card className="p-4 border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-accent" /> Cadastro automático via CRLV
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Envie o PDF do CRLV-e. A IA preenche placa, RENAVAM, chassi, marca/modelo, ano, cor,
+            combustível e calcula o vencimento do licenciamento pela UF + final da placa.
+          </p>
+        </div>
+        <Label
+          htmlFor="crlv-import"
+          className={cn(
+            "cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium",
+            "bg-accent text-accent-foreground hover:bg-accent/90 transition-colors whitespace-nowrap",
+            importandoCrlv && "opacity-60 pointer-events-none",
+          )}
+        >
+          {importandoCrlv ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+          {importandoCrlv ? "Lendo CRLV..." : "Importar CRLV (PDF)"}
+        </Label>
+        <input
+          id="crlv-import"
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={handleCrlvImport}
+          disabled={importandoCrlv}
+        />
+      </Card>
+
       {/* Identificação */}
       <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Identificação</h3>
