@@ -148,7 +148,71 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
   const [crlvFile, setCrlvFile] = useState<File | null>(null);
   const [seguroFile, setSeguroFile] = useState<File | null>(null);
   const [fotosExtras, setFotosExtras] = useState<FotoExtra[]>([]);
+  const [importandoCrlv, setImportandoCrlv] = useState(false);
   const placaConsultada = useRef<string>("");
+
+  async function handleCrlvImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      toast.error("Envie o CRLV em PDF");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("PDF muito grande (máx 8MB)");
+      return;
+    }
+    setImportandoCrlv(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) {
+        toast.error("Sessão expirada, faça login novamente");
+        return;
+      }
+      // Converte para base64
+      const buf = await file.arrayBuffer();
+      let binary = "";
+      const bytes = new Uint8Array(buf);
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+      }
+      const pdfBase64 = btoa(binary);
+
+      const res = await parseCrlv({
+        data: { pdfBase64, fileName: file.name, accessToken: token },
+      });
+      const d = res.dados ?? {};
+      setValues((v) => ({
+        ...v,
+        placa: d.placa || v.placa,
+        marca: d.marca || v.marca,
+        modelo: d.modelo || v.modelo,
+        ano_fabricacao: d.ano_fabricacao ? String(d.ano_fabricacao) : v.ano_fabricacao,
+        ano_modelo: d.ano_modelo ? String(d.ano_modelo) : v.ano_modelo,
+        cor: d.cor || v.cor,
+        combustivel: d.combustivel || v.combustivel,
+        categoria: d.categoria || v.categoria,
+        chassi: d.chassi || v.chassi,
+        renavam: d.renavam || v.renavam,
+        vencimento_licenciamento: d.licenciamento_data || v.vencimento_licenciamento,
+      }));
+      // Guarda o PDF como CRLV anexado também
+      setCrlvFile(file);
+      if (res.licenciamento_calculado) {
+        toast.success("CRLV importado. Vencimento calculado pela UF + final da placa.");
+      } else {
+        toast.success("CRLV importado com sucesso");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Falha ao importar CRLV");
+    } finally {
+      setImportandoCrlv(false);
+    }
+  }
 
   useEffect(() => {
     (async () => {
