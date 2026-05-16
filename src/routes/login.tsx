@@ -21,7 +21,7 @@ export const Route = createFileRoute("/login")({
 });
 
 const DEMO_USERS: { role: AppRole; email: string; password: string; label: string; icon: any }[] = [
-  { role: "admin", email: "paulorichardson@gmail.com", password: "Gugu2062", label: "Admin", icon: Shield },
+  { role: "admin", email: "Lobomarley.tn@gmail.com", password: "Gugu2062", label: "Admin", icon: Shield },
   { role: "gestor_frota", email: "gestor@lobomar.io", password: "Lobomar@2024", label: "Gestor de Frota", icon: Briefcase },
   { role: "fornecedor", email: "fornecedor@lobomar.io", password: "Lobomar@2024", label: "Fornecedor", icon: Wrench },
   { role: "motorista", email: "motorista@lobomar.io", password: "Lobomar@2024", label: "Motorista", icon: User },
@@ -34,23 +34,8 @@ function LoginPage() {
   const [showDemo, setShowDemo] = useState(false);
   const [demoUnlocked, setDemoUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
-    if (new URLSearchParams(window.location.search).get("demo") === "1") return true;
-    return localStorage.getItem("lm_demo_unlocked") === "1";
+    return new URLSearchParams(window.location.search).get("demo") === "1";
   });
-  const [tapCount, setTapCount] = useState(0);
-  function handleSecretTap() {
-    setTapCount((c) => {
-      const n = c + 1;
-      if (n >= 5) {
-        setDemoUnlocked(true);
-        localStorage.setItem("lm_demo_unlocked", "1");
-        toast.success("Modo demo desbloqueado");
-        return 0;
-      }
-      return n;
-    });
-    setTimeout(() => setTapCount(0), 1500);
-  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
@@ -273,20 +258,6 @@ function LoginPage() {
           </a>
         </Card>
 
-        {/* Gatilho secreto: 5 cliques para desbloquear demo */}
-        <div className="flex flex-col items-center gap-1 pt-2">
-          <button
-            type="button"
-            onClick={handleSecretTap}
-            aria-label="Desbloquear demo"
-            className="w-8 h-8 rounded-full border border-dashed border-accent/40 text-accent/70 hover:border-accent hover:text-accent flex items-center justify-center text-sm transition"
-          >
-            ●
-          </button>
-          <span className="text-[9px] text-muted-foreground/50 tracking-wider uppercase">
-            {tapCount > 0 ? `${tapCount}/5` : "ponto secreto"}
-          </span>
-        </div>
       </div>
     </div>
   );
