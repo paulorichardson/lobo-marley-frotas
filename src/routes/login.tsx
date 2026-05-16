@@ -34,23 +34,8 @@ function LoginPage() {
   const [showDemo, setShowDemo] = useState(false);
   const [demoUnlocked, setDemoUnlocked] = useState(() => {
     if (typeof window === "undefined") return false;
-    if (new URLSearchParams(window.location.search).get("demo") === "1") return true;
-    return localStorage.getItem("lm_demo_unlocked") === "1";
+    return new URLSearchParams(window.location.search).get("demo") === "1";
   });
-  const [tapCount, setTapCount] = useState(0);
-  function handleSecretTap() {
-    setTapCount((c) => {
-      const n = c + 1;
-      if (n >= 5) {
-        setDemoUnlocked(true);
-        localStorage.setItem("lm_demo_unlocked", "1");
-        toast.success("Modo demo desbloqueado");
-        return 0;
-      }
-      return n;
-    });
-    setTimeout(() => setTapCount(0), 1500);
-  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
