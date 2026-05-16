@@ -407,6 +407,38 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Importar via CRLV (IA) */}
+      <Card className="p-4 border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-accent" /> Cadastro automático via CRLV
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Envie o PDF do CRLV-e. A IA preenche placa, RENAVAM, chassi, marca/modelo, ano, cor,
+            combustível e calcula o vencimento do licenciamento pela UF + final da placa.
+          </p>
+        </div>
+        <Label
+          htmlFor="crlv-import"
+          className={cn(
+            "cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium",
+            "bg-accent text-accent-foreground hover:bg-accent/90 transition-colors whitespace-nowrap",
+            importandoCrlv && "opacity-60 pointer-events-none",
+          )}
+        >
+          {importandoCrlv ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+          {importandoCrlv ? "Lendo CRLV..." : "Importar CRLV (PDF)"}
+        </Label>
+        <input
+          id="crlv-import"
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={handleCrlvImport}
+          disabled={importandoCrlv}
+        />
+      </Card>
+
       {/* Identificação */}
       <Card className="p-5 space-y-4">
         <h3 className="font-semibold">Identificação</h3>
