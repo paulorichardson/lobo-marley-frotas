@@ -722,6 +722,72 @@ export type Database = {
         }
         Relationships: []
       }
+      laudos_vistoria: {
+        Row: {
+          assinatura_responsavel_path: string | null
+          assinatura_vistoriador_path: string | null
+          atualizado_em: string
+          avarias: Json
+          checklist: Json
+          criado_em: string
+          data_vistoria: string
+          empresa_id: string | null
+          fotos: Json
+          id: string
+          km_registrado: number | null
+          local_vistoria: string | null
+          observacoes: string | null
+          responsavel_documento: string | null
+          responsavel_nome: string | null
+          status: string
+          tipo: string
+          veiculo_id: string
+          vistoriador_id: string | null
+        }
+        Insert: {
+          assinatura_responsavel_path?: string | null
+          assinatura_vistoriador_path?: string | null
+          atualizado_em?: string
+          avarias?: Json
+          checklist?: Json
+          criado_em?: string
+          data_vistoria?: string
+          empresa_id?: string | null
+          fotos?: Json
+          id?: string
+          km_registrado?: number | null
+          local_vistoria?: string | null
+          observacoes?: string | null
+          responsavel_documento?: string | null
+          responsavel_nome?: string | null
+          status?: string
+          tipo?: string
+          veiculo_id: string
+          vistoriador_id?: string | null
+        }
+        Update: {
+          assinatura_responsavel_path?: string | null
+          assinatura_vistoriador_path?: string | null
+          atualizado_em?: string
+          avarias?: Json
+          checklist?: Json
+          criado_em?: string
+          data_vistoria?: string
+          empresa_id?: string | null
+          fotos?: Json
+          id?: string
+          km_registrado?: number | null
+          local_vistoria?: string | null
+          observacoes?: string | null
+          responsavel_documento?: string | null
+          responsavel_nome?: string | null
+          status?: string
+          tipo?: string
+          veiculo_id?: string
+          vistoriador_id?: string | null
+        }
+        Relationships: []
+      }
       manutencao_pecas: {
         Row: {
           criado_em: string

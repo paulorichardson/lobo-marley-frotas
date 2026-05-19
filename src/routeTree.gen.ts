@@ -47,8 +47,10 @@ import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/fi
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AbastecerVeiculoIdRouteImport } from './routes/abastecer.$veiculoId'
+import { Route as GestorLaudosIndexRouteImport } from './routes/gestor/laudos.index'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes.index'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
+import { Route as GestorLaudosNovoRouteImport } from './routes/gestor/laudos.novo'
 import { Route as AdminFinanceiroFornecedoresRouteImport } from './routes/admin/financeiro.fornecedores'
 import { Route as AdminClientesEmpresaIdRouteImport } from './routes/admin/clientes.$empresaId'
 
@@ -244,6 +246,11 @@ const AbastecerVeiculoIdRoute = AbastecerVeiculoIdRouteImport.update({
   path: '/abastecer/$veiculoId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GestorLaudosIndexRoute = GestorLaudosIndexRouteImport.update({
+  id: '/gestor/laudos/',
+  path: '/gestor/laudos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
   id: '/admin/clientes/',
   path: '/admin/clientes/',
@@ -253,6 +260,11 @@ const GestorVeiculosVeiculoIdRoute = GestorVeiculosVeiculoIdRouteImport.update({
   id: '/$veiculoId',
   path: '/$veiculoId',
   getParentRoute: () => GestorVeiculosRoute,
+} as any)
+const GestorLaudosNovoRoute = GestorLaudosNovoRouteImport.update({
+  id: '/gestor/laudos/novo',
+  path: '/gestor/laudos/novo',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFinanceiroFornecedoresRoute =
   AdminFinanceiroFornecedoresRouteImport.update({
@@ -307,8 +319,10 @@ export interface FileRoutesByFullPath {
   '/motorista/': typeof MotoristaIndexRoute
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
+  '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/gestor/laudos/': typeof GestorLaudosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -351,8 +365,10 @@ export interface FileRoutesByTo {
   '/motorista': typeof MotoristaIndexRoute
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
+  '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
+  '/gestor/laudos': typeof GestorLaudosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -396,8 +412,10 @@ export interface FileRoutesById {
   '/motorista/': typeof MotoristaIndexRoute
   '/admin/clientes/$empresaId': typeof AdminClientesEmpresaIdRoute
   '/admin/financeiro/fornecedores': typeof AdminFinanceiroFornecedoresRoute
+  '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/gestor/laudos/': typeof GestorLaudosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -442,8 +460,10 @@ export interface FileRouteTypes {
     | '/motorista/'
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
+    | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
+    | '/gestor/laudos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -486,8 +506,10 @@ export interface FileRouteTypes {
     | '/motorista'
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
+    | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes'
+    | '/gestor/laudos'
   id:
     | '__root__'
     | '/'
@@ -530,8 +552,10 @@ export interface FileRouteTypes {
     | '/motorista/'
     | '/admin/clientes/$empresaId'
     | '/admin/financeiro/fornecedores'
+    | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
+    | '/gestor/laudos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -574,7 +598,9 @@ export interface RootRouteChildren {
   GestorIndexRoute: typeof GestorIndexRoute
   MotoristaIndexRoute: typeof MotoristaIndexRoute
   AdminClientesEmpresaIdRoute: typeof AdminClientesEmpresaIdRoute
+  GestorLaudosNovoRoute: typeof GestorLaudosNovoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
+  GestorLaudosIndexRoute: typeof GestorLaudosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -845,6 +871,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AbastecerVeiculoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gestor/laudos/': {
+      id: '/gestor/laudos/'
+      path: '/gestor/laudos'
+      fullPath: '/gestor/laudos/'
+      preLoaderRoute: typeof GestorLaudosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/clientes/': {
       id: '/admin/clientes/'
       path: '/admin/clientes'
@@ -858,6 +891,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/gestor/veiculos/$veiculoId'
       preLoaderRoute: typeof GestorVeiculosVeiculoIdRouteImport
       parentRoute: typeof GestorVeiculosRoute
+    }
+    '/gestor/laudos/novo': {
+      id: '/gestor/laudos/novo'
+      path: '/gestor/laudos/novo'
+      fullPath: '/gestor/laudos/novo'
+      preLoaderRoute: typeof GestorLaudosNovoRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/financeiro/fornecedores': {
       id: '/admin/financeiro/fornecedores'
@@ -940,7 +980,9 @@ const rootRouteChildren: RootRouteChildren = {
   GestorIndexRoute: GestorIndexRoute,
   MotoristaIndexRoute: MotoristaIndexRoute,
   AdminClientesEmpresaIdRoute: AdminClientesEmpresaIdRoute,
+  GestorLaudosNovoRoute: GestorLaudosNovoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
+  GestorLaudosIndexRoute: GestorLaudosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
