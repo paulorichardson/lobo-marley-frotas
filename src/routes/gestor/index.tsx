@@ -72,11 +72,18 @@ function GestorDashboard() {
           <h1 className="text-3xl font-bold">Gestão de Frota</h1>
           <p className="text-sm text-muted-foreground">Visão geral dos veículos</p>
         </div>
-        <Button asChild>
-          <Link to="/gestor/veiculos">
-            <Plus className="w-4 h-4 mr-2" /> Novo veículo
-          </Link>
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button asChild variant="outline">
+            <Link to="/gestor/laudos">
+              <FileSignature className="w-4 h-4 mr-2" /> Laudos de vistoria
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link to="/gestor/veiculos">
+              <Plus className="w-4 h-4 mr-2" /> Novo veículo
+            </Link>
+          </Button>
+        </div>
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
