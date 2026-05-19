@@ -20,7 +20,7 @@ import { imprimirLaudo } from "@/lib/laudo-pdf";
 
 export const Route = createFileRoute("/gestor/laudos/novo")({
   head: () => ({ meta: [{ title: "Novo Laudo de Vistoria — Lobo Marley" }] }),
-  validateSearch: (s: Record<string, unknown>) => ({ veiculo: (s.veiculo as string) || "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ veiculo: (s.veiculo as string) || undefined }) as { veiculo?: string },
   component: () => (
     <ProtectedRoute roles={["admin", "gestor_frota"]}>
       <AppShell>

@@ -47,6 +47,7 @@ import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/fi
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AbastecerVeiculoIdRouteImport } from './routes/abastecer.$veiculoId'
+import { Route as GestorLaudosIndexRouteImport } from './routes/gestor/laudos.index'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes.index'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
 import { Route as GestorLaudosNovoRouteImport } from './routes/gestor/laudos.novo'
@@ -245,6 +246,11 @@ const AbastecerVeiculoIdRoute = AbastecerVeiculoIdRouteImport.update({
   path: '/abastecer/$veiculoId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GestorLaudosIndexRoute = GestorLaudosIndexRouteImport.update({
+  id: '/gestor/laudos/',
+  path: '/gestor/laudos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
   id: '/admin/clientes/',
   path: '/admin/clientes/',
@@ -316,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/gestor/laudos/': typeof GestorLaudosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -361,6 +368,7 @@ export interface FileRoutesByTo {
   '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
+  '/gestor/laudos': typeof GestorLaudosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -407,6 +415,7 @@ export interface FileRoutesById {
   '/gestor/laudos/novo': typeof GestorLaudosNovoRoute
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
+  '/gestor/laudos/': typeof GestorLaudosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -454,6 +463,7 @@ export interface FileRouteTypes {
     | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
+    | '/gestor/laudos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -499,6 +509,7 @@ export interface FileRouteTypes {
     | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes'
+    | '/gestor/laudos'
   id:
     | '__root__'
     | '/'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/gestor/laudos/novo'
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
+    | '/gestor/laudos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -588,6 +600,7 @@ export interface RootRouteChildren {
   AdminClientesEmpresaIdRoute: typeof AdminClientesEmpresaIdRoute
   GestorLaudosNovoRoute: typeof GestorLaudosNovoRoute
   AdminClientesIndexRoute: typeof AdminClientesIndexRoute
+  GestorLaudosIndexRoute: typeof GestorLaudosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -858,6 +871,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AbastecerVeiculoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gestor/laudos/': {
+      id: '/gestor/laudos/'
+      path: '/gestor/laudos'
+      fullPath: '/gestor/laudos/'
+      preLoaderRoute: typeof GestorLaudosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/clientes/': {
       id: '/admin/clientes/'
       path: '/admin/clientes'
@@ -962,6 +982,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClientesEmpresaIdRoute: AdminClientesEmpresaIdRoute,
   GestorLaudosNovoRoute: GestorLaudosNovoRoute,
   AdminClientesIndexRoute: AdminClientesIndexRoute,
+  GestorLaudosIndexRoute: GestorLaudosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
