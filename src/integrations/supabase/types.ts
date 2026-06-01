@@ -552,9 +552,13 @@ export type Database = {
           data_pagamento: string | null
           empresa_id: string | null
           id: string
+          manutencao_ids: string[] | null
+          numero_fatura: string | null
+          numero_nf: string | null
           observacoes: string | null
           periodo_fim: string
           periodo_inicio: string
+          serie_nf: string | null
           status: string
           taxa_gestao_percentual: number | null
           valor_abastecimentos: number | null
@@ -571,9 +575,13 @@ export type Database = {
           data_pagamento?: string | null
           empresa_id?: string | null
           id?: string
+          manutencao_ids?: string[] | null
+          numero_fatura?: string | null
+          numero_nf?: string | null
           observacoes?: string | null
           periodo_fim: string
           periodo_inicio: string
+          serie_nf?: string | null
           status?: string
           taxa_gestao_percentual?: number | null
           valor_abastecimentos?: number | null
@@ -590,9 +598,13 @@ export type Database = {
           data_pagamento?: string | null
           empresa_id?: string | null
           id?: string
+          manutencao_ids?: string[] | null
+          numero_fatura?: string | null
+          numero_nf?: string | null
           observacoes?: string | null
           periodo_fim?: string
           periodo_inicio?: string
+          serie_nf?: string | null
           status?: string
           taxa_gestao_percentual?: number | null
           valor_abastecimentos?: number | null
@@ -719,6 +731,66 @@ export type Database = {
           tipos_fornecimento?: string[]
           user_id?: string | null
           whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      fornecedores_externos: {
+        Row: {
+          agencia: string | null
+          ativo: boolean
+          atualizado_em: string
+          banco: string | null
+          cnpj: string | null
+          conta: string | null
+          criado_em: string
+          criado_por: string | null
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          pix_chave: string | null
+          pix_tipo: string | null
+          responsavel: string | null
+          telefone: string | null
+        }
+        Insert: {
+          agencia?: string | null
+          ativo?: boolean
+          atualizado_em?: string
+          banco?: string | null
+          cnpj?: string | null
+          conta?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
+          responsavel?: string | null
+          telefone?: string | null
+        }
+        Update: {
+          agencia?: string | null
+          ativo?: boolean
+          atualizado_em?: string
+          banco?: string | null
+          cnpj?: string | null
+          conta?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
+          responsavel?: string | null
+          telefone?: string | null
         }
         Relationships: []
       }
@@ -854,6 +926,8 @@ export type Database = {
           empresa_id: string | null
           enviado_para_rede: boolean | null
           exigir_orcamento: boolean | null
+          fatura_id: string | null
+          fornecedor_externo_id: string | null
           fornecedor_id: string | null
           id: string
           justificativa_prejuizo: string | null
@@ -908,6 +982,8 @@ export type Database = {
           empresa_id?: string | null
           enviado_para_rede?: boolean | null
           exigir_orcamento?: boolean | null
+          fatura_id?: string | null
+          fornecedor_externo_id?: string | null
           fornecedor_id?: string | null
           id?: string
           justificativa_prejuizo?: string | null
@@ -962,6 +1038,8 @@ export type Database = {
           empresa_id?: string | null
           enviado_para_rede?: boolean | null
           exigir_orcamento?: boolean | null
+          fatura_id?: string | null
+          fornecedor_externo_id?: string | null
           fornecedor_id?: string | null
           id?: string
           justificativa_prejuizo?: string | null
@@ -1006,6 +1084,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manutencoes_fornecedor_externo_id_fkey"
+            columns: ["fornecedor_externo_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores_externos"
             referencedColumns: ["id"]
           },
           {
@@ -1164,9 +1249,13 @@ export type Database = {
           comprovante_url: string | null
           criado_em: string
           data_pagamento: string
+          empresa_id: string | null
           forma_pagamento: string
-          fornecedor_id: string
+          fornecedor_externo_id: string | null
+          fornecedor_id: string | null
           id: string
+          manutencao_id: string | null
+          numero_documento: string | null
           observacoes: string | null
           pago_por: string | null
           valor: number
@@ -1175,9 +1264,13 @@ export type Database = {
           comprovante_url?: string | null
           criado_em?: string
           data_pagamento?: string
+          empresa_id?: string | null
           forma_pagamento: string
-          fornecedor_id: string
+          fornecedor_externo_id?: string | null
+          fornecedor_id?: string | null
           id?: string
+          manutencao_id?: string | null
+          numero_documento?: string | null
           observacoes?: string | null
           pago_por?: string | null
           valor: number
@@ -1186,14 +1279,47 @@ export type Database = {
           comprovante_url?: string | null
           criado_em?: string
           data_pagamento?: string
+          empresa_id?: string | null
           forma_pagamento?: string
-          fornecedor_id?: string
+          fornecedor_externo_id?: string | null
+          fornecedor_id?: string | null
           id?: string
+          manutencao_id?: string | null
+          numero_documento?: string | null
           observacoes?: string | null
           pago_por?: string | null
           valor?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_fornecedor_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_fornecedor_fornecedor_externo_id_fkey"
+            columns: ["fornecedor_externo_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores_externos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_fornecedor_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pagamentos_fornecedor_manutencao_id_fkey"
+            columns: ["manutencao_id"]
+            isOneToOne: false
+            referencedRelation: "manutencoes_publicas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       perfis: {
         Row: {

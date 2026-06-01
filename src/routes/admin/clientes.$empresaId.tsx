@@ -11,10 +11,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, ArrowLeft, Loader2, FileSignature, Save } from "lucide-react";
+import { Building2, ArrowLeft, Loader2, FileSignature, Save, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiroSection";
 import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
+import { FaturamentoClienteSection } from "@/components/admin/FaturamentoClienteSection";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
@@ -105,6 +106,9 @@ function ClienteDetalhe() {
           <TabsTrigger value="dados">Dados</TabsTrigger>
           <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
           <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
+          <TabsTrigger value="faturamento">
+            <Receipt className="w-3.5 h-3.5 mr-1" /> Faturamento
+          </TabsTrigger>
           <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
           <TabsTrigger value="contrato">
             <FileSignature className="w-3.5 h-3.5 mr-1" /> Contrato
@@ -145,6 +149,10 @@ function ClienteDetalhe() {
                 </div>
               ))}
           </Card>
+        </TabsContent>
+
+        <TabsContent value="faturamento">
+          <FaturamentoClienteSection empresa={empresa} />
         </TabsContent>
 
         <TabsContent value="financeiro">
