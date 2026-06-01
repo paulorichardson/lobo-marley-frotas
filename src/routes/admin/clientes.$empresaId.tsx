@@ -106,6 +106,9 @@ function ClienteDetalhe() {
           <TabsTrigger value="dados">Dados</TabsTrigger>
           <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
           <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
+          <TabsTrigger value="faturamento">
+            <Receipt className="w-3.5 h-3.5 mr-1" /> Faturamento
+          </TabsTrigger>
           <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
           <TabsTrigger value="contrato">
             <FileSignature className="w-3.5 h-3.5 mr-1" /> Contrato
@@ -146,6 +149,10 @@ function ClienteDetalhe() {
                 </div>
               ))}
           </Card>
+        </TabsContent>
+
+        <TabsContent value="faturamento">
+          <FaturamentoClienteSection empresa={empresa} />
         </TabsContent>
 
         <TabsContent value="financeiro">
