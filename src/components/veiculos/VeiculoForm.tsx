@@ -19,6 +19,8 @@ import {
   normalizarPlaca,
   placaValida,
 } from "@/lib/placa";
+import { consultarPlacaApiBrasil } from "@/lib/placa.functions";
+
 import {
   CATEGORIAS,
   COMBUSTIVEIS,
@@ -240,12 +242,19 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
     if (!placaValida(p) || p === placaConsultada.current) return;
     placaConsultada.current = p;
     setConsultandoPlaca(true);
-    const dados = await consultarPlaca(p);
+    let dados = null as Awaited<ReturnType<typeof consultarPlaca>>;
+    try {
+      dados = await consultarPlacaApiBrasil({ data: { placa: p } });
+    } catch (err: any) {
+      console.warn("[API Brasil] falhou, tentando BrasilAPI:", err?.message);
+      dados = await consultarPlaca(p);
+    }
     setConsultandoPlaca(false);
     if (!dados) {
       toast.warning("Placa não encontrada — preencha manualmente");
       return;
     }
+
     setValues((v) => ({
       ...v,
       placa: p,
