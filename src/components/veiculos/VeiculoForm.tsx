@@ -19,6 +19,8 @@ import {
   normalizarPlaca,
   placaValida,
 } from "@/lib/placa";
+import { consultarPlacaApiBrasil } from "@/lib/placa.functions";
+
 import {
   CATEGORIAS,
   COMBUSTIVEIS,
