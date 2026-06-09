@@ -1,0 +1,1 @@
+UPDATE public.perfis SET email='frota@tremedal.ba.gov.br', nome='Frota Tremedal' WHERE id='85c4c4a5-0e83-4949-a46f-b35c446e122a';
