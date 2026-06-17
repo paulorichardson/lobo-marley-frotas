@@ -169,7 +169,7 @@ function FinanceiroPage() {
           servicos_total: 0, pago: 0, saldo: 0,
         };
       }
-      fornAg[mm.fornecedor_id].servicos_total += Number(mm.valor_final || 0);
+      fornAg[mm.fornecedor_id].servicos_total += Number(mm.custo_fornecedor ?? mm.valor_final ?? 0);
     });
     (pagamentos ?? []).forEach((p: any) => {
       if (!p.fornecedor_id) return;
