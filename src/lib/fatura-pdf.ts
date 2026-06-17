@@ -248,7 +248,7 @@ export function imprimirFatura(d: FaturaData) {
   <!-- HEADER -->
   <div class="header">
     <div class="brand">
-      <div class="logo">LM</div>
+      <div class="logo"><img src="${LOGO_URL}" alt="Lobo Marley" /></div>
       <div>
         <h1>LOBO MARLEY</h1>
         <p class="tag">Gestão Inteligente de Frotas</p>
