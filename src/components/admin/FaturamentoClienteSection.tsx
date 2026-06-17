@@ -76,6 +76,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   const [gerarOpen, setGerarOpen] = useState<"fatura" | "nf" | null>(null);
   const [pagarForn, setPagarForn] = useState<ForExterno | null>(null);
   const [novoForn, setNovoForn] = useState(false);
+  const [importarNFs, setImportarNFs] = useState(false);
 
   async function carregar() {
     setLoading(true);
