@@ -134,13 +134,13 @@ function FinanceiroPage() {
       const [a, m, d] = await Promise.all([
         supabase.from("abastecimentos").select("valor_total")
           .eq("empresa_id", e.id).gte("data_hora", inicioMes),
-        supabase.from("manutencoes").select("valor_final")
+        supabase.from("manutencoes").select("valor_final, valor_liquido_faturavel")
           .eq("empresa_id", e.id).gte("data_conclusao", inicioMes),
         supabase.from("despesas").select("valor")
           .eq("empresa_id", e.id).gte("data_despesa", inicioMes.slice(0, 10)),
       ]);
       const va = (a.data ?? []).reduce((s, x) => s + Number(x.valor_total || 0), 0);
-      const vm = (m.data ?? []).reduce((s, x) => s + Number(x.valor_final || 0), 0);
+      const vm = (m.data ?? []).reduce((s, x: any) => s + Number(x.valor_liquido_faturavel ?? x.valor_final ?? 0), 0);
       const vd = (d.data ?? []).reduce((s, x) => s + Number(x.valor || 0), 0);
       resumoEmp.push({
         empresa_id: e.id, razao_social: e.razao_social,
