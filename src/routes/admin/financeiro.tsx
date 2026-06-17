@@ -73,20 +73,29 @@ function FinanceiroPage() {
     const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString();
 
     // KPIs faturas
-    const [{ data: emitidas }, { data: pagas }] = await Promise.all([
+    const [{ data: emitidas }, { data: pagas }, { data: manutAReceber }] = await Promise.all([
       supabase.from("faturas").select("valor_total").in("status", ["emitida"]),
       supabase.from("faturas").select("valor_total")
         .eq("status", "paga").gte("data_pagamento", inicioMes),
+      supabase.from("manutencoes")
+        .select("valor_liquido_faturavel, valor_final, fatura_id")
+        .eq("status", "Concluída").is("fatura_id", null),
     ]);
-    setAReceber((emitidas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0));
+    const aReceberFaturas = (emitidas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0);
+    const aReceberManut = (manutAReceber ?? []).reduce(
+      (s, m: any) => s + Number(m.valor_liquido_faturavel ?? m.valor_final ?? 0), 0,
+    );
+    setAReceber(aReceberFaturas + aReceberManut);
     setRecebido((pagas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0));
 
-    // a pagar fornecedor: manutencoes concluídas - pagamentos
+    // a pagar fornecedor: manutencoes concluídas - pagamentos (custo do fornecedor)
     const { data: manut } = await supabase
       .from("manutencoes")
-      .select("id, fornecedor_id, valor_final, status, data_conclusao")
+      .select("id, fornecedor_id, valor_final, custo_fornecedor, status, data_conclusao")
       .eq("status", "Concluída");
-    const totalServicos = (manut ?? []).reduce((s, m) => s + Number(m.valor_final || 0), 0);
+    const totalServicos = (manut ?? []).reduce(
+      (s, m: any) => s + Number(m.custo_fornecedor ?? m.valor_final ?? 0), 0,
+    );
     const { data: pagamentos } = await supabase.from("pagamentos_fornecedor").select("valor, fornecedor_id, data_pagamento");
     const totalPago = (pagamentos ?? []).reduce((s, p) => s + Number(p.valor || 0), 0);
     setAPagar(Math.max(0, totalServicos - totalPago));
@@ -134,13 +143,13 @@ function FinanceiroPage() {
       const [a, m, d] = await Promise.all([
         supabase.from("abastecimentos").select("valor_total")
           .eq("empresa_id", e.id).gte("data_hora", inicioMes),
-        supabase.from("manutencoes").select("valor_final")
+        supabase.from("manutencoes").select("valor_final, valor_liquido_faturavel")
           .eq("empresa_id", e.id).gte("data_conclusao", inicioMes),
         supabase.from("despesas").select("valor")
           .eq("empresa_id", e.id).gte("data_despesa", inicioMes.slice(0, 10)),
       ]);
       const va = (a.data ?? []).reduce((s, x) => s + Number(x.valor_total || 0), 0);
-      const vm = (m.data ?? []).reduce((s, x) => s + Number(x.valor_final || 0), 0);
+      const vm = (m.data ?? []).reduce((s, x: any) => s + Number(x.valor_liquido_faturavel ?? x.valor_final ?? 0), 0);
       const vd = (d.data ?? []).reduce((s, x) => s + Number(x.valor || 0), 0);
       resumoEmp.push({
         empresa_id: e.id, razao_social: e.razao_social,
@@ -160,7 +169,7 @@ function FinanceiroPage() {
           servicos_total: 0, pago: 0, saldo: 0,
         };
       }
-      fornAg[mm.fornecedor_id].servicos_total += Number(mm.valor_final || 0);
+      fornAg[mm.fornecedor_id].servicos_total += Number(mm.custo_fornecedor ?? mm.valor_final ?? 0);
     });
     (pagamentos ?? []).forEach((p: any) => {
       if (!p.fornecedor_id) return;
