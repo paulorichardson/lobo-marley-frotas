@@ -35,6 +35,7 @@ type OS = {
   oficina_nome: string | null;
   fornecedor_externo_id: string | null;
   valor_final: number;
+  valor_liquido_faturavel: number | null;
   custo_fornecedor: number | null;
   data_conclusao: string | null;
   fatura_id: string | null;
