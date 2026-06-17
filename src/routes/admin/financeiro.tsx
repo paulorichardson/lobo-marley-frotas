@@ -73,20 +73,29 @@ function FinanceiroPage() {
     const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString();
 
     // KPIs faturas
-    const [{ data: emitidas }, { data: pagas }] = await Promise.all([
+    const [{ data: emitidas }, { data: pagas }, { data: manutAReceber }] = await Promise.all([
       supabase.from("faturas").select("valor_total").in("status", ["emitida"]),
       supabase.from("faturas").select("valor_total")
         .eq("status", "paga").gte("data_pagamento", inicioMes),
+      supabase.from("manutencoes")
+        .select("valor_liquido_faturavel, valor_final, fatura_id")
+        .eq("status", "Concluída").is("fatura_id", null),
     ]);
-    setAReceber((emitidas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0));
+    const aReceberFaturas = (emitidas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0);
+    const aReceberManut = (manutAReceber ?? []).reduce(
+      (s, m: any) => s + Number(m.valor_liquido_faturavel ?? m.valor_final ?? 0), 0,
+    );
+    setAReceber(aReceberFaturas + aReceberManut);
     setRecebido((pagas ?? []).reduce((s, f) => s + Number(f.valor_total || 0), 0));
 
-    // a pagar fornecedor: manutencoes concluídas - pagamentos
+    // a pagar fornecedor: manutencoes concluídas - pagamentos (custo do fornecedor)
     const { data: manut } = await supabase
       .from("manutencoes")
-      .select("id, fornecedor_id, valor_final, status, data_conclusao")
+      .select("id, fornecedor_id, valor_final, custo_fornecedor, status, data_conclusao")
       .eq("status", "Concluída");
-    const totalServicos = (manut ?? []).reduce((s, m) => s + Number(m.valor_final || 0), 0);
+    const totalServicos = (manut ?? []).reduce(
+      (s, m: any) => s + Number(m.custo_fornecedor ?? m.valor_final ?? 0), 0,
+    );
     const { data: pagamentos } = await supabase.from("pagamentos_fornecedor").select("valor, fornecedor_id, data_pagamento");
     const totalPago = (pagamentos ?? []).reduce((s, p) => s + Number(p.valor || 0), 0);
     setAPagar(Math.max(0, totalServicos - totalPago));
