@@ -14,12 +14,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   Wrench, CheckCircle2, XCircle, Clock, Loader2, Plus, Megaphone, Package,
-  Star, Printer, Download,
+  Star, Printer, Download, ClipboardCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { notifyUser } from "@/lib/notify";
 import { useAuth } from "@/hooks/useAuth";
 import { NovaSolicitacaoModal, Estrelas } from "@/components/manutencoes/NovaSolicitacaoModal";
+import { LancarExecutadaModal } from "@/components/manutencoes/LancarExecutadaModal";
 import { cn } from "@/lib/utils";
 import { imprimirOS } from "@/lib/imprimir-os";
 import { exportarXLSX } from "@/lib/export-xlsx";
@@ -122,6 +123,7 @@ function ManutencoesGestor() {
   const [comentarioAv, setComentarioAv] = useState("");
   const [acao, setAcao] = useState(false);
   const [novaOpen, setNovaOpen] = useState(false);
+  const [executadaOpen, setExecutadaOpen] = useState(false);
   const [filtroUrg, setFiltroUrg] = useState<string>("todos");
 
   async function carregar() {
@@ -381,6 +383,9 @@ function ManutencoesGestor() {
             exportarXLSX(dados, "Manutencoes", "lobomarley_manutencoes");
           }}>
             <Download className="w-4 h-4 mr-2" /> Exportar
+          </Button>
+          <Button variant="secondary" onClick={() => setExecutadaOpen(true)}>
+            <ClipboardCheck className="w-4 h-4 mr-2" /> Lançar Executada
           </Button>
           <Button onClick={() => setNovaOpen(true)}>
             <Plus className="w-4 h-4 mr-2" /> Nova Solicitação
@@ -729,6 +734,7 @@ function ManutencoesGestor() {
       </Dialog>
 
       <NovaSolicitacaoModal open={novaOpen} onClose={() => setNovaOpen(false)} onCreated={carregar} />
+      <LancarExecutadaModal open={executadaOpen} onClose={() => setExecutadaOpen(false)} onCreated={carregar} />
     </div>
   );
 }
