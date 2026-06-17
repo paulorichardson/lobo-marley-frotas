@@ -320,6 +320,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 <TableHead>Data</TableHead>
                 <TableHead>OS</TableHead>
                 <TableHead>Veículo</TableHead>
+                <TableHead>Setor</TableHead>
                 <TableHead>Oficina</TableHead>
                 <TableHead>Descrição</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
@@ -327,7 +328,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
               </TableRow></TableHeader>
               <TableBody>
                 {oss.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
                 ) : oss.map((o) => (
                   <TableRow key={o.id} className={o.fatura_id ? "opacity-60" : ""}>
                     <TableCell>
@@ -342,6 +343,9 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                     </TableCell>
                     <TableCell className="font-mono text-xs">{o.numero_os ?? "—"}</TableCell>
                     <TableCell className="text-xs">{o.veiculo ? `${o.veiculo.placa}` : "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {o.veiculo?.setor ? <Badge variant="outline" className="text-[10px]">{o.veiculo.setor}</Badge> : "—"}
+                    </TableCell>
                     <TableCell className="text-xs">{o.oficina_nome ?? "—"}</TableCell>
                     <TableCell className="text-xs max-w-[280px] truncate" title={o.descricao}>{o.descricao}</TableCell>
                     <TableCell className="text-right font-mono">{BRL(Number(o.valor_final || 0))}</TableCell>
