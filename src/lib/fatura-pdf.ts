@@ -1,3 +1,7 @@
+import logoAsset from "@/assets/lobo-marley-logo.png.asset.json";
+
+const LOGO_URL = typeof window !== "undefined" ? new URL(logoAsset.url, window.location.origin).href : logoAsset.url;
+
 type Item = {
   data: string;
   numero_os: string | null;
@@ -149,7 +153,8 @@ export function imprimirFatura(d: FaturaData) {
   /* HEADER */
   .header { background: linear-gradient(135deg, #0A0E27 0%, #161d3f 100%); color:#fff; padding: 22px 26px; border-radius: 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
   .brand { display: flex; gap: 14px; align-items: center; }
-  .logo { width: 56px; height: 56px; border-radius: 12px; background: #DC0000; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:22px; color:#fff; box-shadow: 0 4px 14px rgba(220,0,0,.35); }
+  .logo { width: 72px; height: 72px; display:flex; align-items:center; justify-content:center; }
+  .logo img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(220,0,0,.35)); }
   .brand h1 { margin:0; font-size: 20px; font-weight: 800; letter-spacing: .5px; }
   .brand .tag { margin: 2px 0 0; font-size: 10px; color: #D9D9D9; font-weight: 500; letter-spacing: .8px; text-transform: uppercase; }
   .brand .meta { margin-top: 8px; font-size: 9.5px; color: #cbd0e0; line-height: 1.55; }
@@ -247,7 +252,7 @@ export function imprimirFatura(d: FaturaData) {
   <!-- HEADER -->
   <div class="header">
     <div class="brand">
-      <div class="logo">LM</div>
+      <div class="logo"><img src="${LOGO_URL}" alt="Lobo Marley" /></div>
       <div>
         <h1>LOBO MARLEY</h1>
         <p class="tag">Gestão Inteligente de Frotas</p>
