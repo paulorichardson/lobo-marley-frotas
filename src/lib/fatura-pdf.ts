@@ -254,12 +254,12 @@ export function imprimirFatura(d: FaturaData) {
     <div class="brand">
       <div class="logo"><img src="${LOGO_URL}" alt="Lobo Marley" /></div>
       <div>
-        <h1>LOBO MARLEY</h1>
+        <h1>LOBO MARLEY COMÉRCIO E SERVIÇOS LTDA</h1>
         <p class="tag">Gestão Inteligente de Frotas</p>
         <div class="meta">
-          CNPJ 51.500.000/0001-00<br>
-          Tremedal/BA · www.lobomarley.online<br>
-          contato@lobomarley.online
+          CNPJ 26.743.714/0001-83<br>
+          Rodovia BA 156, Km 2, nº 22 — Tanque Novo/BA · CEP 46.580-000<br>
+          www.lobomarley.online · contato@lobomarley.online
         </div>
       </div>
     </div>
