@@ -285,12 +285,22 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           <Label className="text-xs">Até</Label>
           <Input type="date" value={periodoFim} onChange={(e) => setPeriodoFim(e.target.value)} />
         </div>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-2 flex-wrap">
+          <Button variant="default" onClick={() => setImportarNFs(true)} className="bg-gradient-to-r from-primary to-primary/80">
+            <Sparkles className="w-4 h-4 mr-1" /> Importar NFs (IA)
+          </Button>
           <Button variant="outline" onClick={() => setNovoForn(true)}>
             <Plus className="w-4 h-4 mr-1" /> Novo fornecedor
           </Button>
         </div>
       </Card>
+
+      <EnviarNotasFiscaisModal
+        open={importarNFs}
+        onOpenChange={setImportarNFs}
+        empresaId={empresaId}
+        onSaved={carregar}
+      />
 
       {/* OSs */}
       <Card className="p-4">
