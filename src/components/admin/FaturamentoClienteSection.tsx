@@ -37,7 +37,7 @@ type OS = {
   custo_fornecedor: number | null;
   data_conclusao: string | null;
   fatura_id: string | null;
-  veiculo: { placa: string; marca: string; modelo: string } | null;
+  veiculo: { placa: string; marca: string; modelo: string; setor: string | null } | null;
 };
 type ForExterno = {
   id: string; nome: string; cnpj: string | null;
