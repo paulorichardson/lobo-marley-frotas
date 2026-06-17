@@ -198,7 +198,37 @@ function FinanceiroPage() {
     Object.values(fornAg).forEach((f) => { f.saldo = Math.max(0, f.servicos_total - f.pago); });
     setFornecedores(Object.values(fornAg).filter((f) => f.saldo > 0));
 
+    // Faturas (todas, mais recentes primeiro)
+    const { data: fats } = await supabase
+      .from("faturas")
+      .select("id, numero_fatura, valor_total, status, data_emissao, data_pagamento, periodo_inicio, periodo_fim, empresa_id, empresas(razao_social)")
+      .order("data_emissao", { ascending: false })
+      .limit(100);
+    setFaturas(fats ?? []);
+
     setLoading(false);
+  }
+
+  async function marcarPaga(fatura: any) {
+    setMarcandoId(fatura.id);
+    const { error } = await supabase.from("faturas")
+      .update({ status: "paga", data_pagamento: new Date().toISOString().slice(0, 10) })
+      .eq("id", fatura.id);
+    setMarcandoId(null);
+    if (error) return toast.error(error.message);
+    toast.success(`Fatura ${fatura.numero_fatura} marcada como paga`);
+    carregar();
+  }
+
+  async function reabrirFatura(fatura: any) {
+    setMarcandoId(fatura.id);
+    const { error } = await supabase.from("faturas")
+      .update({ status: "emitida", data_pagamento: null })
+      .eq("id", fatura.id);
+    setMarcandoId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Fatura reaberta");
+    carregar();
   }
 
   useEffect(() => { carregar(); }, []);
