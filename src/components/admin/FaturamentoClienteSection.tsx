@@ -84,7 +84,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     try {
       const [m, f, p, fat] = await Promise.all([
         supabase.from("manutencoes")
-          .select("id, numero_os, nota_fiscal, descricao, oficina_nome, fornecedor_externo_id, valor_final, custo_fornecedor, data_conclusao, fatura_id, veiculo:veiculos(placa,marca,modelo,setor)")
+          .select("id, numero_os, nota_fiscal, descricao, oficina_nome, fornecedor_externo_id, valor_final, valor_liquido_faturavel, custo_fornecedor, data_conclusao, fatura_id, veiculo:veiculos(placa,marca,modelo,setor)")
           .eq("empresa_id", empresaId)
           .eq("status", "Concluída")
           .gte("data_conclusao", `${periodoIni}T00:00:00`)
