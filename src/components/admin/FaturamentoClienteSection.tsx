@@ -18,10 +18,11 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2,
+  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
 } from "lucide-react";
 import { imprimirFatura } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
+import { EnviarNotasFiscaisModal } from "./EnviarNotasFiscaisModal";
 
 const BRL = (v: number) =>
   Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
