@@ -64,8 +64,10 @@ function FinanceiroPage() {
   const [serie, setSerie] = useState<{ mes: string; receita: number; pago: number }[]>([]);
   const [empresas, setEmpresas] = useState<ResumoEmpresa[]>([]);
   const [fornecedores, setFornecedores] = useState<ResumoFornecedor[]>([]);
+  const [faturas, setFaturas] = useState<any[]>([]);
   const [gerarOpen, setGerarOpen] = useState<ResumoEmpresa | null>(null);
   const [pagarOpen, setPagarOpen] = useState<ResumoFornecedor | null>(null);
+  const [marcandoId, setMarcandoId] = useState<string | null>(null);
 
   async function carregar() {
     setLoading(true);
@@ -196,7 +198,37 @@ function FinanceiroPage() {
     Object.values(fornAg).forEach((f) => { f.saldo = Math.max(0, f.servicos_total - f.pago); });
     setFornecedores(Object.values(fornAg).filter((f) => f.saldo > 0));
 
+    // Faturas (todas, mais recentes primeiro)
+    const { data: fats } = await supabase
+      .from("faturas")
+      .select("id, numero_fatura, valor_total, status, data_emissao, data_pagamento, periodo_inicio, periodo_fim, empresa_id, empresas(razao_social)")
+      .order("data_emissao", { ascending: false })
+      .limit(100);
+    setFaturas(fats ?? []);
+
     setLoading(false);
+  }
+
+  async function marcarPaga(fatura: any) {
+    setMarcandoId(fatura.id);
+    const { error } = await supabase.from("faturas")
+      .update({ status: "paga", data_pagamento: new Date().toISOString().slice(0, 10) })
+      .eq("id", fatura.id);
+    setMarcandoId(null);
+    if (error) return toast.error(error.message);
+    toast.success(`Fatura ${fatura.numero_fatura} marcada como paga`);
+    carregar();
+  }
+
+  async function reabrirFatura(fatura: any) {
+    setMarcandoId(fatura.id);
+    const { error } = await supabase.from("faturas")
+      .update({ status: "emitida", data_pagamento: null })
+      .eq("id", fatura.id);
+    setMarcandoId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Fatura reaberta");
+    carregar();
   }
 
   useEffect(() => { carregar(); }, []);
@@ -270,6 +302,70 @@ function FinanceiroPage() {
           </div>
         )}
       </Card>
+
+      <Card className="p-4">
+        <h2 className="font-semibold mb-3">Faturas emitidas</h2>
+        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : faturas.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nenhuma fatura gerada.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader><TableRow>
+                <TableHead>Nº</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Período</TableHead>
+                <TableHead>Emissão</TableHead>
+                <TableHead className="text-right">Valor</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ação</TableHead>
+              </TableRow></TableHeader>
+              <TableBody>
+                {faturas.map((f: any) => (
+                  <TableRow key={f.id}>
+                    <TableCell className="font-mono text-xs">{f.numero_fatura}</TableCell>
+                    <TableCell className="font-medium">{f.empresas?.razao_social ?? "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {f.periodo_inicio ? new Date(f.periodo_inicio).toLocaleDateString("pt-BR") : "—"}
+                      {" → "}
+                      {f.periodo_fim ? new Date(f.periodo_fim).toLocaleDateString("pt-BR") : "—"}
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      {f.data_emissao ? new Date(f.data_emissao).toLocaleDateString("pt-BR") : "—"}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">{BRL(Number(f.valor_total || 0))}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={f.status === "paga" ? "default" : "outline"}
+                        className={f.status === "paga" ? "bg-emerald-600 hover:bg-emerald-600" : ""}
+                      >
+                        {f.status === "paga"
+                          ? `Paga${f.data_pagamento ? " · " + new Date(f.data_pagamento).toLocaleDateString("pt-BR") : ""}`
+                          : f.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {f.status === "paga" ? (
+                        <Button size="sm" variant="ghost" disabled={marcandoId === f.id}
+                          onClick={() => reabrirFatura(f)}>
+                          Reabrir
+                        </Button>
+                      ) : (
+                        <Button size="sm" disabled={marcandoId === f.id}
+                          onClick={() => marcarPaga(f)}>
+                          {marcandoId === f.id && <Loader2 className="w-3 h-3 mr-1 animate-spin" />}
+                          Marcar como paga
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </Card>
+
+
 
       <Card className="p-4">
         <h2 className="font-semibold mb-3">Fornecedores — a pagar</h2>
