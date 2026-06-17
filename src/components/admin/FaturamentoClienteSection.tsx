@@ -154,62 +154,85 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   async function gerarDocumento(tipo: "fatura" | "nf", taxa: number, numNf: string, serie: string, obs: string) {
     const ids = Array.from(selecionadas);
     if (ids.length === 0) { toast.error("Selecione ao menos uma OS"); return; }
-    const itens = oss.filter((o) => ids.includes(o.id));
-    const valorServicos = itens.reduce((s, o) => s + Number(o.valor_final || 0), 0);
-    const valorTaxa = (valorServicos * taxa) / 100;
-    const total = valorServicos + valorTaxa;
+    const itensSel = oss.filter((o) => ids.includes(o.id));
 
-    const { data: fat, error } = await supabase.from("faturas").insert({
-      empresa_id: empresaId,
-      periodo_inicio: periodoIni,
-      periodo_fim: periodoFim,
-      valor_servicos: valorServicos,
-      valor_taxa: valorTaxa,
-      taxa_gestao_percentual: taxa,
-      valor_total: total,
-      status: "emitida",
-      data_emissao: new Date().toISOString(),
-      numero_nf: tipo === "nf" ? (numNf || null) : null,
-      serie_nf: tipo === "nf" ? (serie || null) : null,
-      manutencao_ids: ids,
-      observacoes: obs || null,
-      criado_por: user?.id ?? null,
-    }).select("*").single();
+    // Agrupa por setor/secretaria — gera 1 fatura por setor
+    const grupos = new Map<string, typeof itensSel>();
+    for (const o of itensSel) {
+      const setor = (o.veiculo?.setor ?? "Sem setor").trim() || "Sem setor";
+      if (!grupos.has(setor)) grupos.set(setor, []);
+      grupos.get(setor)!.push(o);
+    }
 
-    if (error) { toast.error(error.message); return; }
+    const setores = Array.from(grupos.keys());
+    if (setores.length > 1) {
+      toast.info(`Gerando ${setores.length} faturas — uma para cada secretaria/setor`);
+    }
 
-    await supabase.from("manutencoes").update({ fatura_id: fat.id }).in("id", ids);
-    toast.success(`${tipo === "nf" ? "NF" : "Fatura"} ${fat.numero_fatura} emitida`);
+    let geradas = 0;
+    for (const [setor, itens] of grupos.entries()) {
+      const idsSetor = itens.map((o) => o.id);
+      const valorServicos = itens.reduce((s, o) => s + Number(o.valor_final || 0), 0);
+      const valorTaxa = (valorServicos * taxa) / 100;
+      const total = valorServicos + valorTaxa;
+      const obsSetor = [obs?.trim(), `Setor: ${setor}`].filter(Boolean).join(" · ");
 
-    imprimirFatura({
-      tipo,
-      numero_fatura: fat.numero_fatura,
-      numero_nf: fat.numero_nf,
-      serie_nf: fat.serie_nf,
-      data_emissao: fat.data_emissao,
-      periodo_inicio: periodoIni,
-      periodo_fim: periodoFim,
-      empresa: {
-        nome: empresa.razao_social,
-        cnpj: empresa.cnpj,
-        cidade: empresa.cidade,
-        estado: empresa.estado,
-      },
-      itens: itens.map((o) => ({
-        data: o.data_conclusao ?? "",
-        numero_os: o.numero_os,
-        veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
-        oficina: o.oficina_nome ?? "—",
-        descricao: o.descricao,
-        valor: Number(o.valor_final || 0),
-      })),
-      valor_servicos: valorServicos,
-      taxa_gestao_percentual: taxa,
-      valor_taxa: valorTaxa,
-      valor_total: total,
-      observacoes: obs,
-    });
+      const { data: fat, error } = await supabase.from("faturas").insert({
+        empresa_id: empresaId,
+        periodo_inicio: periodoIni,
+        periodo_fim: periodoFim,
+        valor_servicos: valorServicos,
+        valor_taxa: valorTaxa,
+        taxa_gestao_percentual: taxa,
+        valor_total: total,
+        status: "emitida",
+        data_emissao: new Date().toISOString(),
+        numero_nf: tipo === "nf" ? (numNf || null) : null,
+        serie_nf: tipo === "nf" ? (serie || null) : null,
+        manutencao_ids: idsSetor,
+        observacoes: obsSetor,
+        criado_por: user?.id ?? null,
+      }).select("*").single();
 
+      if (error) { toast.error(`Erro no setor ${setor}: ${error.message}`); continue; }
+
+      await supabase.from("manutencoes").update({ fatura_id: fat.id }).in("id", idsSetor);
+      geradas++;
+
+      imprimirFatura({
+        tipo,
+        numero_fatura: fat.numero_fatura,
+        numero_nf: fat.numero_nf,
+        serie_nf: fat.serie_nf,
+        data_emissao: fat.data_emissao,
+        periodo_inicio: periodoIni,
+        periodo_fim: periodoFim,
+        setor,
+        empresa: {
+          nome: empresa.razao_social,
+          cnpj: empresa.cnpj,
+          cidade: empresa.cidade,
+          estado: empresa.estado,
+        },
+        itens: itens.map((o) => ({
+          data: o.data_conclusao ?? "",
+          numero_os: o.numero_os,
+          veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
+          oficina: o.oficina_nome ?? "—",
+          descricao: o.descricao,
+          valor: Number(o.valor_final || 0),
+        })),
+        valor_servicos: valorServicos,
+        taxa_gestao_percentual: taxa,
+        valor_taxa: valorTaxa,
+        valor_total: total,
+        observacoes: obsSetor,
+      });
+    }
+
+    if (geradas > 0) {
+      toast.success(`${geradas} ${tipo === "nf" ? "NF(s)" : "fatura(s)"} emitida(s)`);
+    }
     setSelecionadas(new Set());
     setGerarOpen(null);
     carregar();
