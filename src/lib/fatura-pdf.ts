@@ -1,3 +1,7 @@
+import logoAsset from "@/assets/lobo-marley-logo.png.asset.json";
+
+const LOGO_URL = typeof window !== "undefined" ? new URL(logoAsset.url, window.location.origin).href : logoAsset.url;
+
 type Item = {
   data: string;
   numero_os: string | null;
