@@ -304,6 +304,70 @@ function FinanceiroPage() {
       </Card>
 
       <Card className="p-4">
+        <h2 className="font-semibold mb-3">Faturas emitidas</h2>
+        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : faturas.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nenhuma fatura gerada.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader><TableRow>
+                <TableHead>Nº</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Período</TableHead>
+                <TableHead>Emissão</TableHead>
+                <TableHead className="text-right">Valor</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ação</TableHead>
+              </TableRow></TableHeader>
+              <TableBody>
+                {faturas.map((f: any) => (
+                  <TableRow key={f.id}>
+                    <TableCell className="font-mono text-xs">{f.numero_fatura}</TableCell>
+                    <TableCell className="font-medium">{f.empresas?.razao_social ?? "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {f.periodo_inicio ? new Date(f.periodo_inicio).toLocaleDateString("pt-BR") : "—"}
+                      {" → "}
+                      {f.periodo_fim ? new Date(f.periodo_fim).toLocaleDateString("pt-BR") : "—"}
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      {f.data_emissao ? new Date(f.data_emissao).toLocaleDateString("pt-BR") : "—"}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">{BRL(Number(f.valor_total || 0))}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={f.status === "paga" ? "default" : "outline"}
+                        className={f.status === "paga" ? "bg-emerald-600 hover:bg-emerald-600" : ""}
+                      >
+                        {f.status === "paga"
+                          ? `Paga${f.data_pagamento ? " · " + new Date(f.data_pagamento).toLocaleDateString("pt-BR") : ""}`
+                          : f.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {f.status === "paga" ? (
+                        <Button size="sm" variant="ghost" disabled={marcandoId === f.id}
+                          onClick={() => reabrirFatura(f)}>
+                          Reabrir
+                        </Button>
+                      ) : (
+                        <Button size="sm" disabled={marcandoId === f.id}
+                          onClick={() => marcarPaga(f)}>
+                          {marcandoId === f.id && <Loader2 className="w-3 h-3 mr-1 animate-spin" />}
+                          Marcar como paga
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </Card>
+
+
+
+      <Card className="p-4">
         <h2 className="font-semibold mb-3">Fornecedores — a pagar</h2>
         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : fornecedores.length === 0 ? (
           <p className="text-sm text-muted-foreground">Sem saldos pendentes.</p>
