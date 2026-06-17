@@ -36,6 +36,7 @@ type FaturaData = {
   valor_total: number;
   observacoes?: string | null;
   tipo: "fatura" | "nf";
+  setor?: string | null;
 };
 
 const BRL = (v: number) =>
@@ -103,6 +104,7 @@ export function imprimirFatura(d: FaturaData) {
       ${d.empresa.cnpj ? `<div>CNPJ: ${esc(d.empresa.cnpj)}</div>` : ""}
       ${d.empresa.endereco ? `<div>${esc(d.empresa.endereco)}</div>` : ""}
       ${(d.empresa.cidade || d.empresa.estado) ? `<div>${esc(d.empresa.cidade ?? "")}/${esc(d.empresa.estado ?? "")}</div>` : ""}
+      ${d.setor ? `<div style="margin-top:4px"><strong>Secretaria/Setor:</strong> ${esc(d.setor)}</div>` : ""}
     </div>
     <div class="box">
       <h3>Prestador</h3>

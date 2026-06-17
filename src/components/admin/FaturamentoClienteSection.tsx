@@ -37,7 +37,7 @@ type OS = {
   custo_fornecedor: number | null;
   data_conclusao: string | null;
   fatura_id: string | null;
-  veiculo: { placa: string; marca: string; modelo: string } | null;
+  veiculo: { placa: string; marca: string; modelo: string; setor: string | null } | null;
 };
 type ForExterno = {
   id: string; nome: string; cnpj: string | null;
@@ -81,7 +81,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     try {
       const [m, f, p, fat] = await Promise.all([
         supabase.from("manutencoes")
-          .select("id, numero_os, nota_fiscal, descricao, oficina_nome, fornecedor_externo_id, valor_final, custo_fornecedor, data_conclusao, fatura_id, veiculo:veiculos(placa,marca,modelo)")
+          .select("id, numero_os, nota_fiscal, descricao, oficina_nome, fornecedor_externo_id, valor_final, custo_fornecedor, data_conclusao, fatura_id, veiculo:veiculos(placa,marca,modelo,setor)")
           .eq("empresa_id", empresaId)
           .eq("status", "Concluída")
           .gte("data_conclusao", `${periodoIni}T00:00:00`)
@@ -154,62 +154,85 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   async function gerarDocumento(tipo: "fatura" | "nf", taxa: number, numNf: string, serie: string, obs: string) {
     const ids = Array.from(selecionadas);
     if (ids.length === 0) { toast.error("Selecione ao menos uma OS"); return; }
-    const itens = oss.filter((o) => ids.includes(o.id));
-    const valorServicos = itens.reduce((s, o) => s + Number(o.valor_final || 0), 0);
-    const valorTaxa = (valorServicos * taxa) / 100;
-    const total = valorServicos + valorTaxa;
+    const itensSel = oss.filter((o) => ids.includes(o.id));
 
-    const { data: fat, error } = await supabase.from("faturas").insert({
-      empresa_id: empresaId,
-      periodo_inicio: periodoIni,
-      periodo_fim: periodoFim,
-      valor_servicos: valorServicos,
-      valor_taxa: valorTaxa,
-      taxa_gestao_percentual: taxa,
-      valor_total: total,
-      status: "emitida",
-      data_emissao: new Date().toISOString(),
-      numero_nf: tipo === "nf" ? (numNf || null) : null,
-      serie_nf: tipo === "nf" ? (serie || null) : null,
-      manutencao_ids: ids,
-      observacoes: obs || null,
-      criado_por: user?.id ?? null,
-    }).select("*").single();
+    // Agrupa por setor/secretaria — gera 1 fatura por setor
+    const grupos = new Map<string, typeof itensSel>();
+    for (const o of itensSel) {
+      const setor = (o.veiculo?.setor ?? "Sem setor").trim() || "Sem setor";
+      if (!grupos.has(setor)) grupos.set(setor, []);
+      grupos.get(setor)!.push(o);
+    }
 
-    if (error) { toast.error(error.message); return; }
+    const setores = Array.from(grupos.keys());
+    if (setores.length > 1) {
+      toast.info(`Gerando ${setores.length} faturas — uma para cada secretaria/setor`);
+    }
 
-    await supabase.from("manutencoes").update({ fatura_id: fat.id }).in("id", ids);
-    toast.success(`${tipo === "nf" ? "NF" : "Fatura"} ${fat.numero_fatura} emitida`);
+    let geradas = 0;
+    for (const [setor, itens] of grupos.entries()) {
+      const idsSetor = itens.map((o) => o.id);
+      const valorServicos = itens.reduce((s, o) => s + Number(o.valor_final || 0), 0);
+      const valorTaxa = (valorServicos * taxa) / 100;
+      const total = valorServicos + valorTaxa;
+      const obsSetor = [obs?.trim(), `Setor: ${setor}`].filter(Boolean).join(" · ");
 
-    imprimirFatura({
-      tipo,
-      numero_fatura: fat.numero_fatura,
-      numero_nf: fat.numero_nf,
-      serie_nf: fat.serie_nf,
-      data_emissao: fat.data_emissao,
-      periodo_inicio: periodoIni,
-      periodo_fim: periodoFim,
-      empresa: {
-        nome: empresa.razao_social,
-        cnpj: empresa.cnpj,
-        cidade: empresa.cidade,
-        estado: empresa.estado,
-      },
-      itens: itens.map((o) => ({
-        data: o.data_conclusao ?? "",
-        numero_os: o.numero_os,
-        veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
-        oficina: o.oficina_nome ?? "—",
-        descricao: o.descricao,
-        valor: Number(o.valor_final || 0),
-      })),
-      valor_servicos: valorServicos,
-      taxa_gestao_percentual: taxa,
-      valor_taxa: valorTaxa,
-      valor_total: total,
-      observacoes: obs,
-    });
+      const { data: fat, error } = await supabase.from("faturas").insert({
+        empresa_id: empresaId,
+        periodo_inicio: periodoIni,
+        periodo_fim: periodoFim,
+        valor_servicos: valorServicos,
+        valor_taxa: valorTaxa,
+        taxa_gestao_percentual: taxa,
+        valor_total: total,
+        status: "emitida",
+        data_emissao: new Date().toISOString(),
+        numero_nf: tipo === "nf" ? (numNf || null) : null,
+        serie_nf: tipo === "nf" ? (serie || null) : null,
+        manutencao_ids: idsSetor,
+        observacoes: obsSetor,
+        criado_por: user?.id ?? null,
+      }).select("*").single();
 
+      if (error) { toast.error(`Erro no setor ${setor}: ${error.message}`); continue; }
+
+      await supabase.from("manutencoes").update({ fatura_id: fat.id }).in("id", idsSetor);
+      geradas++;
+
+      imprimirFatura({
+        tipo,
+        numero_fatura: fat.numero_fatura,
+        numero_nf: fat.numero_nf,
+        serie_nf: fat.serie_nf,
+        data_emissao: fat.data_emissao,
+        periodo_inicio: periodoIni,
+        periodo_fim: periodoFim,
+        setor,
+        empresa: {
+          nome: empresa.razao_social,
+          cnpj: empresa.cnpj,
+          cidade: empresa.cidade,
+          estado: empresa.estado,
+        },
+        itens: itens.map((o) => ({
+          data: o.data_conclusao ?? "",
+          numero_os: o.numero_os,
+          veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
+          oficina: o.oficina_nome ?? "—",
+          descricao: o.descricao,
+          valor: Number(o.valor_final || 0),
+        })),
+        valor_servicos: valorServicos,
+        taxa_gestao_percentual: taxa,
+        valor_taxa: valorTaxa,
+        valor_total: total,
+        observacoes: obsSetor,
+      });
+    }
+
+    if (geradas > 0) {
+      toast.success(`${geradas} ${tipo === "nf" ? "NF(s)" : "fatura(s)"} emitida(s)`);
+    }
     setSelecionadas(new Set());
     setGerarOpen(null);
     carregar();
@@ -218,6 +241,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   function imprimirFaturaExistente(f: Fatura) {
     const ids = f.manutencao_ids ?? [];
     const itens = oss.filter((o) => ids.includes(o.id));
+    const setores = Array.from(new Set(itens.map((o) => o.veiculo?.setor).filter(Boolean))) as string[];
     imprimirFatura({
       tipo: f.numero_nf ? "nf" : "fatura",
       numero_fatura: f.numero_fatura,
@@ -226,6 +250,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       data_emissao: f.data_emissao,
       periodo_inicio: f.periodo_inicio,
       periodo_fim: f.periodo_fim,
+      setor: setores.join(", ") || null,
       empresa: { nome: empresa.razao_social, cnpj: empresa.cnpj, cidade: empresa.cidade, estado: empresa.estado },
       itens: itens.map((o) => ({
         data: o.data_conclusao ?? "",
@@ -295,6 +320,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 <TableHead>Data</TableHead>
                 <TableHead>OS</TableHead>
                 <TableHead>Veículo</TableHead>
+                <TableHead>Setor</TableHead>
                 <TableHead>Oficina</TableHead>
                 <TableHead>Descrição</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
@@ -302,7 +328,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
               </TableRow></TableHeader>
               <TableBody>
                 {oss.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
                 ) : oss.map((o) => (
                   <TableRow key={o.id} className={o.fatura_id ? "opacity-60" : ""}>
                     <TableCell>
@@ -317,6 +343,9 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                     </TableCell>
                     <TableCell className="font-mono text-xs">{o.numero_os ?? "—"}</TableCell>
                     <TableCell className="text-xs">{o.veiculo ? `${o.veiculo.placa}` : "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {o.veiculo?.setor ? <Badge variant="outline" className="text-[10px]">{o.veiculo.setor}</Badge> : "—"}
+                    </TableCell>
                     <TableCell className="text-xs">{o.oficina_nome ?? "—"}</TableCell>
                     <TableCell className="text-xs max-w-[280px] truncate" title={o.descricao}>{o.descricao}</TableCell>
                     <TableCell className="text-right font-mono">{BRL(Number(o.valor_final || 0))}</TableCell>
