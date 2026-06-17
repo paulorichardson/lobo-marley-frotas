@@ -64,8 +64,10 @@ function FinanceiroPage() {
   const [serie, setSerie] = useState<{ mes: string; receita: number; pago: number }[]>([]);
   const [empresas, setEmpresas] = useState<ResumoEmpresa[]>([]);
   const [fornecedores, setFornecedores] = useState<ResumoFornecedor[]>([]);
+  const [faturas, setFaturas] = useState<any[]>([]);
   const [gerarOpen, setGerarOpen] = useState<ResumoEmpresa | null>(null);
   const [pagarOpen, setPagarOpen] = useState<ResumoFornecedor | null>(null);
+  const [marcandoId, setMarcandoId] = useState<string | null>(null);
 
   async function carregar() {
     setLoading(true);
