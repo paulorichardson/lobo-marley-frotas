@@ -241,6 +241,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   function imprimirFaturaExistente(f: Fatura) {
     const ids = f.manutencao_ids ?? [];
     const itens = oss.filter((o) => ids.includes(o.id));
+    const setores = Array.from(new Set(itens.map((o) => o.veiculo?.setor).filter(Boolean))) as string[];
     imprimirFatura({
       tipo: f.numero_nf ? "nf" : "fatura",
       numero_fatura: f.numero_fatura,
@@ -249,6 +250,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       data_emissao: f.data_emissao,
       periodo_inicio: f.periodo_inicio,
       periodo_fim: f.periodo_fim,
+      setor: setores.join(", ") || null,
       empresa: { nome: empresa.razao_social, cnpj: empresa.cnpj, cidade: empresa.cidade, estado: empresa.estado },
       itens: itens.map((o) => ({
         data: o.data_conclusao ?? "",
