@@ -36,6 +36,7 @@ type FaturaData = {
   valor_total: number;
   observacoes?: string | null;
   tipo: "fatura" | "nf";
+  setor?: string | null;
 };
 
 const BRL = (v: number) =>
