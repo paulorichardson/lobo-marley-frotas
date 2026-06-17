@@ -137,7 +137,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   }, [oss, pagamentos, fornecedores]);
 
   const totalSelecionado = useMemo(
-    () => oss.filter((o) => selecionadas.has(o.id)).reduce((s, o) => s + Number(o.valor_final || 0), 0),
+    () => oss.filter((o) => selecionadas.has(o.id)).reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0),
     [oss, selecionadas],
   );
 
@@ -175,7 +175,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     let geradas = 0;
     for (const [setor, itens] of grupos.entries()) {
       const idsSetor = itens.map((o) => o.id);
-      const valorServicos = itens.reduce((s, o) => s + Number(o.valor_final || 0), 0);
+      const valorServicos = itens.reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0);
       const valorTaxa = (valorServicos * taxa) / 100;
       const total = valorServicos + valorTaxa;
       const obsSetor = [obs?.trim(), `Setor: ${setor}`].filter(Boolean).join(" · ");
@@ -223,7 +223,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
           oficina: o.oficina_nome ?? "—",
           descricao: o.descricao,
-          valor: Number(o.valor_final || 0),
+          valor: Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0),
         })),
         valor_servicos: valorServicos,
         taxa_gestao_percentual: taxa,
@@ -261,7 +261,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
         veiculo: o.veiculo ? o.veiculo.placa : "—",
         oficina: o.oficina_nome ?? "—",
         descricao: o.descricao,
-        valor: Number(o.valor_final || 0),
+        valor: Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0),
       })),
       valor_servicos: Number(f.valor_total),
       valor_total: Number(f.valor_total),
@@ -361,7 +361,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                     </TableCell>
                     <TableCell className="text-xs">{o.oficina_nome ?? "—"}</TableCell>
                     <TableCell className="text-xs max-w-[280px] truncate" title={o.descricao}>{o.descricao}</TableCell>
-                    <TableCell className="text-right font-mono">{BRL(Number(o.valor_final || 0))}</TableCell>
+                    <TableCell className="text-right font-mono">{BRL(Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0))}</TableCell>
                     <TableCell>
                       {o.fatura_id
                         ? <Badge variant="default" className="text-[10px]">Faturada</Badge>
