@@ -64,19 +64,21 @@ Deno.serve(async (req) => {
     const dataUrl = `data:${mime};base64,${file_base64}`;
 
     const body = {
-      model: "google/gemini-2.5-flash",
+      model: "google/gemini-2.5-pro",
       messages: [
         { role: "system", content: SCHEMA_PROMPT },
         {
           role: "user",
           content: [
-            { type: "text", text: `Extraia os dados desta nota fiscal (arquivo: ${filename ?? "documento"}).` },
-            { type: "file", file: { filename: filename ?? "nota.pdf", file_data: dataUrl } },
+            { type: "text", text: `Extraia TODOS os dados desta nota fiscal (arquivo: ${filename ?? "documento"}). Leia o PDF inteiro, identifique CNPJ do emitente, data de emissão, número da NF, valor total, descrição dos serviços/produtos e procure pela placa do veículo (formatos ABC1234 ou ABC1D23) em qualquer parte do documento (descrição, observações, dados adicionais). Devolva APENAS o JSON, sem markdown.` },
+            { type: "image_url", image_url: { url: dataUrl } },
           ],
         },
       ],
       response_format: { type: "json_object" },
     };
+
+    console.log(`[parse-nota-fiscal] enviando ${filename} (${(file_base64.length * 0.75 / 1024).toFixed(1)}kb) ao modelo`);
 
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -89,6 +91,7 @@ Deno.serve(async (req) => {
 
     if (!r.ok) {
       const text = await r.text();
+      console.error(`[parse-nota-fiscal] IA ${r.status}: ${text.slice(0, 300)}`);
       return new Response(JSON.stringify({ error: `IA ${r.status}: ${text.slice(0, 500)}` }), {
         status: r.status === 429 || r.status === 402 ? r.status : 502,
         headers: { ...CORS, "Content-Type": "application/json" },
@@ -97,6 +100,8 @@ Deno.serve(async (req) => {
 
     const json = await r.json();
     const content = json?.choices?.[0]?.message?.content ?? "{}";
+    console.log(`[parse-nota-fiscal] resposta IA (primeiros 400 chars):`, String(content).slice(0, 400));
+
     let parsed: any;
     try {
       parsed = typeof content === "string" ? JSON.parse(content) : content;
