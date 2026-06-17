@@ -18,10 +18,11 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2,
+  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
 } from "lucide-react";
 import { imprimirFatura } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
+import { EnviarNotasFiscaisModal } from "./EnviarNotasFiscaisModal";
 
 const BRL = (v: number) =>
   Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -75,6 +76,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   const [gerarOpen, setGerarOpen] = useState<"fatura" | "nf" | null>(null);
   const [pagarForn, setPagarForn] = useState<ForExterno | null>(null);
   const [novoForn, setNovoForn] = useState(false);
+  const [importarNFs, setImportarNFs] = useState(false);
 
   async function carregar() {
     setLoading(true);
@@ -283,12 +285,22 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           <Label className="text-xs">Até</Label>
           <Input type="date" value={periodoFim} onChange={(e) => setPeriodoFim(e.target.value)} />
         </div>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-2 flex-wrap">
+          <Button variant="default" onClick={() => setImportarNFs(true)} className="bg-gradient-to-r from-primary to-primary/80">
+            <Sparkles className="w-4 h-4 mr-1" /> Importar NFs (IA)
+          </Button>
           <Button variant="outline" onClick={() => setNovoForn(true)}>
             <Plus className="w-4 h-4 mr-1" /> Novo fornecedor
           </Button>
         </div>
       </Card>
+
+      <EnviarNotasFiscaisModal
+        open={importarNFs}
+        onOpenChange={setImportarNFs}
+        empresaId={empresaId}
+        onSaved={carregar}
+      />
 
       {/* OSs */}
       <Card className="p-4">
