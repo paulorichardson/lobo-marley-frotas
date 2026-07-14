@@ -38,6 +38,7 @@ async function fileToBase64(f: File): Promise<string> {
 export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   const { user, empresaId } = useAuth();
   const parseIA = useServerFn(parseNotaFiscalIA);
+  const autoRegForn = useServerFn(autoRegistrarFornecedor);
 
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
