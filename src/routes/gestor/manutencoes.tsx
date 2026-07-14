@@ -741,6 +741,7 @@ function ManutencoesGestor() {
 
       <NovaSolicitacaoModal open={novaOpen} onClose={() => setNovaOpen(false)} onCreated={carregar} />
       <LancarExecutadaModal open={executadaOpen} onClose={() => setExecutadaOpen(false)} onCreated={carregar} />
+      <LancarExecutadaIAModal open={executadaIAOpen} onClose={() => setExecutadaIAOpen(false)} onCreated={carregar} />
     </div>
   );
 }
