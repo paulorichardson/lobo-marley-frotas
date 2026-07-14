@@ -4,6 +4,7 @@ export interface PecaExtraida {
   descricao: string;
   quantidade: number;
   valor_unitario: number;
+  veiculo_hint?: string | null; // placa/apelido sugerido pela IA
 }
 
 export interface NfExtraida {
