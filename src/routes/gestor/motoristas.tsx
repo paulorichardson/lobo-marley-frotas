@@ -139,6 +139,17 @@ function MotoristasPage() {
     );
   }, [motoristas, busca]);
 
+  const cadastroFiltrado = useMemo(() => {
+    const q = busca.trim().toLowerCase();
+    if (!q) return cadastro;
+    return cadastro.filter((c) =>
+      c.nome.toLowerCase().includes(q)
+      || (c.matricula ?? "").toLowerCase().includes(q)
+      || (c.secretaria ?? "").toLowerCase().includes(q)
+      || (c.cargo ?? "").toLowerCase().includes(q),
+    );
+  }, [cadastro, busca]);
+
   const veicPorMotorista = useMemo(() => {
     const m: Record<string, VeiculoSimples> = {};
     veiculos.forEach((v) => { if (v.motorista_id) m[v.motorista_id] = v; });
