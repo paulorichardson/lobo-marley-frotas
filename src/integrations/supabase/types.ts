@@ -1564,7 +1564,13 @@ export type Database = {
           motorista_id: string | null
           numero_patrimonio: string | null
           numero_serie: string | null
+          oleo_lubrificante: string | null
           placa: string
+          pneu_aro: string | null
+          pneu_indice_carga_vel: string | null
+          pneu_medida_original: string | null
+          pneu_observacao: string | null
+          pneus_compativeis: string | null
           renavam: string | null
           setor: string | null
           status: string
@@ -1598,7 +1604,13 @@ export type Database = {
           motorista_id?: string | null
           numero_patrimonio?: string | null
           numero_serie?: string | null
+          oleo_lubrificante?: string | null
           placa: string
+          pneu_aro?: string | null
+          pneu_indice_carga_vel?: string | null
+          pneu_medida_original?: string | null
+          pneu_observacao?: string | null
+          pneus_compativeis?: string | null
           renavam?: string | null
           setor?: string | null
           status?: string
@@ -1632,7 +1644,13 @@ export type Database = {
           motorista_id?: string | null
           numero_patrimonio?: string | null
           numero_serie?: string | null
+          oleo_lubrificante?: string | null
           placa?: string
+          pneu_aro?: string | null
+          pneu_indice_carga_vel?: string | null
+          pneu_medida_original?: string | null
+          pneu_observacao?: string | null
+          pneus_compativeis?: string | null
           renavam?: string | null
           setor?: string | null
           status?: string

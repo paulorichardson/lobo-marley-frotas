@@ -80,6 +80,12 @@ function DetalheVeiculo() {
       doc_seguro_url: veiculo.doc_seguro_url || "",
       codigo_siga: veiculo.codigo_siga || "",
       tipo_combustivel_siga: veiculo.tipo_combustivel_siga || "",
+      pneu_aro: veiculo.pneu_aro || "",
+      pneu_medida_original: veiculo.pneu_medida_original || "",
+      pneus_compativeis: veiculo.pneus_compativeis || "",
+      pneu_indice_carga_vel: veiculo.pneu_indice_carga_vel || "",
+      pneu_observacao: veiculo.pneu_observacao || "",
+      oleo_lubrificante: veiculo.oleo_lubrificante || "",
     };
     return (
       <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-4">
@@ -177,6 +183,18 @@ function DadosTab({ veiculo, motoristaNome }: { veiculo: any; motoristaNome: str
       <DateField label="Vencimento Seguro" value={veiculo.vencimento_seguro} />
       <Field label="Código SIGA-TCM" value={veiculo.codigo_siga} />
       <Field label="Combustível SIGA-TCM" value={veiculo.tipo_combustivel_siga} />
+      <Field label="Pneu (aro)" value={veiculo.pneu_aro} />
+      <Field label="Medida original do pneu" value={veiculo.pneu_medida_original} />
+      <Field label="Índice carga/vel." value={veiculo.pneu_indice_carga_vel} />
+      <Field label="Óleo lubrificante" value={veiculo.oleo_lubrificante} />
+      <div className="md:col-span-2">
+        <Field label="Medidas compatíveis" value={veiculo.pneus_compativeis} />
+      </div>
+      {veiculo.pneu_observacao && (
+        <div className="md:col-span-2">
+          <Field label="Obs. do pneu" value={veiculo.pneu_observacao} />
+        </div>
+      )}
     </Card>
   );
 }
