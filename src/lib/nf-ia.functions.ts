@@ -71,11 +71,17 @@ Estrutura JSON:
   "valor_mao_obra": number|null,
   "tipo_servico": string|null,
   "descricao": string|null,
-  "pecas": [{"descricao": string, "quantidade": number, "valor_unitario": number}],
-  "observacoes": string|null
+  "pecas": [{"descricao": string, "quantidade": number, "valor_unitario": number, "veiculo_hint": string|null}],
+  "observacoes": string|null,
+  "veiculos_mencionados": [string]
 }
 Extraia CNPJ como apenas dígitos (14 caracteres). CEP apenas dígitos (8). Estado como sigla (2 letras).
 Para tipo_servico use um destes valores: "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura", "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros".
+IMPORTANTE — Múltiplos veículos:
+- Procure placas ou apelidos de veículos em QUALQUER lugar do documento, especialmente em "DADOS ADICIONAIS", "OBSERVAÇÕES", "INFORMAÇÕES COMPLEMENTARES", nos itens/descrições, e junto a quantidades.
+- Liste TODOS em "veiculos_mencionados" (ex.: "PAC2A34", "OUS-4535", "CAÇAMBA 01"). Se aparecerem em blocos como "(CAÇAMBA / PAC2A34) (ÔNIBUS / OUS-4535)", extraia cada placa/apelido separadamente.
+- Se houver múltiplos veículos e o documento indicar quais peças/quantidades pertencem a cada um, preencha "veiculo_hint" em cada peça com a placa/apelido correspondente. Caso a nota tenha, por exemplo, 4 pneus para o ônibus e 2 para a caçamba, DESMEMBRE em linhas separadas com o hint certo.
+- Se não houver indicação clara de distribuição, deixe "veiculo_hint" null e o operador distribui manualmente.
 ${placasHint}`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
