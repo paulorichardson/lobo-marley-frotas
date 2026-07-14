@@ -157,12 +157,38 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         } catch (e) { console.error(e); }
       }
 
-      const fornecedorUserId = fornecedorId !== "__externo"
+      let fornecedorIdFinal = fornecedorId;
+      let fornecedorUserId: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.user_id ?? null
         : null;
-      const nomeFornecedor = fornecedorId !== "__externo"
+      let nomeFornecedor: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.razao_social ?? null
         : oficinaNome;
+
+      // Auto-cadastro do fornecedor se veio da IA e não foi selecionado manualmente
+      if (fornecedorId === "__externo" && extraido?.fornecedor_nome && oficinaNome.trim()) {
+        try {
+          const novo = await autoRegForn({
+            data: {
+              razao_social: oficinaNome.trim(),
+              cnpj: extraido.fornecedor_cnpj,
+              telefone: extraido.fornecedor_telefone,
+              email: extraido.fornecedor_email,
+              endereco: extraido.fornecedor_endereco,
+              cidade: extraido.fornecedor_cidade,
+              estado: extraido.fornecedor_estado,
+              cep: extraido.fornecedor_cep,
+            },
+          });
+          fornecedorIdFinal = novo.id;
+          fornecedorUserId = novo.user_id;
+          nomeFornecedor = novo.razao_social;
+          if (novo.criado) toast.success(`Fornecedor "${novo.razao_social}" cadastrado automaticamente`);
+        } catch (e: any) {
+          console.error("auto-registro fornecedor falhou", e);
+          toast.warning("Não foi possível cadastrar o fornecedor automaticamente — seguindo como oficina externa");
+        }
+      }
 
       const dataISO = new Date(dataExec + "T12:00:00").toISOString();
       const valor = Number(valorTotal);
