@@ -119,6 +119,13 @@ function MotoristasPage() {
     }));
     setStats(map);
 
+    const { data: cad } = await supabase
+      .from("motoristas_cadastro")
+      .select("id, matricula, nome, cargo, vinculo, secretaria, ativo, perfil_id")
+      .eq("empresa_id", empresaId)
+      .order("nome");
+    setCadastro((cad ?? []) as MotoristaCadastro[]);
+
     setLoading(false);
   }
 
