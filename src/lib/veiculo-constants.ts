@@ -1,5 +1,27 @@
 export const COMBUSTIVEIS = ["Gasolina", "Diesel", "Flex", "Elétrico", "GNV", "Híbrido"] as const;
-export const CATEGORIAS = ["Carro", "Caminhonete", "Van", "Ônibus", "Caminhão", "Moto", "Máquina", "Outro"] as const;
+export const CATEGORIAS = [
+  "Carro",
+  "Caminhonete",
+  "Van",
+  "Ônibus",
+  "Micro-ônibus",
+  "Caminhão",
+  "Caminhão Basculante",
+  "Caçamba",
+  "Moto",
+  "Máquina",
+  "Retroescavadeira",
+  "Pá Carregadeira",
+  "Escavadeira Hidráulica",
+  "Motoniveladora (Patrol)",
+  "Trator de Esteira",
+  "Trator Agrícola",
+  "Rolo Compactador",
+  "Empilhadeira",
+  "Munck",
+  "Betoneira",
+  "Outro",
+] as const;
 export const STATUS_VEICULO = ["Ativo", "Em Manutenção", "Inativo", "Vendido"] as const;
 
 export const TIPOS_BEM = [
