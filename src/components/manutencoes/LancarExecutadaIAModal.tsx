@@ -74,7 +74,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
     (async () => {
       const [{ data: vs }, { data: fs }] = await Promise.all([
         supabase.from("veiculos").select("id, placa, modelo, marca, km_atual").order("placa"),
-        supabase.from("fornecedores_cadastro").select("id, user_id, razao_social, nome_fantasia").eq("status", "aprovado"),
+        supabase.from("fornecedores_cadastro").select("id, user_id, razao_social, nome_fantasia, cnpj").eq("status", "aprovado"),
       ]);
       setVeiculos((vs ?? []) as any);
       setFornecedores((fs ?? []) as any);
