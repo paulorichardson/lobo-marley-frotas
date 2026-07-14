@@ -20,9 +20,21 @@ interface Fornecedor { id: string; user_id: string | null; razao_social: string;
 type PecaLocal = PecaExtraida & { veiculo_id?: string };
 
 const TIPOS = [
-  "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
-  "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros",
+  "Preventiva", "Corretiva", "Pneu", "Elétrica", "Funilaria", "Revisão", "Outro",
 ];
+
+function normalizeTipo(t: string | null | undefined): string | null {
+  if (!t) return null;
+  const s = t.toLowerCase();
+  if (TIPOS.includes(t)) return t;
+  if (s.includes("pneu")) return "Pneu";
+  if (s.includes("elétr") || s.includes("eletr")) return "Elétrica";
+  if (s.includes("funila") || s.includes("pintura")) return "Funilaria";
+  if (s.includes("revis")) return "Revisão";
+  if (s.includes("prevent")) return "Preventiva";
+  if (s.includes("corret") || s.includes("mecân") || s.includes("mecan") || s.includes("motor")) return "Corretiva";
+  return "Outro";
+}
 
 function matchVeiculoByHint(hint: string | null | undefined, veiculos: Veiculo[]): Veiculo | undefined {
   if (!hint) return undefined;
