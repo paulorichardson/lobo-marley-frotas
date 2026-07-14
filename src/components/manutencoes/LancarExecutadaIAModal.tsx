@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Loader2, Sparkles, FileText, Trash2, Plus } from "lucide-react";
 
 interface Veiculo { id: string; placa: string; modelo: string; marca: string; km_atual: number; }
-interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; }
+interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; cnpj: string | null; }
 
 const TIPOS = [
   "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
