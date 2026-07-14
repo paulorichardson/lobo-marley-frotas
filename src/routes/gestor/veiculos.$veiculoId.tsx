@@ -133,10 +133,11 @@ function DetalheVeiculo() {
       </Card>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="grid grid-cols-4 w-full md:w-auto">
+        <TabsList className="grid grid-cols-5 w-full md:w-auto">
           <TabsTrigger value="dados">Dados</TabsTrigger>
           <TabsTrigger value="fotos">Fotos</TabsTrigger>
           <TabsTrigger value="docs">Documentos</TabsTrigger>
+          <TabsTrigger value="pecas">Peças</TabsTrigger>
           <TabsTrigger value="hist">Histórico</TabsTrigger>
         </TabsList>
 
@@ -148,6 +149,9 @@ function DetalheVeiculo() {
         </TabsContent>
         <TabsContent value="docs" className="mt-4">
           <DocsTab veiculo={veiculo} onChanged={carregar} />
+        </TabsContent>
+        <TabsContent value="pecas" className="mt-4">
+          <PecasTab veiculoId={veiculo.id} />
         </TabsContent>
         <TabsContent value="hist" className="mt-4">
           <HistoricoTab veiculoId={veiculo.id} />
