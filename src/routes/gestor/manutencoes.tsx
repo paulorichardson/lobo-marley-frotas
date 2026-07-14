@@ -21,6 +21,8 @@ import { notifyUser } from "@/lib/notify";
 import { useAuth } from "@/hooks/useAuth";
 import { NovaSolicitacaoModal, Estrelas } from "@/components/manutencoes/NovaSolicitacaoModal";
 import { LancarExecutadaModal } from "@/components/manutencoes/LancarExecutadaModal";
+import { LancarExecutadaIAModal } from "@/components/manutencoes/LancarExecutadaIAModal";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { imprimirOS } from "@/lib/imprimir-os";
 import { exportarXLSX } from "@/lib/export-xlsx";
@@ -124,6 +126,7 @@ function ManutencoesGestor() {
   const [acao, setAcao] = useState(false);
   const [novaOpen, setNovaOpen] = useState(false);
   const [executadaOpen, setExecutadaOpen] = useState(false);
+  const [executadaIAOpen, setExecutadaIAOpen] = useState(false);
   const [filtroUrg, setFiltroUrg] = useState<string>("todos");
 
   async function carregar() {
@@ -386,6 +389,9 @@ function ManutencoesGestor() {
           </Button>
           <Button variant="secondary" onClick={() => setExecutadaOpen(true)}>
             <ClipboardCheck className="w-4 h-4 mr-2" /> Lançar Executada
+          </Button>
+          <Button variant="secondary" onClick={() => setExecutadaIAOpen(true)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30">
+            <Sparkles className="w-4 h-4 mr-2" /> Lançar por IA
           </Button>
           <Button onClick={() => setNovaOpen(true)}>
             <Plus className="w-4 h-4 mr-2" /> Nova Solicitação
