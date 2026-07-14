@@ -1123,6 +1123,63 @@ export type Database = {
           },
         ]
       }
+      motoristas_cadastro: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          cargo: string | null
+          cnh_categoria: string | null
+          cnh_numero: string | null
+          cnh_vencimento: string | null
+          criado_em: string
+          empresa_id: string
+          id: string
+          matricula: string | null
+          nome: string
+          observacoes: string | null
+          perfil_id: string | null
+          secretaria: string | null
+          telefone: string | null
+          vinculo: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          cargo?: string | null
+          cnh_categoria?: string | null
+          cnh_numero?: string | null
+          cnh_vencimento?: string | null
+          criado_em?: string
+          empresa_id: string
+          id?: string
+          matricula?: string | null
+          nome: string
+          observacoes?: string | null
+          perfil_id?: string | null
+          secretaria?: string | null
+          telefone?: string | null
+          vinculo?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          cargo?: string | null
+          cnh_categoria?: string | null
+          cnh_numero?: string | null
+          cnh_vencimento?: string | null
+          criado_em?: string
+          empresa_id?: string
+          id?: string
+          matricula?: string | null
+          nome?: string
+          observacoes?: string | null
+          perfil_id?: string | null
+          secretaria?: string | null
+          telefone?: string | null
+          vinculo?: string | null
+        }
+        Relationships: []
+      }
       notificacoes: {
         Row: {
           criado_em: string
