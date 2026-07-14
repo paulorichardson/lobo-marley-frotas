@@ -25,6 +25,7 @@ export interface NfExtraida {
   descricao: string | null;
   pecas: PecaExtraida[];
   observacoes: string | null;
+  veiculos_mencionados: string[]; // placas/apelidos identificados em qualquer campo (dados adicionais, obs, etc.)
 }
 
 /**
