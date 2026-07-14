@@ -57,6 +57,13 @@ Estrutura JSON:
   "placa": string|null,
   "data_emissao": string|null,
   "fornecedor_nome": string|null,
+  "fornecedor_cnpj": string|null,
+  "fornecedor_telefone": string|null,
+  "fornecedor_email": string|null,
+  "fornecedor_endereco": string|null,
+  "fornecedor_cidade": string|null,
+  "fornecedor_estado": string|null,
+  "fornecedor_cep": string|null,
   "numero_nf": string|null,
   "valor_total": number|null,
   "valor_mao_obra": number|null,
@@ -65,6 +72,7 @@ Estrutura JSON:
   "pecas": [{"descricao": string, "quantidade": number, "valor_unitario": number}],
   "observacoes": string|null
 }
+Extraia CNPJ como apenas dígitos (14 caracteres). CEP apenas dígitos (8). Estado como sigla (2 letras).
 Para tipo_servico use um destes valores: "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura", "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros".
 ${placasHint}`;
 
