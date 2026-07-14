@@ -233,6 +233,50 @@ function MotoristasPage() {
         </div>
       )}
 
+      {cadastro.length > 0 && (
+        <section className="space-y-3 pt-4">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <h2 className="text-lg font-semibold">Cadastro de motoristas e operadores</h2>
+            <p className="text-xs text-muted-foreground">
+              {cadastroFiltrado.length} de {cadastro.length} · Sem conta de acesso ao app
+            </p>
+          </div>
+          <Card className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="text-left px-3 py-2">Matrícula</th>
+                    <th className="text-left px-3 py-2">Nome</th>
+                    <th className="text-left px-3 py-2">Cargo</th>
+                    <th className="text-left px-3 py-2">Vínculo</th>
+                    <th className="text-left px-3 py-2">Secretaria</th>
+                    <th className="text-left px-3 py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cadastroFiltrado.map((c) => (
+                    <tr key={c.id} className="border-t border-border hover:bg-muted/30">
+                      <td className="px-3 py-2 font-mono text-xs">{c.matricula || "—"}</td>
+                      <td className="px-3 py-2 font-medium">{c.nome}</td>
+                      <td className="px-3 py-2 text-xs">{c.cargo || "—"}</td>
+                      <td className="px-3 py-2 text-xs">{c.vinculo || "—"}</td>
+                      <td className="px-3 py-2 text-xs">{c.secretaria || "—"}</td>
+                      <td className="px-3 py-2">
+                        <Badge variant={c.ativo ? "default" : "secondary"} className="text-[10px]">
+                          {c.ativo ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </section>
+      )}
+
+
       {novoOpen && (
         <NovoMotoristaDialog
           empresaId={empresaId}
