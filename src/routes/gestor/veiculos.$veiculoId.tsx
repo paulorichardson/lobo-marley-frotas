@@ -133,10 +133,11 @@ function DetalheVeiculo() {
       </Card>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="grid grid-cols-4 w-full md:w-auto">
+        <TabsList className="grid grid-cols-5 w-full md:w-auto">
           <TabsTrigger value="dados">Dados</TabsTrigger>
           <TabsTrigger value="fotos">Fotos</TabsTrigger>
           <TabsTrigger value="docs">Documentos</TabsTrigger>
+          <TabsTrigger value="pecas">Peças</TabsTrigger>
           <TabsTrigger value="hist">Histórico</TabsTrigger>
         </TabsList>
 
@@ -148,6 +149,9 @@ function DetalheVeiculo() {
         </TabsContent>
         <TabsContent value="docs" className="mt-4">
           <DocsTab veiculo={veiculo} onChanged={carregar} />
+        </TabsContent>
+        <TabsContent value="pecas" className="mt-4">
+          <PecasTab veiculoId={veiculo.id} />
         </TabsContent>
         <TabsContent value="hist" className="mt-4">
           <HistoricoTab veiculoId={veiculo.id} />
@@ -462,6 +466,73 @@ function HistoricoTab({ veiculoId }: { veiculoId: string }) {
           </div>
         );
       })}
+    </Card>
+  );
+}
+
+function PecasTab({ veiculoId }: { veiculoId: string }) {
+  const [items, setItems] = useState<Array<{ id: string; descricao: string; quantidade: number; valor_unitario: number; data: string; oficina: string; tipo: string }>>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data: mans } = await supabase
+        .from("manutencoes")
+        .select("id, data_conclusao, data_solicitacao, oficina_nome, tipo")
+        .eq("veiculo_id", veiculoId);
+      const ids = (mans ?? []).map((m: any) => m.id);
+      if (!ids.length) { setItems([]); setLoading(false); return; }
+      const manMap: Record<string, any> = {};
+      (mans ?? []).forEach((m: any) => { manMap[m.id] = m; });
+      const { data: pecas } = await supabase
+        .from("manutencao_pecas")
+        .select("id, manutencao_id, descricao, quantidade, valor_unitario")
+        .in("manutencao_id", ids);
+      const rows = (pecas ?? []).map((p: any) => {
+        const m = manMap[p.manutencao_id] ?? {};
+        return {
+          id: p.id,
+          descricao: p.descricao,
+          quantidade: Number(p.quantidade) || 0,
+          valor_unitario: Number(p.valor_unitario) || 0,
+          data: m.data_conclusao || m.data_solicitacao,
+          oficina: m.oficina_nome || "—",
+          tipo: m.tipo || "",
+        };
+      }).sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+      setItems(rows);
+      setLoading(false);
+    })();
+  }, [veiculoId]);
+
+  if (loading) return <Card className="p-8 text-center text-muted-foreground">Carregando...</Card>;
+  if (items.length === 0) return <Card className="p-8 text-center text-muted-foreground">Nenhuma peça registrada nas manutenções deste veículo.</Card>;
+
+  const total = items.reduce((s, r) => s + r.quantidade * r.valor_unitario, 0);
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="p-4 bg-muted/30 border-b border-border flex items-center justify-between text-sm">
+        <span className="font-semibold">{items.length} peça(s) trocada(s)</span>
+        <span>Total: <strong>R$ {total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong></span>
+      </div>
+      <div className="divide-y divide-border">
+        {items.map((r) => (
+          <div key={r.id} className="p-4 grid grid-cols-[1fr_auto] gap-3 items-center">
+            <div className="min-w-0">
+              <p className="font-medium text-sm">{r.descricao}</p>
+              <p className="text-xs text-muted-foreground">
+                {new Date(r.data).toLocaleDateString("pt-BR")} · {r.oficina} · {r.tipo}
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <p className="text-xs text-muted-foreground">{r.quantidade}× R$ {r.valor_unitario.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+              <p className="text-sm font-semibold">R$ {(r.quantidade * r.valor_unitario).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </Card>
   );
 }
