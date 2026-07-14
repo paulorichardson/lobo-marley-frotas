@@ -48,6 +48,16 @@ interface Stats {
   km_mes: number;
   checklists_mes: number;
 }
+interface MotoristaCadastro {
+  id: string;
+  matricula: string | null;
+  nome: string;
+  cargo: string | null;
+  vinculo: string | null;
+  secretaria: string | null;
+  ativo: boolean;
+  perfil_id: string | null;
+}
 
 const CATEGORIAS = ["A", "B", "C", "D", "E", "AB"];
 
@@ -58,6 +68,7 @@ function MotoristasPage() {
   const [motoristas, setMotoristas] = useState<MotoristaRow[]>([]);
   const [veiculos, setVeiculos] = useState<VeiculoSimples[]>([]);
   const [stats, setStats] = useState<Record<string, Stats>>({});
+  const [cadastro, setCadastro] = useState<MotoristaCadastro[]>([]);
   const [novoOpen, setNovoOpen] = useState(false);
   const [detalhe, setDetalhe] = useState<MotoristaRow | null>(null);
 
