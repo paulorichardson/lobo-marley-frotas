@@ -157,7 +157,8 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         } catch (e) { console.error(e); }
       }
 
-      let _fornecedorIdFinal = fornecedorId;
+      let fornecedorIdFinal = fornecedorId;
+      void fornecedorIdFinal;
       let fornecedorUserId: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.user_id ?? null
         : null;
