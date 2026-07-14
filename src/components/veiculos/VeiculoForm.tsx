@@ -64,6 +64,12 @@ export interface VeiculoFormValues {
   numero_serie: string;
   codigo_siga: string;
   tipo_combustivel_siga: string;
+  pneu_aro: string;
+  pneu_medida_original: string;
+  pneus_compativeis: string;
+  pneu_indice_carga_vel: string;
+  pneu_observacao: string;
+  oleo_lubrificante: string;
 }
 
 const TIPOS_COMBUSTIVEL_SIGA = [
@@ -119,6 +125,12 @@ const EMPTY: VeiculoFormValues = {
   numero_serie: "",
   codigo_siga: "",
   tipo_combustivel_siga: "",
+  pneu_aro: "",
+  pneu_medida_original: "",
+  pneus_compativeis: "",
+  pneu_indice_carga_vel: "",
+  pneu_observacao: "",
+  oleo_lubrificante: "",
 };
 
 interface FotoExtra {
@@ -370,6 +382,12 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         numero_serie: values.numero_serie.trim() || null,
         codigo_siga: values.codigo_siga.trim() || null,
         tipo_combustivel_siga: values.tipo_combustivel_siga || null,
+        pneu_aro: values.pneu_aro.trim() || null,
+        pneu_medida_original: values.pneu_medida_original.trim() || null,
+        pneus_compativeis: values.pneus_compativeis.trim() || null,
+        pneu_indice_carga_vel: values.pneu_indice_carga_vel.trim() || null,
+        pneu_observacao: values.pneu_observacao.trim() || null,
+        oleo_lubrificante: values.oleo_lubrificante.trim() || null,
       };
 
       let veiculoId = values.id;
