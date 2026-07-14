@@ -48,6 +48,16 @@ interface Stats {
   km_mes: number;
   checklists_mes: number;
 }
+interface MotoristaCadastro {
+  id: string;
+  matricula: string | null;
+  nome: string;
+  cargo: string | null;
+  vinculo: string | null;
+  secretaria: string | null;
+  ativo: boolean;
+  perfil_id: string | null;
+}
 
 const CATEGORIAS = ["A", "B", "C", "D", "E", "AB"];
 
@@ -58,6 +68,7 @@ function MotoristasPage() {
   const [motoristas, setMotoristas] = useState<MotoristaRow[]>([]);
   const [veiculos, setVeiculos] = useState<VeiculoSimples[]>([]);
   const [stats, setStats] = useState<Record<string, Stats>>({});
+  const [cadastro, setCadastro] = useState<MotoristaCadastro[]>([]);
   const [novoOpen, setNovoOpen] = useState(false);
   const [detalhe, setDetalhe] = useState<MotoristaRow | null>(null);
 
@@ -108,6 +119,13 @@ function MotoristasPage() {
     }));
     setStats(map);
 
+    const { data: cad } = await supabase
+      .from("motoristas_cadastro")
+      .select("id, matricula, nome, cargo, vinculo, secretaria, ativo, perfil_id")
+      .eq("empresa_id", empresaId)
+      .order("nome");
+    setCadastro((cad ?? []) as MotoristaCadastro[]);
+
     setLoading(false);
   }
 
@@ -120,6 +138,17 @@ function MotoristasPage() {
       m.nome.toLowerCase().includes(q) || m.email.toLowerCase().includes(q),
     );
   }, [motoristas, busca]);
+
+  const cadastroFiltrado = useMemo(() => {
+    const q = busca.trim().toLowerCase();
+    if (!q) return cadastro;
+    return cadastro.filter((c) =>
+      c.nome.toLowerCase().includes(q)
+      || (c.matricula ?? "").toLowerCase().includes(q)
+      || (c.secretaria ?? "").toLowerCase().includes(q)
+      || (c.cargo ?? "").toLowerCase().includes(q),
+    );
+  }, [cadastro, busca]);
 
   const veicPorMotorista = useMemo(() => {
     const m: Record<string, VeiculoSimples> = {};
@@ -203,6 +232,50 @@ function MotoristasPage() {
           })}
         </div>
       )}
+
+      {cadastro.length > 0 && (
+        <section className="space-y-3 pt-4">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <h2 className="text-lg font-semibold">Cadastro de motoristas e operadores</h2>
+            <p className="text-xs text-muted-foreground">
+              {cadastroFiltrado.length} de {cadastro.length} · Sem conta de acesso ao app
+            </p>
+          </div>
+          <Card className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="text-left px-3 py-2">Matrícula</th>
+                    <th className="text-left px-3 py-2">Nome</th>
+                    <th className="text-left px-3 py-2">Cargo</th>
+                    <th className="text-left px-3 py-2">Vínculo</th>
+                    <th className="text-left px-3 py-2">Secretaria</th>
+                    <th className="text-left px-3 py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cadastroFiltrado.map((c) => (
+                    <tr key={c.id} className="border-t border-border hover:bg-muted/30">
+                      <td className="px-3 py-2 font-mono text-xs">{c.matricula || "—"}</td>
+                      <td className="px-3 py-2 font-medium">{c.nome}</td>
+                      <td className="px-3 py-2 text-xs">{c.cargo || "—"}</td>
+                      <td className="px-3 py-2 text-xs">{c.vinculo || "—"}</td>
+                      <td className="px-3 py-2 text-xs">{c.secretaria || "—"}</td>
+                      <td className="px-3 py-2">
+                        <Badge variant={c.ativo ? "default" : "secondary"} className="text-[10px]">
+                          {c.ativo ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </section>
+      )}
+
 
       {novoOpen && (
         <NovoMotoristaDialog
