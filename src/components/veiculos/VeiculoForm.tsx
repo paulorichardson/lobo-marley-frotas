@@ -633,8 +633,45 @@ export function VeiculoForm({ initial, onSaved, onCancel }: Props) {
         </div>
       </Card>
 
+      {/* Pneus e Lubrificantes */}
+      <Card className="p-5 space-y-4 border-blue-300/40 bg-blue-50/40 dark:bg-blue-950/10">
+        <div>
+          <h3 className="font-semibold flex items-center gap-2">🛞 Pneus e Lubrificantes</h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Usado na hora de faturar pneus/óleo — permite distribuir a compra pelos veículos compatíveis.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="pneu_aro">Aro</Label>
+            <Input id="pneu_aro" value={values.pneu_aro} onChange={(e) => set("pneu_aro", e.target.value)} placeholder="Ex.: 14, 16C, 22.5, moto" />
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="pneu_med">Medida original</Label>
+            <Input id="pneu_med" value={values.pneu_medida_original} onChange={(e) => set("pneu_medida_original", e.target.value)} placeholder="Ex.: 175/70 R14" />
+          </div>
+          <div className="space-y-1.5 md:col-span-3">
+            <Label htmlFor="pneu_compat">Medidas compatíveis</Label>
+            <Textarea id="pneu_compat" rows={2} value={values.pneus_compativeis} onChange={(e) => set("pneus_compativeis", e.target.value)} placeholder="Separe com · ou vírgula. Ex.: 175/65 R14 · 185/65 R14" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pneu_ind">Índice carga/vel.</Label>
+            <Input id="pneu_ind" value={values.pneu_indice_carga_vel} onChange={(e) => set("pneu_indice_carga_vel", e.target.value)} placeholder="Ex.: 84 T" />
+          </div>
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="pneu_obs">Observação do pneu</Label>
+            <Input id="pneu_obs" value={values.pneu_observacao} onChange={(e) => set("pneu_observacao", e.target.value)} />
+          </div>
+          <div className="space-y-1.5 md:col-span-3">
+            <Label htmlFor="oleo">Óleo lubrificante recomendado</Label>
+            <Input id="oleo" value={values.oleo_lubrificante} onChange={(e) => set("oleo_lubrificante", e.target.value)} placeholder="Ex.: 5W30 API SN — 4L (motor); 75W90 (câmbio)" />
+          </div>
+        </div>
+      </Card>
+
       {/* SIGA-TCM */}
       <Card className="p-5 space-y-4 border-amber-300/40 bg-amber-50/40 dark:bg-amber-950/10">
+
         <div className="flex items-center justify-between">
           <h3 className="font-semibold flex items-center gap-2">
             🏛️ Configuração SIGA-TCM
