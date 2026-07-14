@@ -118,7 +118,22 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       if (res.valor_mao_obra != null) setValorMaoObra(String(res.valor_mao_obra));
       if (res.numero_nf) setNumeroNf(res.numero_nf);
       if (res.observacoes) setObs(res.observacoes);
-      setPecas(res.pecas ?? []);
+      // Pré-atribui veículo por hint da IA quando bater com uma placa da frota
+      const pecasComVeic: PecaLocal[] = (res.pecas ?? []).map((p) => {
+        const v = matchVeiculoByHint(p.veiculo_hint, veiculos);
+        return { ...p, veiculo_id: v?.id };
+      });
+      setPecas(pecasComVeic);
+
+      // Aviso se a IA identificou múltiplos veículos
+      if (res.veiculos_mencionados.length > 1) {
+        const naoCasados = res.veiculos_mencionados.filter((h) => !matchVeiculoByHint(h, veiculos));
+        if (naoCasados.length > 0) {
+          toast.info(`IA identificou múltiplos veículos: ${res.veiculos_mencionados.join(", ")}. ${naoCasados.length} não foi(ram) casado(s) com a frota — atribua manualmente em cada peça.`);
+        } else {
+          toast.info(`IA distribuiu peças entre ${res.veiculos_mencionados.length} veículos — revise as atribuições abaixo.`);
+        }
+      }
 
       // Tenta casar fornecedor por CNPJ e depois por nome
       const cnpjIA = (res.fornecedor_cnpj || "").replace(/\D/g, "");
