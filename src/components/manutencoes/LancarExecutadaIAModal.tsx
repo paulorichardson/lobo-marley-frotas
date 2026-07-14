@@ -362,9 +362,21 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
 
           {extraido && (
             <>
+              {extraido.veiculos_mencionados.length > 0 && (
+                <div className="rounded-md border border-accent/40 bg-accent/5 p-3 text-xs">
+                  <strong className="text-accent">IA identificou {extraido.veiculos_mencionados.length} veículo(s) na nota:</strong>{" "}
+                  {extraido.veiculos_mencionados.join(" · ")}
+                  {extraido.veiculos_mencionados.length > 1 && (
+                    <p className="mt-1 text-muted-foreground">
+                      Cada peça abaixo pode ser atribuída a um veículo diferente. O valor total e a mão de obra serão rateados proporcionalmente e uma manutenção será criada por veículo.
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label>Veículo *</Label>
+                  <Label>Veículo principal *</Label>
                   <Select value={veiculoId} onValueChange={setVeiculoId}>
                     <SelectTrigger><SelectValue placeholder="Escolha" /></SelectTrigger>
                     <SelectContent>
@@ -373,6 +385,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1">Usado como padrão para peças sem veículo atribuído.</p>
                   {extraido.placa && !veiculoId && (
                     <p className="text-xs text-amber-600 mt-1">IA sugere placa "{extraido.placa}" mas não encontrei na frota.</p>
                   )}
