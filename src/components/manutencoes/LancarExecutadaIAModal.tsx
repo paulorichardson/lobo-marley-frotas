@@ -20,9 +20,21 @@ interface Fornecedor { id: string; user_id: string | null; razao_social: string;
 type PecaLocal = PecaExtraida & { veiculo_id?: string };
 
 const TIPOS = [
-  "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
-  "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros",
+  "Preventiva", "Corretiva", "Pneu", "Elétrica", "Funilaria", "Revisão", "Outro",
 ];
+
+function normalizeTipo(t: string | null | undefined): string | null {
+  if (!t) return null;
+  const s = t.toLowerCase();
+  if (TIPOS.includes(t)) return t;
+  if (s.includes("pneu")) return "Pneu";
+  if (s.includes("elétr") || s.includes("eletr")) return "Elétrica";
+  if (s.includes("funila") || s.includes("pintura")) return "Funilaria";
+  if (s.includes("revis")) return "Revisão";
+  if (s.includes("prevent")) return "Preventiva";
+  if (s.includes("corret") || s.includes("mecân") || s.includes("mecan") || s.includes("motor")) return "Corretiva";
+  return "Outro";
+}
 
 function matchVeiculoByHint(hint: string | null | undefined, veiculos: Veiculo[]): Veiculo | undefined {
   if (!hint) return undefined;
@@ -111,7 +123,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         const v = veiculos.find((x) => x.placa.toUpperCase().replace(/[^A-Z0-9]/g, "") === res.placa);
         if (v) { setVeiculoId(v.id); if (!km) setKm(String(v.km_atual ?? "")); }
       }
-      if (res.tipo_servico && TIPOS.includes(res.tipo_servico)) setTipo(res.tipo_servico);
+      const tipoNorm = normalizeTipo(res.tipo_servico); if (tipoNorm) setTipo(tipoNorm);
       if (res.descricao) setDescricao(res.descricao);
       if (res.data_emissao) setDataExec(res.data_emissao);
       if (res.valor_total != null) setValorTotal(String(res.valor_total));
