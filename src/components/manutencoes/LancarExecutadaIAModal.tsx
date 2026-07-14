@@ -452,14 +452,36 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
                   <p className="text-xs text-muted-foreground">Nenhuma peça extraída.</p>
                 ) : (
                   <div className="space-y-2">
-                    {pecas.map((p, i) => (
-                      <div key={i} className="grid grid-cols-[1fr_80px_110px_40px] gap-2 items-center">
-                        <Input value={p.descricao} onChange={(e) => updPeca(i, { descricao: e.target.value })} placeholder="Descrição" />
-                        <Input type="number" step="0.01" value={p.quantidade} onChange={(e) => updPeca(i, { quantidade: Number(e.target.value) })} />
-                        <Input type="number" step="0.01" value={p.valor_unitario} onChange={(e) => updPeca(i, { valor_unitario: Number(e.target.value) })} placeholder="Valor un." />
-                        <Button size="icon" variant="ghost" onClick={() => rmPeca(i)}><Trash2 className="w-4 h-4" /></Button>
-                      </div>
-                    ))}
+                    {pecas.map((p, i) => {
+                      const vidAtual = p.veiculo_id || veiculoId;
+                      const hintNaoCasado = p.veiculo_hint && !matchVeiculoByHint(p.veiculo_hint, veiculos);
+                      return (
+                        <div key={i} className="space-y-1 border border-border rounded-md p-2">
+                          <div className="grid grid-cols-[1fr_70px_100px_36px] gap-2 items-center">
+                            <Input value={p.descricao} onChange={(e) => updPeca(i, { descricao: e.target.value })} placeholder="Descrição" />
+                            <Input type="number" step="0.01" value={p.quantidade} onChange={(e) => updPeca(i, { quantidade: Number(e.target.value) })} />
+                            <Input type="number" step="0.01" value={p.valor_unitario} onChange={(e) => updPeca(i, { valor_unitario: Number(e.target.value) })} placeholder="Valor un." />
+                            <Button size="icon" variant="ghost" onClick={() => rmPeca(i)}><Trash2 className="w-4 h-4" /></Button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-muted-foreground min-w-fit">Veículo:</span>
+                            <Select value={vidAtual} onValueChange={(v) => updPeca(i, { veiculo_id: v })}>
+                              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {veiculos.map((v) => (
+                                  <SelectItem key={v.id} value={v.id}>{v.placa} · {v.marca} {v.modelo}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {p.veiculo_hint && (
+                              <span className={`text-[11px] ${hintNaoCasado ? "text-amber-600" : "text-muted-foreground"}`}>
+                                IA: "{p.veiculo_hint}"{hintNaoCasado ? " (não casou com frota)" : ""}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
