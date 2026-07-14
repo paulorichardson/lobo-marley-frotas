@@ -106,15 +106,24 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       if (res.observacoes) setObs(res.observacoes);
       setPecas(res.pecas ?? []);
 
-      // Tenta casar fornecedor por nome
-      if (res.fornecedor_nome) {
+      // Tenta casar fornecedor por CNPJ e depois por nome
+      const cnpjIA = (res.fornecedor_cnpj || "").replace(/\D/g, "");
+      let matched: Fornecedor | undefined;
+      if (cnpjIA.length === 14) {
+        matched = fornecedores.find((f) => (f.cnpj || "").replace(/\D/g, "") === cnpjIA);
+      }
+      if (!matched && res.fornecedor_nome) {
         const alvo = res.fornecedor_nome.toLowerCase();
-        const f = fornecedores.find((f) => {
+        matched = fornecedores.find((f) => {
           const nome = (f.nome_fantasia || f.razao_social || "").toLowerCase();
           return nome && (nome.includes(alvo) || alvo.includes(nome));
         });
-        if (f) setFornecedorId(f.id);
-        else setOficinaNome(res.fornecedor_nome);
+      }
+      if (matched) {
+        setFornecedorId(matched.id);
+      } else if (res.fornecedor_nome) {
+        setOficinaNome(res.fornecedor_nome);
+        toast.info(`Fornecedor "${res.fornecedor_nome}" não está cadastrado — será cadastrado automaticamente ao salvar.`);
       }
       toast.success("Nota analisada com IA");
     } catch (e: any) {
