@@ -140,13 +140,18 @@ function ClienteDetalhe() {
             {veiculos.length === 0
               ? <div className="p-6 text-sm text-muted-foreground text-center">Nenhum veículo.</div>
               : veiculos.map((v) => (
-                <div key={v.id} className="p-3 flex items-center gap-3">
+                <Link
+                  key={v.id}
+                  to="/gestor/veiculos/$veiculoId"
+                  params={{ veiculoId: v.id }}
+                  className="p-3 flex items-center gap-3 hover:bg-accent/10 transition"
+                >
                   <div className="flex-1">
                     <p className="font-medium">{v.placa}</p>
                     <p className="text-xs text-muted-foreground">{v.marca} {v.modelo}</p>
                   </div>
                   <Badge variant="outline">{v.status}</Badge>
-                </div>
+                </Link>
               ))}
           </Card>
         </TabsContent>
