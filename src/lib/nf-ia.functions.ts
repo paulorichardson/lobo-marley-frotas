@@ -10,6 +10,13 @@ export interface NfExtraida {
   placa: string | null;
   data_emissao: string | null; // YYYY-MM-DD
   fornecedor_nome: string | null;
+  fornecedor_cnpj: string | null;
+  fornecedor_telefone: string | null;
+  fornecedor_email: string | null;
+  fornecedor_endereco: string | null;
+  fornecedor_cidade: string | null;
+  fornecedor_estado: string | null;
+  fornecedor_cep: string | null;
   numero_nf: string | null;
   valor_total: number | null;
   valor_mao_obra: number | null;
