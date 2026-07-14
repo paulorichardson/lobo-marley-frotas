@@ -1,6 +1,4 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
-import { AppShell } from "@/components/layout/AppShell";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -19,13 +17,7 @@ import { QRCodeVeiculo } from "@/components/veiculos/QRCodeVeiculo";
 
 export const Route = createFileRoute("/gestor/veiculos/$veiculoId")({
   head: () => ({ meta: [{ title: "Detalhe do veículo — Lobo Marley" }] }),
-  component: () => (
-    <ProtectedRoute roles={["admin", "gestor_frota"]}>
-      <AppShell>
-        <DetalheVeiculo />
-      </AppShell>
-    </ProtectedRoute>
-  ),
+  component: DetalheVeiculo,
 });
 
 function DetalheVeiculo() {
