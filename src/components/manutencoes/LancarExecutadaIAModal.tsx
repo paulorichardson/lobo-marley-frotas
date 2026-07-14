@@ -73,7 +73,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   const [valorMaoObra, setValorMaoObra] = useState("");
   const [numeroNf, setNumeroNf] = useState("");
   const [obs, setObs] = useState("");
-  const [pecas, setPecas] = useState<PecaExtraida[]>([]);
+  const [pecas, setPecas] = useState<PecaLocal[]>([]);
   const [criarDespesa, setCriarDespesa] = useState(true);
 
   useEffect(() => {
