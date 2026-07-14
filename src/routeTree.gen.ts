@@ -47,6 +47,7 @@ import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/fi
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 import { Route as AbastecerVeiculoIdRouteImport } from './routes/abastecer.$veiculoId'
+import { Route as GestorVeiculosIndexRouteImport } from './routes/gestor/veiculos.index'
 import { Route as GestorLaudosIndexRouteImport } from './routes/gestor/laudos.index'
 import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes.index'
 import { Route as GestorVeiculosVeiculoIdRouteImport } from './routes/gestor/veiculos.$veiculoId'
@@ -246,6 +247,11 @@ const AbastecerVeiculoIdRoute = AbastecerVeiculoIdRouteImport.update({
   path: '/abastecer/$veiculoId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GestorVeiculosIndexRoute = GestorVeiculosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GestorVeiculosRoute,
+} as any)
 const GestorLaudosIndexRoute = GestorLaudosIndexRouteImport.update({
   id: '/gestor/laudos/',
   path: '/gestor/laudos/',
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/gestor/laudos/': typeof GestorLaudosIndexRoute
+  '/gestor/veiculos/': typeof GestorVeiculosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -349,7 +356,6 @@ export interface FileRoutesByTo {
   '/gestor/manutencoes': typeof GestorManutencoesRoute
   '/gestor/motoristas': typeof GestorMotoristasRoute
   '/gestor/relatorios': typeof GestorRelatoriosRoute
-  '/gestor/veiculos': typeof GestorVeiculosRouteWithChildren
   '/motorista/abastecimento': typeof MotoristaAbastecimentoRoute
   '/motorista/checklist': typeof MotoristaChecklistRoute
   '/motorista/encerrar-jornada': typeof MotoristaEncerrarJornadaRoute
@@ -369,6 +375,7 @@ export interface FileRoutesByTo {
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes': typeof AdminClientesIndexRoute
   '/gestor/laudos': typeof GestorLaudosIndexRoute
+  '/gestor/veiculos': typeof GestorVeiculosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -416,6 +423,7 @@ export interface FileRoutesById {
   '/gestor/veiculos/$veiculoId': typeof GestorVeiculosVeiculoIdRoute
   '/admin/clientes/': typeof AdminClientesIndexRoute
   '/gestor/laudos/': typeof GestorLaudosIndexRoute
+  '/gestor/veiculos/': typeof GestorVeiculosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -464,6 +472,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
     | '/gestor/laudos/'
+    | '/gestor/veiculos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -490,7 +499,6 @@ export interface FileRouteTypes {
     | '/gestor/manutencoes'
     | '/gestor/motoristas'
     | '/gestor/relatorios'
-    | '/gestor/veiculos'
     | '/motorista/abastecimento'
     | '/motorista/checklist'
     | '/motorista/encerrar-jornada'
@@ -510,6 +518,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes'
     | '/gestor/laudos'
+    | '/gestor/veiculos'
   id:
     | '__root__'
     | '/'
@@ -556,6 +565,7 @@ export interface FileRouteTypes {
     | '/gestor/veiculos/$veiculoId'
     | '/admin/clientes/'
     | '/gestor/laudos/'
+    | '/gestor/veiculos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -871,6 +881,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AbastecerVeiculoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gestor/veiculos/': {
+      id: '/gestor/veiculos/'
+      path: '/'
+      fullPath: '/gestor/veiculos/'
+      preLoaderRoute: typeof GestorVeiculosIndexRouteImport
+      parentRoute: typeof GestorVeiculosRoute
+    }
     '/gestor/laudos/': {
       id: '/gestor/laudos/'
       path: '/gestor/laudos'
@@ -930,10 +947,12 @@ const AdminFinanceiroRouteWithChildren = AdminFinanceiroRoute._addFileChildren(
 
 interface GestorVeiculosRouteChildren {
   GestorVeiculosVeiculoIdRoute: typeof GestorVeiculosVeiculoIdRoute
+  GestorVeiculosIndexRoute: typeof GestorVeiculosIndexRoute
 }
 
 const GestorVeiculosRouteChildren: GestorVeiculosRouteChildren = {
   GestorVeiculosVeiculoIdRoute: GestorVeiculosVeiculoIdRoute,
+  GestorVeiculosIndexRoute: GestorVeiculosIndexRoute,
 }
 
 const GestorVeiculosRouteWithChildren = GestorVeiculosRoute._addFileChildren(
