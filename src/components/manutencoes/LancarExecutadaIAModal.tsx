@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useServerFn } from "@tanstack/react-start";
 import { parseNotaFiscalIA, type NfExtraida, type PecaExtraida } from "@/lib/nf-ia.functions";
+import { autoRegistrarFornecedor } from "@/lib/fornecedor-auto.functions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import { toast } from "sonner";
 import { Loader2, Sparkles, FileText, Trash2, Plus } from "lucide-react";
 
 interface Veiculo { id: string; placa: string; modelo: string; marca: string; km_atual: number; }
-interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; }
+interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; cnpj: string | null; }
 
 const TIPOS = [
   "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
@@ -37,6 +38,7 @@ async function fileToBase64(f: File): Promise<string> {
 export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   const { user, empresaId } = useAuth();
   const parseIA = useServerFn(parseNotaFiscalIA);
+  const autoRegForn = useServerFn(autoRegistrarFornecedor);
 
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
@@ -72,7 +74,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
     (async () => {
       const [{ data: vs }, { data: fs }] = await Promise.all([
         supabase.from("veiculos").select("id, placa, modelo, marca, km_atual").order("placa"),
-        supabase.from("fornecedores_cadastro").select("id, user_id, razao_social, nome_fantasia").eq("status", "aprovado"),
+        supabase.from("fornecedores_cadastro").select("id, user_id, razao_social, nome_fantasia, cnpj").eq("status", "aprovado"),
       ]);
       setVeiculos((vs ?? []) as any);
       setFornecedores((fs ?? []) as any);
@@ -104,15 +106,24 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       if (res.observacoes) setObs(res.observacoes);
       setPecas(res.pecas ?? []);
 
-      // Tenta casar fornecedor por nome
-      if (res.fornecedor_nome) {
+      // Tenta casar fornecedor por CNPJ e depois por nome
+      const cnpjIA = (res.fornecedor_cnpj || "").replace(/\D/g, "");
+      let matched: Fornecedor | undefined;
+      if (cnpjIA.length === 14) {
+        matched = fornecedores.find((f) => (f.cnpj || "").replace(/\D/g, "") === cnpjIA);
+      }
+      if (!matched && res.fornecedor_nome) {
         const alvo = res.fornecedor_nome.toLowerCase();
-        const f = fornecedores.find((f) => {
+        matched = fornecedores.find((f) => {
           const nome = (f.nome_fantasia || f.razao_social || "").toLowerCase();
           return nome && (nome.includes(alvo) || alvo.includes(nome));
         });
-        if (f) setFornecedorId(f.id);
-        else setOficinaNome(res.fornecedor_nome);
+      }
+      if (matched) {
+        setFornecedorId(matched.id);
+      } else if (res.fornecedor_nome) {
+        setOficinaNome(res.fornecedor_nome);
+        toast.info(`Fornecedor "${res.fornecedor_nome}" não está cadastrado — será cadastrado automaticamente ao salvar.`);
       }
       toast.success("Nota analisada com IA");
     } catch (e: any) {
@@ -146,12 +157,39 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         } catch (e) { console.error(e); }
       }
 
-      const fornecedorUserId = fornecedorId !== "__externo"
+      let fornecedorIdFinal = fornecedorId;
+      void fornecedorIdFinal;
+      let fornecedorUserId: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.user_id ?? null
         : null;
-      const nomeFornecedor = fornecedorId !== "__externo"
+      let nomeFornecedor: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.razao_social ?? null
         : oficinaNome;
+
+      // Auto-cadastro do fornecedor se veio da IA e não foi selecionado manualmente
+      if (fornecedorId === "__externo" && extraido?.fornecedor_nome && oficinaNome.trim()) {
+        try {
+          const novo = await autoRegForn({
+            data: {
+              razao_social: oficinaNome.trim(),
+              cnpj: extraido.fornecedor_cnpj,
+              telefone: extraido.fornecedor_telefone,
+              email: extraido.fornecedor_email,
+              endereco: extraido.fornecedor_endereco,
+              cidade: extraido.fornecedor_cidade,
+              estado: extraido.fornecedor_estado,
+              cep: extraido.fornecedor_cep,
+            },
+          });
+          fornecedorIdFinal = novo.id;
+          fornecedorUserId = novo.user_id;
+          nomeFornecedor = novo.razao_social;
+          if (novo.criado) toast.success(`Fornecedor "${novo.razao_social}" cadastrado automaticamente`);
+        } catch (e: any) {
+          console.error("auto-registro fornecedor falhou", e);
+          toast.warning("Não foi possível cadastrar o fornecedor automaticamente — seguindo como oficina externa");
+        }
+      }
 
       const dataISO = new Date(dataExec + "T12:00:00").toISOString();
       const valor = Number(valorTotal);

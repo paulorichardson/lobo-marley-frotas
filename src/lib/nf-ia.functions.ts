@@ -10,6 +10,13 @@ export interface NfExtraida {
   placa: string | null;
   data_emissao: string | null; // YYYY-MM-DD
   fornecedor_nome: string | null;
+  fornecedor_cnpj: string | null;
+  fornecedor_telefone: string | null;
+  fornecedor_email: string | null;
+  fornecedor_endereco: string | null;
+  fornecedor_cidade: string | null;
+  fornecedor_estado: string | null;
+  fornecedor_cep: string | null;
   numero_nf: string | null;
   valor_total: number | null;
   valor_mao_obra: number | null;
@@ -50,6 +57,13 @@ Estrutura JSON:
   "placa": string|null,
   "data_emissao": string|null,
   "fornecedor_nome": string|null,
+  "fornecedor_cnpj": string|null,
+  "fornecedor_telefone": string|null,
+  "fornecedor_email": string|null,
+  "fornecedor_endereco": string|null,
+  "fornecedor_cidade": string|null,
+  "fornecedor_estado": string|null,
+  "fornecedor_cep": string|null,
   "numero_nf": string|null,
   "valor_total": number|null,
   "valor_mao_obra": number|null,
@@ -58,6 +72,7 @@ Estrutura JSON:
   "pecas": [{"descricao": string, "quantidade": number, "valor_unitario": number}],
   "observacoes": string|null
 }
+Extraia CNPJ como apenas dígitos (14 caracteres). CEP apenas dígitos (8). Estado como sigla (2 letras).
 Para tipo_servico use um destes valores: "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura", "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros".
 ${placasHint}`;
 
@@ -117,6 +132,13 @@ ${placasHint}`;
       placa: parsed.placa ? String(parsed.placa).toUpperCase().replace(/[^A-Z0-9]/g, "") : null,
       data_emissao: parsed.data_emissao ?? null,
       fornecedor_nome: parsed.fornecedor_nome ?? null,
+      fornecedor_cnpj: parsed.fornecedor_cnpj ? String(parsed.fornecedor_cnpj).replace(/\D/g, "").slice(0, 14) || null : null,
+      fornecedor_telefone: parsed.fornecedor_telefone ?? null,
+      fornecedor_email: parsed.fornecedor_email ?? null,
+      fornecedor_endereco: parsed.fornecedor_endereco ?? null,
+      fornecedor_cidade: parsed.fornecedor_cidade ?? null,
+      fornecedor_estado: parsed.fornecedor_estado ? String(parsed.fornecedor_estado).toUpperCase().slice(0, 2) : null,
+      fornecedor_cep: parsed.fornecedor_cep ? String(parsed.fornecedor_cep).replace(/\D/g, "").slice(0, 8) || null : null,
       numero_nf: parsed.numero_nf ? String(parsed.numero_nf) : null,
       valor_total: toNum(parsed.valor_total),
       valor_mao_obra: toNum(parsed.valor_mao_obra),
