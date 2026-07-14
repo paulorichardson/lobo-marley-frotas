@@ -17,10 +17,24 @@ import { Loader2, Sparkles, FileText, Trash2, Plus } from "lucide-react";
 interface Veiculo { id: string; placa: string; modelo: string; marca: string; km_atual: number; }
 interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; cnpj: string | null; }
 
+type PecaLocal = PecaExtraida & { veiculo_id?: string };
+
 const TIPOS = [
   "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
   "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros",
 ];
+
+function matchVeiculoByHint(hint: string | null | undefined, veiculos: Veiculo[]): Veiculo | undefined {
+  if (!hint) return undefined;
+  const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const h = norm(hint);
+  if (!h) return undefined;
+  // Match exato pela placa normalizada, ou prefixo/substring
+  return veiculos.find((v) => {
+    const p = norm(v.placa);
+    return p === h || p.includes(h) || h.includes(p);
+  });
+}
 
 interface Props { open: boolean; onClose: () => void; onCreated: () => void; }
 
@@ -59,7 +73,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   const [valorMaoObra, setValorMaoObra] = useState("");
   const [numeroNf, setNumeroNf] = useState("");
   const [obs, setObs] = useState("");
-  const [pecas, setPecas] = useState<PecaExtraida[]>([]);
+  const [pecas, setPecas] = useState<PecaLocal[]>([]);
   const [criarDespesa, setCriarDespesa] = useState(true);
 
   useEffect(() => {
@@ -104,7 +118,22 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       if (res.valor_mao_obra != null) setValorMaoObra(String(res.valor_mao_obra));
       if (res.numero_nf) setNumeroNf(res.numero_nf);
       if (res.observacoes) setObs(res.observacoes);
-      setPecas(res.pecas ?? []);
+      // Pré-atribui veículo por hint da IA quando bater com uma placa da frota
+      const pecasComVeic: PecaLocal[] = (res.pecas ?? []).map((p) => {
+        const v = matchVeiculoByHint(p.veiculo_hint, veiculos);
+        return { ...p, veiculo_id: v?.id };
+      });
+      setPecas(pecasComVeic);
+
+      // Aviso se a IA identificou múltiplos veículos
+      if (res.veiculos_mencionados.length > 1) {
+        const naoCasados = res.veiculos_mencionados.filter((h) => !matchVeiculoByHint(h, veiculos));
+        if (naoCasados.length > 0) {
+          toast.info(`IA identificou múltiplos veículos: ${res.veiculos_mencionados.join(", ")}. ${naoCasados.length} não foi(ram) casado(s) com a frota — atribua manualmente em cada peça.`);
+        } else {
+          toast.info(`IA distribuiu peças entre ${res.veiculos_mencionados.length} veículos — revise as atribuições abaixo.`);
+        }
+      }
 
       // Tenta casar fornecedor por CNPJ e depois por nome
       const cnpjIA = (res.fornecedor_cnpj || "").replace(/\D/g, "");
@@ -134,7 +163,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   }
 
   function addPeca() { setPecas((p) => [...p, { descricao: "", quantidade: 1, valor_unitario: 0 }]); }
-  function updPeca(i: number, patch: Partial<PecaExtraida>) {
+  function updPeca(i: number, patch: Partial<PecaLocal>) {
     setPecas((p) => p.map((x, idx) => idx === i ? { ...x, ...patch } : x));
   }
   function rmPeca(i: number) { setPecas((p) => p.filter((_, idx) => idx !== i)); }
@@ -157,8 +186,6 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         } catch (e) { console.error(e); }
       }
 
-      let fornecedorIdFinal = fornecedorId;
-      void fornecedorIdFinal;
       let fornecedorUserId: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.user_id ?? null
         : null;
@@ -181,7 +208,6 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
               cep: extraido.fornecedor_cep,
             },
           });
-          fornecedorIdFinal = novo.id;
           fornecedorUserId = novo.user_id;
           nomeFornecedor = novo.razao_social;
           if (novo.criado) toast.success(`Fornecedor "${novo.razao_social}" cadastrado automaticamente`);
@@ -192,75 +218,111 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       }
 
       const dataISO = new Date(dataExec + "T12:00:00").toISOString();
-      const valor = Number(valorTotal);
-      const mao = valorMaoObra ? Number(valorMaoObra) : 0;
+      const valorTotalNota = Number(valorTotal);
+      const maoTotal = valorMaoObra ? Number(valorMaoObra) : 0;
 
-      const { data: mIns, error } = await supabase.from("manutencoes").insert({
-        veiculo_id: veiculoId,
-        empresa_id: empresaId,
-        solicitado_por: user.id,
-        aprovado_por: user.id,
-        aprovado_nome: "Lançamento IA (NF)",
-        tipo,
-        descricao,
-        servico_executado: descricao,
-        status: "Concluída",
-        prioridade: "Normal",
-        data_solicitacao: dataISO,
-        data_aprovacao: dataISO,
-        data_inicio: dataISO,
-        data_conclusao: dataISO,
-        km_na_manutencao: km ? Number(km) : null,
-        valor_final: valor,
-        valor_mao_obra: mao,
-        custo_fornecedor: valor,
-        oficina_nome: nomeFornecedor,
-        fornecedor_id: fornecedorUserId,
-        nota_fiscal: numeroNf || null,
-        comprovante_url: comprovanteUrl,
-        observacoes: `[Lançamento via IA a partir de NF]${obs ? " " + obs : ""}`,
-        confirmada_pelo_solicitante: true,
-        exigir_orcamento: false,
-        enviado_para_rede: false,
-      } as any).select("id").single();
-      if (error) throw error;
+      // Distribuição das peças por veículo (default = veículo principal)
+      const pecasValidas = pecas.filter((p) => p.descricao.trim());
+      const grupos = new Map<string, PecaLocal[]>();
+      for (const p of pecasValidas) {
+        const vid = p.veiculo_id || veiculoId;
+        if (!grupos.has(vid)) grupos.set(vid, []);
+        grupos.get(vid)!.push(p);
+      }
+      // Se não há peças, cria um único grupo com o veículo principal
+      if (grupos.size === 0) grupos.set(veiculoId, []);
 
-      // Peças
-      if (mIns?.id && pecas.length > 0) {
-        const rows = pecas
-          .filter((p) => p.descricao.trim())
-          .map((p) => ({
+      const somaPecas = pecasValidas.reduce((s, p) => s + (Number(p.quantidade) || 1) * (Number(p.valor_unitario) || 0), 0);
+
+      const veiculosEnvolvidos = Array.from(grupos.keys());
+      const isMulti = veiculosEnvolvidos.length > 1;
+
+      let criadas = 0;
+      for (const [vid, itens] of grupos) {
+        const somaGrupo = itens.reduce((s, p) => s + (Number(p.quantidade) || 1) * (Number(p.valor_unitario) || 0), 0);
+        // Rateio: se houver múltiplos veículos, proporciona valor total e mão de obra pela soma de peças; senão usa valores digitados
+        let valorGrupo: number;
+        let maoGrupo: number;
+        if (isMulti && somaPecas > 0) {
+          const razao = somaGrupo / somaPecas;
+          valorGrupo = Number((valorTotalNota * razao).toFixed(2));
+          maoGrupo = Number((maoTotal * razao).toFixed(2));
+        } else {
+          valorGrupo = valorTotalNota;
+          maoGrupo = maoTotal;
+        }
+
+        const placaTxt = veiculos.find((v) => v.id === vid)?.placa ?? "";
+        const descGrupo = isMulti ? `[${placaTxt}] ${descricao}` : descricao;
+
+        const { data: mIns, error } = await supabase.from("manutencoes").insert({
+          veiculo_id: vid,
+          empresa_id: empresaId,
+          solicitado_por: user.id,
+          aprovado_por: user.id,
+          aprovado_nome: "Lançamento IA (NF)",
+          tipo,
+          descricao: descGrupo,
+          servico_executado: descGrupo,
+          status: "Concluída",
+          prioridade: "Normal",
+          data_solicitacao: dataISO,
+          data_aprovacao: dataISO,
+          data_inicio: dataISO,
+          data_conclusao: dataISO,
+          km_na_manutencao: vid === veiculoId && km ? Number(km) : null,
+          valor_final: valorGrupo,
+          valor_mao_obra: maoGrupo,
+          custo_fornecedor: valorGrupo,
+          oficina_nome: nomeFornecedor,
+          fornecedor_id: fornecedorUserId,
+          nota_fiscal: numeroNf || null,
+          comprovante_url: comprovanteUrl,
+          observacoes: `[Lançamento via IA a partir de NF${isMulti ? ` — rateado entre ${veiculosEnvolvidos.length} veículos` : ""}]${obs ? " " + obs : ""}`,
+          confirmada_pelo_solicitante: true,
+          exigir_orcamento: false,
+          enviado_para_rede: false,
+        } as any).select("id").single();
+        if (error) throw error;
+
+        // Peças do grupo
+        if (mIns?.id && itens.length > 0) {
+          const rows = itens.map((p) => ({
             manutencao_id: mIns.id,
             descricao: p.descricao,
             quantidade: Number(p.quantidade) || 1,
             valor_unitario: Number(p.valor_unitario) || 0,
           }));
-        if (rows.length) await supabase.from("manutencao_pecas").insert(rows);
-      }
-
-      // Despesa
-      if (criarDespesa) {
-        await supabase.from("despesas").insert({
-          empresa_id: empresaId,
-          veiculo_id: veiculoId,
-          data_despesa: dataExec,
-          tipo: "Manutenção",
-          descricao: `NF ${numeroNf || "s/n"} — ${nomeFornecedor || ""} — ${descricao}`.slice(0, 250),
-          valor,
-          comprovante_url: comprovanteUrl,
-          registrado_por: user.id,
-        } as any);
-      }
-
-      // KM
-      if (km) {
-        const v = veiculos.find((x) => x.id === veiculoId);
-        if (v && Number(km) > (v.km_atual ?? 0)) {
-          await supabase.from("veiculos").update({ km_atual: Number(km) }).eq("id", veiculoId);
+          await supabase.from("manutencao_pecas").insert(rows);
         }
+
+        // Despesa por veículo
+        if (criarDespesa) {
+          await supabase.from("despesas").insert({
+            empresa_id: empresaId,
+            veiculo_id: vid,
+            data_despesa: dataExec,
+            tipo: "Manutenção",
+            descricao: `NF ${numeroNf || "s/n"} — ${nomeFornecedor || ""} — ${descGrupo}`.slice(0, 250),
+            valor: valorGrupo,
+            comprovante_url: comprovanteUrl,
+            registrado_por: user.id,
+          } as any);
+        }
+
+        // KM só no veículo principal
+        if (vid === veiculoId && km) {
+          const v = veiculos.find((x) => x.id === vid);
+          if (v && Number(km) > (v.km_atual ?? 0)) {
+            await supabase.from("veiculos").update({ km_atual: Number(km) }).eq("id", vid);
+          }
+        }
+        criadas++;
       }
 
-      toast.success("Manutenção registrada a partir da NF");
+      toast.success(isMulti
+        ? `${criadas} manutenções registradas a partir da NF (rateio entre veículos)`
+        : "Manutenção registrada a partir da NF");
       onCreated();
       onClose();
     } catch (e: any) {
@@ -300,9 +362,21 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
 
           {extraido && (
             <>
+              {extraido.veiculos_mencionados.length > 0 && (
+                <div className="rounded-md border border-accent/40 bg-accent/5 p-3 text-xs">
+                  <strong className="text-accent">IA identificou {extraido.veiculos_mencionados.length} veículo(s) na nota:</strong>{" "}
+                  {extraido.veiculos_mencionados.join(" · ")}
+                  {extraido.veiculos_mencionados.length > 1 && (
+                    <p className="mt-1 text-muted-foreground">
+                      Cada peça abaixo pode ser atribuída a um veículo diferente. O valor total e a mão de obra serão rateados proporcionalmente e uma manutenção será criada por veículo.
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label>Veículo *</Label>
+                  <Label>Veículo principal *</Label>
                   <Select value={veiculoId} onValueChange={setVeiculoId}>
                     <SelectTrigger><SelectValue placeholder="Escolha" /></SelectTrigger>
                     <SelectContent>
@@ -311,6 +385,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1">Usado como padrão para peças sem veículo atribuído.</p>
                   {extraido.placa && !veiculoId && (
                     <p className="text-xs text-amber-600 mt-1">IA sugere placa "{extraido.placa}" mas não encontrei na frota.</p>
                   )}
@@ -377,14 +452,36 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
                   <p className="text-xs text-muted-foreground">Nenhuma peça extraída.</p>
                 ) : (
                   <div className="space-y-2">
-                    {pecas.map((p, i) => (
-                      <div key={i} className="grid grid-cols-[1fr_80px_110px_40px] gap-2 items-center">
-                        <Input value={p.descricao} onChange={(e) => updPeca(i, { descricao: e.target.value })} placeholder="Descrição" />
-                        <Input type="number" step="0.01" value={p.quantidade} onChange={(e) => updPeca(i, { quantidade: Number(e.target.value) })} />
-                        <Input type="number" step="0.01" value={p.valor_unitario} onChange={(e) => updPeca(i, { valor_unitario: Number(e.target.value) })} placeholder="Valor un." />
-                        <Button size="icon" variant="ghost" onClick={() => rmPeca(i)}><Trash2 className="w-4 h-4" /></Button>
-                      </div>
-                    ))}
+                    {pecas.map((p, i) => {
+                      const vidAtual = p.veiculo_id || veiculoId;
+                      const hintNaoCasado = p.veiculo_hint && !matchVeiculoByHint(p.veiculo_hint, veiculos);
+                      return (
+                        <div key={i} className="space-y-1 border border-border rounded-md p-2">
+                          <div className="grid grid-cols-[1fr_70px_100px_36px] gap-2 items-center">
+                            <Input value={p.descricao} onChange={(e) => updPeca(i, { descricao: e.target.value })} placeholder="Descrição" />
+                            <Input type="number" step="0.01" value={p.quantidade} onChange={(e) => updPeca(i, { quantidade: Number(e.target.value) })} />
+                            <Input type="number" step="0.01" value={p.valor_unitario} onChange={(e) => updPeca(i, { valor_unitario: Number(e.target.value) })} placeholder="Valor un." />
+                            <Button size="icon" variant="ghost" onClick={() => rmPeca(i)}><Trash2 className="w-4 h-4" /></Button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-muted-foreground min-w-fit">Veículo:</span>
+                            <Select value={vidAtual} onValueChange={(v) => updPeca(i, { veiculo_id: v })}>
+                              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {veiculos.map((v) => (
+                                  <SelectItem key={v.id} value={v.id}>{v.placa} · {v.marca} {v.modelo}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {p.veiculo_hint && (
+                              <span className={`text-[11px] ${hintNaoCasado ? "text-amber-600" : "text-muted-foreground"}`}>
+                                IA: "{p.veiculo_hint}"{hintNaoCasado ? " (não casou com frota)" : ""}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
