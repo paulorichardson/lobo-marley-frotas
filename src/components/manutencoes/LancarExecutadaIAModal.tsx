@@ -17,10 +17,24 @@ import { Loader2, Sparkles, FileText, Trash2, Plus } from "lucide-react";
 interface Veiculo { id: string; placa: string; modelo: string; marca: string; km_atual: number; }
 interface Fornecedor { id: string; user_id: string | null; razao_social: string; nome_fantasia: string | null; cnpj: string | null; }
 
+type PecaLocal = PecaExtraida & { veiculo_id?: string };
+
 const TIPOS = [
   "Mecânica / Motor", "Elétrica", "Pneu / Suspensão", "Funilaria / Pintura",
   "Ar-condicionado", "Troca de peças", "Revisão / Preventiva", "Diagnóstico", "Outros",
 ];
+
+function matchVeiculoByHint(hint: string | null | undefined, veiculos: Veiculo[]): Veiculo | undefined {
+  if (!hint) return undefined;
+  const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const h = norm(hint);
+  if (!h) return undefined;
+  // Match exato pela placa normalizada, ou prefixo/substring
+  return veiculos.find((v) => {
+    const p = norm(v.placa);
+    return p === h || p.includes(h) || h.includes(p);
+  });
+}
 
 interface Props { open: boolean; onClose: () => void; onCreated: () => void; }
 
