@@ -163,7 +163,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
   }
 
   function addPeca() { setPecas((p) => [...p, { descricao: "", quantidade: 1, valor_unitario: 0 }]); }
-  function updPeca(i: number, patch: Partial<PecaExtraida>) {
+  function updPeca(i: number, patch: Partial<PecaLocal>) {
     setPecas((p) => p.map((x, idx) => idx === i ? { ...x, ...patch } : x));
   }
   function rmPeca(i: number) { setPecas((p) => p.filter((_, idx) => idx !== i)); }
