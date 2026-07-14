@@ -186,8 +186,6 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         } catch (e) { console.error(e); }
       }
 
-      let fornecedorIdFinal = fornecedorId;
-      void fornecedorIdFinal;
       let fornecedorUserId: string | null = fornecedorId !== "__externo"
         ? fornecedores.find((f) => f.id === fornecedorId)?.user_id ?? null
         : null;
@@ -210,7 +208,6 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
               cep: extraido.fornecedor_cep,
             },
           });
-          fornecedorIdFinal = novo.id;
           fornecedorUserId = novo.user_id;
           nomeFornecedor = novo.razao_social;
           if (novo.criado) toast.success(`Fornecedor "${novo.razao_social}" cadastrado automaticamente`);
@@ -221,75 +218,111 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
       }
 
       const dataISO = new Date(dataExec + "T12:00:00").toISOString();
-      const valor = Number(valorTotal);
-      const mao = valorMaoObra ? Number(valorMaoObra) : 0;
+      const valorTotalNota = Number(valorTotal);
+      const maoTotal = valorMaoObra ? Number(valorMaoObra) : 0;
 
-      const { data: mIns, error } = await supabase.from("manutencoes").insert({
-        veiculo_id: veiculoId,
-        empresa_id: empresaId,
-        solicitado_por: user.id,
-        aprovado_por: user.id,
-        aprovado_nome: "Lançamento IA (NF)",
-        tipo,
-        descricao,
-        servico_executado: descricao,
-        status: "Concluída",
-        prioridade: "Normal",
-        data_solicitacao: dataISO,
-        data_aprovacao: dataISO,
-        data_inicio: dataISO,
-        data_conclusao: dataISO,
-        km_na_manutencao: km ? Number(km) : null,
-        valor_final: valor,
-        valor_mao_obra: mao,
-        custo_fornecedor: valor,
-        oficina_nome: nomeFornecedor,
-        fornecedor_id: fornecedorUserId,
-        nota_fiscal: numeroNf || null,
-        comprovante_url: comprovanteUrl,
-        observacoes: `[Lançamento via IA a partir de NF]${obs ? " " + obs : ""}`,
-        confirmada_pelo_solicitante: true,
-        exigir_orcamento: false,
-        enviado_para_rede: false,
-      } as any).select("id").single();
-      if (error) throw error;
+      // Distribuição das peças por veículo (default = veículo principal)
+      const pecasValidas = pecas.filter((p) => p.descricao.trim());
+      const grupos = new Map<string, PecaLocal[]>();
+      for (const p of pecasValidas) {
+        const vid = p.veiculo_id || veiculoId;
+        if (!grupos.has(vid)) grupos.set(vid, []);
+        grupos.get(vid)!.push(p);
+      }
+      // Se não há peças, cria um único grupo com o veículo principal
+      if (grupos.size === 0) grupos.set(veiculoId, []);
 
-      // Peças
-      if (mIns?.id && pecas.length > 0) {
-        const rows = pecas
-          .filter((p) => p.descricao.trim())
-          .map((p) => ({
+      const somaPecas = pecasValidas.reduce((s, p) => s + (Number(p.quantidade) || 1) * (Number(p.valor_unitario) || 0), 0);
+
+      const veiculosEnvolvidos = Array.from(grupos.keys());
+      const isMulti = veiculosEnvolvidos.length > 1;
+
+      let criadas = 0;
+      for (const [vid, itens] of grupos) {
+        const somaGrupo = itens.reduce((s, p) => s + (Number(p.quantidade) || 1) * (Number(p.valor_unitario) || 0), 0);
+        // Rateio: se houver múltiplos veículos, proporciona valor total e mão de obra pela soma de peças; senão usa valores digitados
+        let valorGrupo: number;
+        let maoGrupo: number;
+        if (isMulti && somaPecas > 0) {
+          const razao = somaGrupo / somaPecas;
+          valorGrupo = Number((valorTotalNota * razao).toFixed(2));
+          maoGrupo = Number((maoTotal * razao).toFixed(2));
+        } else {
+          valorGrupo = valorTotalNota;
+          maoGrupo = maoTotal;
+        }
+
+        const placaTxt = veiculos.find((v) => v.id === vid)?.placa ?? "";
+        const descGrupo = isMulti ? `[${placaTxt}] ${descricao}` : descricao;
+
+        const { data: mIns, error } = await supabase.from("manutencoes").insert({
+          veiculo_id: vid,
+          empresa_id: empresaId,
+          solicitado_por: user.id,
+          aprovado_por: user.id,
+          aprovado_nome: "Lançamento IA (NF)",
+          tipo,
+          descricao: descGrupo,
+          servico_executado: descGrupo,
+          status: "Concluída",
+          prioridade: "Normal",
+          data_solicitacao: dataISO,
+          data_aprovacao: dataISO,
+          data_inicio: dataISO,
+          data_conclusao: dataISO,
+          km_na_manutencao: vid === veiculoId && km ? Number(km) : null,
+          valor_final: valorGrupo,
+          valor_mao_obra: maoGrupo,
+          custo_fornecedor: valorGrupo,
+          oficina_nome: nomeFornecedor,
+          fornecedor_id: fornecedorUserId,
+          nota_fiscal: numeroNf || null,
+          comprovante_url: comprovanteUrl,
+          observacoes: `[Lançamento via IA a partir de NF${isMulti ? ` — rateado entre ${veiculosEnvolvidos.length} veículos` : ""}]${obs ? " " + obs : ""}`,
+          confirmada_pelo_solicitante: true,
+          exigir_orcamento: false,
+          enviado_para_rede: false,
+        } as any).select("id").single();
+        if (error) throw error;
+
+        // Peças do grupo
+        if (mIns?.id && itens.length > 0) {
+          const rows = itens.map((p) => ({
             manutencao_id: mIns.id,
             descricao: p.descricao,
             quantidade: Number(p.quantidade) || 1,
             valor_unitario: Number(p.valor_unitario) || 0,
           }));
-        if (rows.length) await supabase.from("manutencao_pecas").insert(rows);
-      }
-
-      // Despesa
-      if (criarDespesa) {
-        await supabase.from("despesas").insert({
-          empresa_id: empresaId,
-          veiculo_id: veiculoId,
-          data_despesa: dataExec,
-          tipo: "Manutenção",
-          descricao: `NF ${numeroNf || "s/n"} — ${nomeFornecedor || ""} — ${descricao}`.slice(0, 250),
-          valor,
-          comprovante_url: comprovanteUrl,
-          registrado_por: user.id,
-        } as any);
-      }
-
-      // KM
-      if (km) {
-        const v = veiculos.find((x) => x.id === veiculoId);
-        if (v && Number(km) > (v.km_atual ?? 0)) {
-          await supabase.from("veiculos").update({ km_atual: Number(km) }).eq("id", veiculoId);
+          await supabase.from("manutencao_pecas").insert(rows);
         }
+
+        // Despesa por veículo
+        if (criarDespesa) {
+          await supabase.from("despesas").insert({
+            empresa_id: empresaId,
+            veiculo_id: vid,
+            data_despesa: dataExec,
+            tipo: "Manutenção",
+            descricao: `NF ${numeroNf || "s/n"} — ${nomeFornecedor || ""} — ${descGrupo}`.slice(0, 250),
+            valor: valorGrupo,
+            comprovante_url: comprovanteUrl,
+            registrado_por: user.id,
+          } as any);
+        }
+
+        // KM só no veículo principal
+        if (vid === veiculoId && km) {
+          const v = veiculos.find((x) => x.id === vid);
+          if (v && Number(km) > (v.km_atual ?? 0)) {
+            await supabase.from("veiculos").update({ km_atual: Number(km) }).eq("id", vid);
+          }
+        }
+        criadas++;
       }
 
-      toast.success("Manutenção registrada a partir da NF");
+      toast.success(isMulti
+        ? `${criadas} manutenções registradas a partir da NF (rateio entre veículos)`
+        : "Manutenção registrada a partir da NF");
       onCreated();
       onClose();
     } catch (e: any) {
