@@ -123,7 +123,7 @@ export function LancarExecutadaIAModal({ open, onClose, onCreated }: Props) {
         const v = veiculos.find((x) => x.placa.toUpperCase().replace(/[^A-Z0-9]/g, "") === res.placa);
         if (v) { setVeiculoId(v.id); if (!km) setKm(String(v.km_atual ?? "")); }
       }
-      if (res.tipo_servico && TIPOS.includes(res.tipo_servico)) setTipo(res.tipo_servico);
+      const tipoNorm = normalizeTipo(res.tipo_servico); if (tipoNorm) setTipo(tipoNorm);
       if (res.descricao) setDescricao(res.descricao);
       if (res.data_emissao) setDataExec(res.data_emissao);
       if (res.valor_total != null) setValorTotal(String(res.valor_total));
