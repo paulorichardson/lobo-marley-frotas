@@ -157,8 +157,14 @@ ${placasHint}`;
             descricao: String(p?.descricao ?? ""),
             quantidade: Number(p?.quantidade ?? 1) || 1,
             valor_unitario: toNum(p?.valor_unitario) ?? 0,
+            veiculo_hint: p?.veiculo_hint ? String(p.veiculo_hint).toUpperCase().trim() : null,
           }))
         : [],
       observacoes: parsed.observacoes ?? null,
+      veiculos_mencionados: Array.isArray(parsed.veiculos_mencionados)
+        ? parsed.veiculos_mencionados
+            .filter((v: any) => v)
+            .map((v: any) => String(v).toUpperCase().trim())
+        : [],
     };
   });
