@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useServerFn } from "@tanstack/react-start";
 import { parseNotaFiscalIA, type NfExtraida, type PecaExtraida } from "@/lib/nf-ia.functions";
+import { autoRegistrarFornecedor } from "@/lib/fornecedor-auto.functions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
