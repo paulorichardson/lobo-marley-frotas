@@ -310,6 +310,18 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           <Label className="text-xs">Até</Label>
           <Input type="date" value={periodoFim} onChange={(e) => setPeriodoFim(e.target.value)} />
         </div>
+        <div className="min-w-[200px]">
+          <Label className="text-xs">Setor / Secretaria</Label>
+          <Select value={filtroSetor} onValueChange={setFiltroSetor}>
+            <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">Todos os setores</SelectItem>
+              {setoresDisponiveis.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="ml-auto flex gap-2 flex-wrap">
           <Button variant="default" onClick={() => setImportarNFs(true)} className="bg-gradient-to-r from-primary to-primary/80">
             <Sparkles className="w-4 h-4 mr-1" /> Importar NFs (IA)
