@@ -294,6 +294,54 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     });
   }
 
+  async function gerarTextoNFSe(f: Fatura) {
+    setGerandoTexto(f.id);
+    try {
+      const ids = f.manutencao_ids ?? [];
+      if (ids.length === 0) {
+        toast.error("Fatura sem OSs vinculadas");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("manutencoes")
+        .select("numero_os, descricao, data_conclusao, valor_final, valor_liquido_faturavel, oficina_nome, nota_fiscal, veiculo:veiculos(placa, marca, modelo, setor)")
+        .in("id", ids)
+        .order("data_conclusao", { ascending: true });
+      if (error) throw error;
+
+      const itens = (data ?? []) as any[];
+      const setores = Array.from(new Set(itens.map((o) => (o.veiculo?.setor ?? "").trim()).filter(Boolean)));
+      const setorLabel = setores.length === 1 ? setores[0] : (setores.join(" / ") || "—");
+
+      const compIni = new Date(f.periodo_inicio).toLocaleDateString("pt-BR");
+      const compFim = new Date(f.periodo_fim).toLocaleDateString("pt-BR");
+
+      const linhas: string[] = [];
+      linhas.push(`Prestação de serviços de gestão e intermediação de manutenção de frota de veículos referente ao período de ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}.`);
+      linhas.push("");
+      linhas.push(`Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`);
+      linhas.push("");
+      linhas.push(`Discriminação dos serviços (${itens.length} OS):`);
+      for (const o of itens) {
+        const dt = o.data_conclusao ? new Date(o.data_conclusao).toLocaleDateString("pt-BR") : "—";
+        const veic = o.veiculo ? `${o.veiculo.placa}${o.veiculo.marca ? ` (${o.veiculo.marca} ${o.veiculo.modelo ?? ""})`.trim() + ")" : ""}` : "—";
+        const valor = Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0);
+        const nf = o.nota_fiscal ? ` — NF ${o.nota_fiscal}` : "";
+        const of = o.oficina_nome ? ` — ${o.oficina_nome}` : "";
+        linhas.push(`• OS ${o.numero_os ?? "—"} · ${dt} · ${veic}${of}${nf}: ${o.descricao ?? ""} — ${BRL(valor)}`);
+      }
+      linhas.push("");
+      linhas.push(`VALOR TOTAL DA NOTA: ${BRL(Number(f.valor_total))}.`);
+      if (f.numero_fatura) linhas.push(`Referente à Fatura Interna nº ${f.numero_fatura}.`);
+
+      setTextoNFSe({ fatura: f, setor: setorLabel, texto: linhas.join("\n") });
+    } catch (e: any) {
+      toast.error(`Erro ao gerar texto: ${e.message ?? e}`);
+    } finally {
+      setGerandoTexto(null);
+    }
+  }
+
   async function marcarFaturaPaga(id: string) {
     const { error } = await supabase.from("faturas")
       .update({ status: "paga", data_pagamento: new Date().toISOString() }).eq("id", id);
