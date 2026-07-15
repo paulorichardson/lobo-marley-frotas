@@ -11,11 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, ArrowLeft, Loader2, FileSignature, Save, Receipt } from "lucide-react";
+import { Building2, ArrowLeft, Loader2, FileSignature, Save, Receipt, Network } from "lucide-react";
 import { toast } from "sonner";
 import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiroSection";
 import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
 import { FaturamentoClienteSection } from "@/components/admin/FaturamentoClienteSection";
+import { UnidadesSection } from "@/components/admin/UnidadesSection";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
