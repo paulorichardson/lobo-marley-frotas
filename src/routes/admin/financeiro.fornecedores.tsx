@@ -487,6 +487,29 @@ function FinanceiroFornecedoresPage() {
   );
 }
 
+function TaxaInline({ value, onSave }: { value: number; onSave: (v: number) => void | Promise<void> }) {
+  const [v, setV] = useState<string>(value.toString());
+  useEffect(() => { setV(value.toString()); }, [value]);
+  return (
+    <div className="flex items-center justify-end gap-1">
+      <Input
+        type="number"
+        min={0}
+        max={100}
+        step={0.01}
+        value={v}
+        onChange={(e) => setV(e.target.value)}
+        onBlur={() => {
+          const num = Number(v.replace(",", "."));
+          if (num !== value) onSave(num);
+        }}
+        className="w-20 h-8 text-right font-mono"
+      />
+      <span className="text-xs text-muted-foreground">%</span>
+    </div>
+  );
+}
+
 function RegistrarPagamentoDialog({
   fornecedor,
   adminId,
