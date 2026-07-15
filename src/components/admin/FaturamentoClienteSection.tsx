@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
+  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles, Copy, ClipboardCopy,
 } from "lucide-react";
 import { imprimirFatura, baixarFaturaPDF } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
