@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
-  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
+  FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles, Copy, ClipboardCopy,
 } from "lucide-react";
 import { imprimirFatura, baixarFaturaPDF } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
@@ -79,6 +79,8 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   const [novoForn, setNovoForn] = useState(false);
   const [importarNFs, setImportarNFs] = useState(false);
   const [filtroSetor, setFiltroSetor] = useState<string>("__all__");
+  const [textoNFSe, setTextoNFSe] = useState<{ fatura: Fatura; setor: string; texto: string } | null>(null);
+  const [gerandoTexto, setGerandoTexto] = useState<string | null>(null);
 
   async function carregar() {
     setLoading(true);
@@ -292,6 +294,54 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     });
   }
 
+  async function gerarTextoNFSe(f: Fatura) {
+    setGerandoTexto(f.id);
+    try {
+      const ids = f.manutencao_ids ?? [];
+      if (ids.length === 0) {
+        toast.error("Fatura sem OSs vinculadas");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("manutencoes")
+        .select("numero_os, descricao, data_conclusao, valor_final, valor_liquido_faturavel, oficina_nome, nota_fiscal, veiculo:veiculos(placa, marca, modelo, setor)")
+        .in("id", ids)
+        .order("data_conclusao", { ascending: true });
+      if (error) throw error;
+
+      const itens = (data ?? []) as any[];
+      const setores = Array.from(new Set(itens.map((o) => (o.veiculo?.setor ?? "").trim()).filter(Boolean)));
+      const setorLabel = setores.length === 1 ? setores[0] : (setores.join(" / ") || "—");
+
+      const compIni = new Date(f.periodo_inicio).toLocaleDateString("pt-BR");
+      const compFim = new Date(f.periodo_fim).toLocaleDateString("pt-BR");
+
+      const linhas: string[] = [];
+      linhas.push(`Prestação de serviços de gestão e intermediação de manutenção de frota de veículos referente ao período de ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}.`);
+      linhas.push("");
+      linhas.push(`Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`);
+      linhas.push("");
+      linhas.push(`Discriminação dos serviços (${itens.length} OS):`);
+      for (const o of itens) {
+        const dt = o.data_conclusao ? new Date(o.data_conclusao).toLocaleDateString("pt-BR") : "—";
+        const veic = o.veiculo ? `${o.veiculo.placa}${o.veiculo.marca ? ` (${o.veiculo.marca} ${o.veiculo.modelo ?? ""})`.trim() + ")" : ""}` : "—";
+        const valor = Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0);
+        const nf = o.nota_fiscal ? ` — NF ${o.nota_fiscal}` : "";
+        const of = o.oficina_nome ? ` — ${o.oficina_nome}` : "";
+        linhas.push(`• OS ${o.numero_os ?? "—"} · ${dt} · ${veic}${of}${nf}: ${o.descricao ?? ""} — ${BRL(valor)}`);
+      }
+      linhas.push("");
+      linhas.push(`VALOR TOTAL DA NOTA: ${BRL(Number(f.valor_total))}.`);
+      if (f.numero_fatura) linhas.push(`Referente à Fatura Interna nº ${f.numero_fatura}.`);
+
+      setTextoNFSe({ fatura: f, setor: setorLabel, texto: linhas.join("\n") });
+    } catch (e: any) {
+      toast.error(`Erro ao gerar texto: ${e.message ?? e}`);
+    } finally {
+      setGerandoTexto(null);
+    }
+  }
+
   async function marcarFaturaPaga(id: string) {
     const { error } = await supabase.from("faturas")
       .update({ status: "paga", data_pagamento: new Date().toISOString() }).eq("id", id);
@@ -490,6 +540,10 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
+                      <Button size="sm" variant="default" onClick={() => gerarTextoNFSe(f)} disabled={gerandoTexto === f.id} title="Gerar texto para a NFS-e do site da prefeitura">
+                        {gerandoTexto === f.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ClipboardCopy className="w-3.5 h-3.5 mr-1" />}
+                        Texto NFS-e
+                      </Button>
                       <Button size="sm" variant="outline" onClick={() => imprimirFaturaExistente(f)}>
                         <Printer className="w-3.5 h-3.5" />
                       </Button>
@@ -573,6 +627,46 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           onClose={() => setNovoForn(false)}
           onSaved={() => { setNovoForn(false); carregar(); }}
         />
+      )}
+      {textoNFSe && (
+        <Dialog open onOpenChange={(o) => !o && setTextoNFSe(null)}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Texto para NFS-e — Fatura {textoNFSe.fatura.numero_fatura ?? "—"}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="text-xs text-muted-foreground">
+                Cole este texto no campo <b>Discriminação dos Serviços</b> ao emitir a NFS-e no site da prefeitura.
+                {textoNFSe.setor && textoNFSe.setor !== "—" && <> Setor/Secretaria: <b>{textoNFSe.setor}</b>.</>}
+              </div>
+              <Textarea
+                rows={18}
+                value={textoNFSe.texto}
+                readOnly
+                className="font-mono text-xs whitespace-pre"
+                onFocus={(e) => e.currentTarget.select()}
+              />
+              <div className="text-xs text-muted-foreground">
+                Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setTextoNFSe(null)}>Fechar</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(textoNFSe.texto);
+                    toast.success("Texto copiado para a área de transferência");
+                  } catch {
+                    toast.error("Não foi possível copiar — selecione manualmente");
+                  }
+                }}
+              >
+                <Copy className="w-4 h-4 mr-1" /> Copiar texto
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
