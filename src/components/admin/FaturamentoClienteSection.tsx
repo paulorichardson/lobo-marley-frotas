@@ -137,6 +137,23 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     return Array.from(map.entries()).map(([id, v]) => ({ id, ...v, saldo: Math.max(0, v.servicos - v.pago) }));
   }, [oss, pagamentos, fornecedores]);
 
+  const setoresDisponiveis = useMemo(() => {
+    const s = new Set<string>();
+    for (const o of oss) {
+      const set = (o.veiculo?.setor ?? "").trim();
+      s.add(set || "Sem setor");
+    }
+    return Array.from(s).sort();
+  }, [oss]);
+
+  const ossFiltradas = useMemo(() => {
+    if (filtroSetor === "__all__") return oss;
+    return oss.filter((o) => {
+      const set = (o.veiculo?.setor ?? "").trim() || "Sem setor";
+      return set === filtroSetor;
+    });
+  }, [oss, filtroSetor]);
+
   const totalSelecionado = useMemo(
     () => oss.filter((o) => selecionadas.has(o.id)).reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0),
     [oss, selecionadas],
@@ -148,11 +165,17 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     });
   }
   function toggleTodas() {
-    if (selecionadas.size === oss.filter((o) => !o.fatura_id).length) {
-      setSelecionadas(new Set());
-    } else {
-      setSelecionadas(new Set(oss.filter((o) => !o.fatura_id).map((o) => o.id)));
-    }
+    const disponiveis = ossFiltradas.filter((o) => !o.fatura_id);
+    const todasSelecionadas = disponiveis.length > 0 && disponiveis.every((o) => selecionadas.has(o.id));
+    setSelecionadas((prev) => {
+      const n = new Set(prev);
+      if (todasSelecionadas) {
+        disponiveis.forEach((o) => n.delete(o.id));
+      } else {
+        disponiveis.forEach((o) => n.add(o.id));
+      }
+      return n;
+    });
   }
 
   async function gerarDocumento(tipo: "fatura" | "nf", taxa: number, numNf: string, serie: string, obs: string) {
