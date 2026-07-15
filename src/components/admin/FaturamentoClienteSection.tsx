@@ -324,38 +324,54 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       const desconto = valorBruto - valorLiquido;
       const comissao = valorLiquido * 0.03;
 
-      const linhas: string[] = [];
-      if (isIpupiara) {
-        linhas.push(
-          `Serviços de administração e gerenciamento de manutenção preventiva e corretiva de frotas, com fornecimento de peças e ampla rede de oficinas credenciadas. CONTRATO Nº 105/2026, vinculado ao Pregão Eletrônico nº 019/2025 (Processo Administrativo nº 116/2025). Vigência: 12 meses a partir da assinatura. TAXA DE ADMINISTRAÇÃO: -51% (desconto aplicado sobre o valor bruto das notas). VALOR BRUTO: ${BRL(valorBruto)} | DESCONTO (51%): ${BRL(desconto)} | VALOR LÍQUIDO: ${BRL(valorLiquido)}.`
-        );
-        linhas.push("");
-      }
-      linhas.push(`Prestação de serviços de gestão e intermediação de manutenção de frota de veículos referente ao período de ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}.`);
-      linhas.push("");
-      linhas.push(`Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`);
-      linhas.push("");
-      linhas.push(`Discriminação dos serviços (${itens.length} OS):`);
-      for (const o of itens) {
-        const dt = o.data_conclusao ? new Date(o.data_conclusao).toLocaleDateString("pt-BR") : "—";
-        const veic = o.veiculo ? `${o.veiculo.placa}${o.veiculo.marca ? ` (${o.veiculo.marca} ${o.veiculo.modelo ?? ""})`.trim() + ")" : ""}` : "—";
-        const valor = Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0);
-        const nf = o.nota_fiscal ? ` — NF ${o.nota_fiscal}` : "";
-        const of = o.oficina_nome ? ` — ${o.oficina_nome}` : "";
-        linhas.push(`• OS ${o.numero_os ?? "—"} · ${dt} · ${veic}${of}${nf}: ${o.descricao ?? ""} — ${BRL(valor)}`);
-      }
-      linhas.push("");
-      linhas.push(`VALOR TOTAL DA NOTA: ${BRL(valorLiquido)}.`);
-      if (f.numero_fatura) linhas.push(`Referente à Fatura Interna nº ${f.numero_fatura}.`);
+      const LIMITE = 1500;
+      let texto = "";
 
       if (isIpupiara) {
+        const objeto = `Serviços de administração e gerenciamento de manutenção preventiva e corretiva de frotas, com fornecimento de peças e ampla rede de oficinas credenciadas. CONTRATO Nº 105/2026, vinculado ao Pregão Eletrônico nº 019/2025 (Processo Administrativo nº 116/2025). Vigência: 12 meses a partir da assinatura. TAXA DE ADMINISTRAÇÃO: -51% (desconto aplicado sobre o valor bruto das notas). VALOR BRUTO: ${BRL(valorBruto)} | DESCONTO (51%): ${BRL(desconto)} | VALOR LÍQUIDO: ${BRL(valorLiquido)}.`;
+        const periodo = `Período: ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}. Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}. Referente a ${itens.length} OS${f.numero_fatura ? ` — Fatura Interna nº ${f.numero_fatura}` : ""}.`;
+        const legal = `Base de cálculo conforme Art. 18 da IN RFB nº 2.145/2023: Valor total dos serviços (base): ${BRL(valorLiquido)}. Valor da comissão (3%): ${BRL(comissao)}. Conforme §1º do Art. 18, a base de cálculo para retenção dos tributos federais corresponde à comissão indicada. Não há retenção de ISS sobre a comissão, conforme entendimento vigente sobre a não incidência de ISS em operações de intermediação sem cobrança de comissão específica.`;
+        texto = [objeto, "", periodo, "", legal].join("\n");
+      } else {
+        const linhas: string[] = [];
+        linhas.push(`Prestação de serviços de gestão e intermediação de manutenção de frota de veículos referente ao período de ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}.`);
         linhas.push("");
-        linhas.push(
-          `Base de cálculo conforme Art. 18 da IN RFB nº 2.145/2023: Valor total dos serviços (base): ${BRL(valorLiquido)}. Valor da comissão (3%): ${BRL(comissao)}. Conforme o §1º do Art. 18, destaca-se que a base de cálculo para retenção dos tributos federais corresponde ao valor da comissão acima indicada. Não há retenção de ISS sobre a comissão destacada, conforme entendimento vigente sobre a não incidência de ISS em operações de intermediação sem cobrança de comissão específica.`
-        );
+        linhas.push(`Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`);
+        linhas.push("");
+        linhas.push(`Discriminação dos serviços (${itens.length} OS):`);
+        const itensLinhas: string[] = [];
+        for (const o of itens) {
+          const dt = o.data_conclusao ? new Date(o.data_conclusao).toLocaleDateString("pt-BR") : "—";
+          const veic = o.veiculo ? `${o.veiculo.placa}${o.veiculo.marca ? ` (${o.veiculo.marca} ${o.veiculo.modelo ?? ""})`.trim() + ")" : ""}` : "—";
+          const valor = Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0);
+          const nf = o.nota_fiscal ? ` — NF ${o.nota_fiscal}` : "";
+          const of = o.oficina_nome ? ` — ${o.oficina_nome}` : "";
+          itensLinhas.push(`• OS ${o.numero_os ?? "—"} · ${dt} · ${veic}${of}${nf}: ${o.descricao ?? ""} — ${BRL(valor)}`);
+        }
+        linhas.push(...itensLinhas);
+        linhas.push("");
+        linhas.push(`VALOR TOTAL DA NOTA: ${BRL(valorLiquido)}.`);
+        if (f.numero_fatura) linhas.push(`Referente à Fatura Interna nº ${f.numero_fatura}.`);
+        texto = linhas.join("\n");
+
+        // Compacta caso ultrapasse o limite: remove detalhes das OS mantendo o resumo
+        if (texto.length > LIMITE) {
+          const resumo = [
+            `Prestação de serviços de gestão e intermediação de manutenção de frota — período ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` (${setorLabel})` : ""}.`,
+            `Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`,
+            `Referente a ${itens.length} OS concluídas no período${f.numero_fatura ? ` — Fatura Interna nº ${f.numero_fatura}` : ""}.`,
+            `VALOR TOTAL DA NOTA: ${BRL(valorLiquido)}.`,
+          ].join("\n");
+          texto = resumo;
+        }
       }
 
-      setTextoNFSe({ fatura: f, setor: setorLabel, texto: linhas.join("\n") });
+      if (texto.length > LIMITE) {
+        texto = texto.slice(0, LIMITE - 3) + "...";
+        toast.warning(`Texto truncado para ${LIMITE} caracteres`);
+      }
+
+      setTextoNFSe({ fatura: f, setor: setorLabel, texto });
     } catch (e: any) {
       toast.error(`Erro ao gerar texto: ${e.message ?? e}`);
     } finally {
@@ -667,8 +683,11 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 className="font-mono text-xs whitespace-pre"
                 onFocus={(e) => e.currentTarget.select()}
               />
-              <div className="text-xs text-muted-foreground">
-                Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b>
+              <div className="text-xs text-muted-foreground flex justify-between">
+                <span>Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b></span>
+                <span className={textoNFSe.texto.length > 1500 ? "text-destructive font-semibold" : ""}>
+                  {textoNFSe.texto.length}/1500 caracteres
+                </span>
               </div>
             </div>
             <DialogFooter>
