@@ -247,9 +247,30 @@ function FinanceiroFornecedoresPage() {
       total: rows.reduce((s, r) => s + r.total, 0),
       pago: rows.reduce((s, r) => s + r.pago, 0),
       saldo: rows.reduce((s, r) => s + r.saldo, 0),
+      liquido: rows.reduce((s, r) => s + r.saldo * (1 - r.taxaPct / 100), 0),
+      taxa: rows.reduce((s, r) => s + r.saldo * (r.taxaPct / 100), 0),
     }),
     [rows],
   );
+
+  async function salvarTaxa(cadastroId: string, taxa: number) {
+    if (taxa < 0 || taxa > 100 || Number.isNaN(taxa)) {
+      toast.error("Taxa inválida (0–100%)");
+      return;
+    }
+    const { error } = await supabase
+      .from("fornecedores_cadastro")
+      .update({ taxa_percentual: taxa })
+      .eq("id", cadastroId);
+    if (error) {
+      toast.error("Erro ao salvar taxa", { description: error.message });
+      return;
+    }
+    setRows((prev) =>
+      prev.map((r) => (r.cadastroId === cadastroId ? { ...r, taxaPct: taxa } : r)),
+    );
+    toast.success("Taxa atualizada");
+  }
 
   return (
     <ProtectedRoute roles={["admin"]}>
