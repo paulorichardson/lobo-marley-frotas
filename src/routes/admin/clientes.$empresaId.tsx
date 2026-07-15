@@ -38,6 +38,7 @@ function ClienteDetalhe() {
   const [veiculos, setVeiculos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(false);
+  const [openRascunho, setOpenRascunho] = useState(false);
 
   async function load() {
     setLoading(true);
