@@ -348,6 +348,9 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           </div>
           <div className="flex gap-2 items-center">
             <Badge variant="secondary">Selecionado: {BRL(totalSelecionado)}</Badge>
+            <Button size="sm" variant="secondary" onClick={gerarRascunho} disabled={selecionadas.size === 0}>
+              <Printer className="w-4 h-4 mr-1" /> Gerar Rascunho
+            </Button>
             <Button size="sm" variant="outline" onClick={() => setGerarOpen("fatura")} disabled={selecionadas.size === 0}>
               <FileText className="w-4 h-4 mr-1" /> Gerar Fatura
             </Button>
