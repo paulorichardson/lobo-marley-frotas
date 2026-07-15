@@ -683,8 +683,11 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 className="font-mono text-xs whitespace-pre"
                 onFocus={(e) => e.currentTarget.select()}
               />
-              <div className="text-xs text-muted-foreground">
-                Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b>
+              <div className="text-xs text-muted-foreground flex justify-between">
+                <span>Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b></span>
+                <span className={textoNFSe.texto.length > 1500 ? "text-destructive font-semibold" : ""}>
+                  {textoNFSe.texto.length}/1500 caracteres
+                </span>
               </div>
             </div>
             <DialogFooter>
