@@ -103,8 +103,11 @@ function ClienteDetalhe() {
       </header>
 
       <Tabs defaultValue="dados" className="space-y-4">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="dados">Dados</TabsTrigger>
+          <TabsTrigger value="unidades">
+            <Network className="w-3.5 h-3.5 mr-1" /> Unidades
+          </TabsTrigger>
           <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
           <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
           <TabsTrigger value="faturamento">
@@ -118,6 +121,10 @@ function ClienteDetalhe() {
 
         <TabsContent value="dados">
           <DadosClienteEditor empresa={empresa} onSaved={load} />
+        </TabsContent>
+
+        <TabsContent value="unidades">
+          <UnidadesSection empresaId={empresaId} />
         </TabsContent>
 
         <TabsContent value="usuarios">
