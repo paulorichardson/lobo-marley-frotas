@@ -628,6 +628,46 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           onSaved={() => { setNovoForn(false); carregar(); }}
         />
       )}
+      {textoNFSe && (
+        <Dialog open onOpenChange={(o) => !o && setTextoNFSe(null)}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Texto para NFS-e — Fatura {textoNFSe.fatura.numero_fatura ?? "—"}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="text-xs text-muted-foreground">
+                Cole este texto no campo <b>Discriminação dos Serviços</b> ao emitir a NFS-e no site da prefeitura.
+                {textoNFSe.setor && textoNFSe.setor !== "—" && <> Setor/Secretaria: <b>{textoNFSe.setor}</b>.</>}
+              </div>
+              <Textarea
+                rows={18}
+                value={textoNFSe.texto}
+                readOnly
+                className="font-mono text-xs whitespace-pre"
+                onFocus={(e) => e.currentTarget.select()}
+              />
+              <div className="text-xs text-muted-foreground">
+                Valor total da NF: <b>{BRL(Number(textoNFSe.fatura.valor_total))}</b>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setTextoNFSe(null)}>Fechar</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(textoNFSe.texto);
+                    toast.success("Texto copiado para a área de transferência");
+                  } catch {
+                    toast.error("Não foi possível copiar — selecione manualmente");
+                  }
+                }}
+              >
+                <Copy className="w-4 h-4 mr-1" /> Copiar texto
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
