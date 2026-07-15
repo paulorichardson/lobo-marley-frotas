@@ -328,6 +328,7 @@ export type Database = {
           percentual_taxa: number
           permitir_prejuizo: boolean
           tipo_taxa: string
+          unidade_id: string | null
           valor_global: number | null
         }
         Insert: {
@@ -349,6 +350,7 @@ export type Database = {
           percentual_taxa?: number
           permitir_prejuizo?: boolean
           tipo_taxa?: string
+          unidade_id?: string | null
           valor_global?: number | null
         }
         Update: {
@@ -370,6 +372,7 @@ export type Database = {
           percentual_taxa?: number
           permitir_prejuizo?: boolean
           tipo_taxa?: string
+          unidade_id?: string | null
           valor_global?: number | null
         }
         Relationships: [
@@ -378,6 +381,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_clientes_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
             referencedColumns: ["id"]
           },
         ]
@@ -561,6 +571,7 @@ export type Database = {
           serie_nf: string | null
           status: string
           taxa_gestao_percentual: number | null
+          unidade_id: string | null
           valor_abastecimentos: number | null
           valor_despesas: number | null
           valor_servicos: number | null
@@ -584,6 +595,7 @@ export type Database = {
           serie_nf?: string | null
           status?: string
           taxa_gestao_percentual?: number | null
+          unidade_id?: string | null
           valor_abastecimentos?: number | null
           valor_despesas?: number | null
           valor_servicos?: number | null
@@ -607,6 +619,7 @@ export type Database = {
           serie_nf?: string | null
           status?: string
           taxa_gestao_percentual?: number | null
+          unidade_id?: string | null
           valor_abastecimentos?: number | null
           valor_despesas?: number | null
           valor_servicos?: number | null
@@ -619,6 +632,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faturas_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
             referencedColumns: ["id"]
           },
         ]
@@ -1513,6 +1533,101 @@ export type Database = {
           },
         ]
       }
+      unidades: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cnpj: string | null
+          complemento: string | null
+          criado_em: string
+          criado_por: string | null
+          email: string | null
+          empresa_id: string
+          estado: string | null
+          faturamento_separado: boolean
+          id: string
+          inscricao_estadual: string | null
+          logradouro: string | null
+          nome: string
+          numero: string | null
+          observacoes: string | null
+          responsavel_cargo: string | null
+          responsavel_email: string | null
+          responsavel_nome: string | null
+          responsavel_telefone: string | null
+          sigla: string | null
+          telefone: string | null
+          tipo: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          email?: string | null
+          empresa_id: string
+          estado?: string | null
+          faturamento_separado?: boolean
+          id?: string
+          inscricao_estadual?: string | null
+          logradouro?: string | null
+          nome: string
+          numero?: string | null
+          observacoes?: string | null
+          responsavel_cargo?: string | null
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          responsavel_telefone?: string | null
+          sigla?: string | null
+          telefone?: string | null
+          tipo?: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cnpj?: string | null
+          complemento?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          email?: string | null
+          empresa_id?: string
+          estado?: string | null
+          faturamento_separado?: boolean
+          id?: string
+          inscricao_estadual?: string | null
+          logradouro?: string | null
+          nome?: string
+          numero?: string | null
+          observacoes?: string | null
+          responsavel_cargo?: string | null
+          responsavel_email?: string | null
+          responsavel_nome?: string | null
+          responsavel_telefone?: string | null
+          sigla?: string | null
+          telefone?: string | null
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unidades_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1633,6 +1748,7 @@ export type Database = {
           status: string
           tipo_bem: string
           tipo_combustivel_siga: string | null
+          unidade_id: string | null
           vencimento_ipva: string | null
           vencimento_licenciamento: string | null
           vencimento_seguro: string | null
@@ -1673,6 +1789,7 @@ export type Database = {
           status?: string
           tipo_bem?: string
           tipo_combustivel_siga?: string | null
+          unidade_id?: string | null
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
@@ -1713,6 +1830,7 @@ export type Database = {
           status?: string
           tipo_bem?: string
           tipo_combustivel_siga?: string | null
+          unidade_id?: string | null
           vencimento_ipva?: string | null
           vencimento_licenciamento?: string | null
           vencimento_seguro?: string | null
@@ -1737,6 +1855,13 @@ export type Database = {
             columns: ["motorista_id"]
             isOneToOne: false
             referencedRelation: "perfis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "veiculos_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
             referencedColumns: ["id"]
           },
         ]

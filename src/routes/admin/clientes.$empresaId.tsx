@@ -11,11 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Building2, ArrowLeft, Loader2, FileSignature, Save, Receipt } from "lucide-react";
+import { Building2, ArrowLeft, Loader2, FileSignature, Save, Receipt, Network } from "lucide-react";
 import { toast } from "sonner";
 import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiroSection";
 import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
 import { FaturamentoClienteSection } from "@/components/admin/FaturamentoClienteSection";
+import { UnidadesSection } from "@/components/admin/UnidadesSection";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
@@ -102,8 +103,11 @@ function ClienteDetalhe() {
       </header>
 
       <Tabs defaultValue="dados" className="space-y-4">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="dados">Dados</TabsTrigger>
+          <TabsTrigger value="unidades">
+            <Network className="w-3.5 h-3.5 mr-1" /> Unidades
+          </TabsTrigger>
           <TabsTrigger value="usuarios">Usuários ({usuarios.length})</TabsTrigger>
           <TabsTrigger value="veiculos">Veículos ({veiculos.length})</TabsTrigger>
           <TabsTrigger value="faturamento">
@@ -117,6 +121,10 @@ function ClienteDetalhe() {
 
         <TabsContent value="dados">
           <DadosClienteEditor empresa={empresa} onSaved={load} />
+        </TabsContent>
+
+        <TabsContent value="unidades">
+          <UnidadesSection empresaId={empresaId} />
         </TabsContent>
 
         <TabsContent value="usuarios">
