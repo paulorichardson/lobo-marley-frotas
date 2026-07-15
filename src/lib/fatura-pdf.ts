@@ -99,7 +99,7 @@ function gerarHash(d: FaturaData) {
   return Math.abs(h).toString(16).padStart(12, "0").slice(0, 16).toUpperCase();
 }
 
-export function imprimirFatura(d: FaturaData) {
+function buildFaturaHTML(d: FaturaData, autoprint: boolean): string {
   const tomador = resolverTomador(d.empresa, d.setor);
   const titulo = d.tipo === "nf" ? "NOTA FISCAL DE SERVIÇO" : "FATURA CORPORATIVA";
   const numeroExibido =
@@ -415,14 +415,54 @@ export function imprimirFatura(d: FaturaData) {
 
   <div class="pagina">${esc(titulo)} Nº ${esc(numeroExibido)} · Lobo Marley · Gestão Inteligente de Frotas</div>
 </div>
-<script>window.onload=()=>setTimeout(()=>window.print(),500);</script>
+${autoprint ? `<script>window.onload=()=>setTimeout(()=>window.print(),500);</script>` : ""}
 </body></html>`;
 
+  return html;
+}
+
+export function imprimirFatura(d: FaturaData) {
+  const html = buildFaturaHTML(d, true);
   const w = window.open("", "_blank", "width=960,height=760");
   if (!w) return;
   w.document.write(html);
   w.document.close();
 }
+
+export async function baixarFaturaPDF(d: FaturaData) {
+  const html = buildFaturaHTML(d, false);
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.left = "-10000px";
+  container.style.top = "0";
+  container.style.width = "820px";
+  container.style.background = "#fff";
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  const target = (container.querySelector(".doc") as HTMLElement) ?? container;
+  const nomeSetor = (d.setor ?? "geral").replace(/[^\w-]+/g, "_");
+  const filename = `${d.tipo === "nf" ? "NF" : "Fatura"}_${nomeSetor}_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+  try {
+    const mod: any = await import("html2pdf.js");
+    const html2pdf = mod.default ?? mod;
+    await html2pdf()
+      .set({
+        margin: [8, 6, 8, 6],
+        filename,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] },
+      })
+      .from(target)
+      .save();
+  } finally {
+    document.body.removeChild(container);
+  }
+}
+
 
 function formatDate(s: string) {
   if (!s) return "—";

@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import {
   FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
 } from "lucide-react";
-import { imprimirFatura } from "@/lib/fatura-pdf";
+import { imprimirFatura, baixarFaturaPDF } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
 import { EnviarNotasFiscaisModal } from "./EnviarNotasFiscaisModal";
 
@@ -298,7 +298,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     if (error) toast.error(error.message); else { toast.success("Fatura paga"); carregar(); }
   }
 
-  function gerarRascunho() {
+  async function gerarRascunho() {
     const ids = Array.from(selecionadas);
     if (ids.length === 0) { toast.error("Selecione ao menos uma OS"); return; }
     const itensSel = oss.filter((o) => ids.includes(o.id));
@@ -310,37 +310,43 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       grupos.get(setor)!.push(o);
     }
 
-    for (const [setor, itens] of grupos.entries()) {
-      const valorServicos = itens.reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0);
-      imprimirFatura({
-        tipo: "fatura",
-        numero_fatura: null,
-        data_emissao: new Date().toISOString(),
-        periodo_inicio: periodoIni,
-        periodo_fim: periodoFim,
-        setor,
-        status: "rascunho",
-        empresa: {
-          nome: empresa.razao_social,
-          cnpj: empresa.cnpj,
-          cidade: empresa.cidade,
-          estado: empresa.estado,
-        },
-        itens: itens.map((o) => ({
-          data: o.data_conclusao ?? "",
-          numero_os: o.numero_os,
-          veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
-          oficina: o.oficina_nome ?? "—",
-          descricao: o.descricao,
-          valor: Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0),
-        })),
-        valor_servicos: valorServicos,
-        valor_total: valorServicos,
-        observacoes: "*** RASCUNHO — CONFERIR ANTES DE EMITIR — NÃO POSSUI VALIDADE FISCAL ***",
-      });
+    toast.loading(`Gerando ${grupos.size} rascunho(s) em PDF...`, { id: "rascunho" });
+    try {
+      for (const [setor, itens] of grupos.entries()) {
+        const valorServicos = itens.reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0);
+        await baixarFaturaPDF({
+          tipo: "fatura",
+          numero_fatura: null,
+          data_emissao: new Date().toISOString(),
+          periodo_inicio: periodoIni,
+          periodo_fim: periodoFim,
+          setor,
+          status: "rascunho",
+          empresa: {
+            nome: empresa.razao_social,
+            cnpj: empresa.cnpj,
+            cidade: empresa.cidade,
+            estado: empresa.estado,
+          },
+          itens: itens.map((o) => ({
+            data: o.data_conclusao ?? "",
+            numero_os: o.numero_os,
+            veiculo: o.veiculo ? `${o.veiculo.placa}` : "—",
+            oficina: o.oficina_nome ?? "—",
+            descricao: o.descricao,
+            valor: Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0),
+          })),
+          valor_servicos: valorServicos,
+          valor_total: valorServicos,
+          observacoes: "*** RASCUNHO — CONFERIR ANTES DE EMITIR — NÃO POSSUI VALIDADE FISCAL ***",
+        });
+      }
+      toast.success(`${grupos.size} rascunho(s) baixado(s) em PDF`, { id: "rascunho" });
+    } catch (e: any) {
+      toast.error(`Erro ao gerar PDF: ${e.message ?? e}`, { id: "rascunho" });
     }
-    toast.success(`${grupos.size} rascunho(s) gerado(s)`);
   }
+
 
 
   return (
