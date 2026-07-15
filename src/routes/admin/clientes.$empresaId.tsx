@@ -17,6 +17,8 @@ import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiro
 import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
 import { FaturamentoClienteSection } from "@/components/admin/FaturamentoClienteSection";
 import { UnidadesSection } from "@/components/admin/UnidadesSection";
+import { GerarRascunhoNFModal } from "@/components/admin/GerarRascunhoNFModal";
+import { FileText } from "lucide-react";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
