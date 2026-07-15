@@ -540,6 +540,10 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
+                      <Button size="sm" variant="default" onClick={() => gerarTextoNFSe(f)} disabled={gerandoTexto === f.id} title="Gerar texto para a NFS-e do site da prefeitura">
+                        {gerandoTexto === f.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ClipboardCopy className="w-3.5 h-3.5 mr-1" />}
+                        Texto NFS-e
+                      </Button>
                       <Button size="sm" variant="outline" onClick={() => imprimirFaturaExistente(f)}>
                         <Printer className="w-3.5 h-3.5" />
                       </Button>
