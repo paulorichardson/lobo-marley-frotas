@@ -319,8 +319,8 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       const alvo = `${empresa.razao_social ?? ""} ${empresa.nome_fantasia ?? ""}`.toLowerCase();
       const isIpupiara = alvo.includes("ipupiara");
 
-      const valorBruto = itens.reduce((s, o) => s + Number(o.valor_final ?? 0), 0);
       const valorLiquido = Number(f.valor_total);
+      const valorBruto = valorLiquido / 0.49;
       const desconto = valorBruto - valorLiquido;
       const comissao = valorLiquido * 0.03;
 
