@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import {
   FileText, Printer, Wallet, Loader2, Receipt, Plus, Building2, Sparkles,
 } from "lucide-react";
-import { imprimirFatura } from "@/lib/fatura-pdf";
+import { imprimirFatura, baixarFaturaPDF } from "@/lib/fatura-pdf";
 import { useAuth } from "@/hooks/useAuth";
 import { EnviarNotasFiscaisModal } from "./EnviarNotasFiscaisModal";
 
