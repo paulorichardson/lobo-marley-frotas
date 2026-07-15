@@ -166,7 +166,12 @@ function ClienteDetalhe() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="faturamento">
+        <TabsContent value="faturamento" className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setOpenRascunho(true)} variant="default">
+              <FileText className="w-4 h-4 mr-1" /> Gerar rascunho NFS-e (mensal)
+            </Button>
+          </div>
           <FaturamentoClienteSection empresa={empresa} />
         </TabsContent>
 
