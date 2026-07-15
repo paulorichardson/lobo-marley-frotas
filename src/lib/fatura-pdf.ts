@@ -431,16 +431,28 @@ export function imprimirFatura(d: FaturaData) {
 
 export async function baixarFaturaPDF(d: FaturaData) {
   const html = buildFaturaHTML(d, false);
-  const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.left = "-10000px";
-  container.style.top = "0";
-  container.style.width = "820px";
-  container.style.background = "#fff";
-  container.innerHTML = html;
-  document.body.appendChild(container);
 
-  const target = (container.querySelector(".doc") as HTMLElement) ?? container;
+  // Renderiza dentro de um iframe isolado para escapar das variáveis
+  // CSS do Tailwind v4 (oklch/lab) — html2canvas não suporta essas funções.
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.left = "-10000px";
+  iframe.style.top = "0";
+  iframe.style.width = "900px";
+  iframe.style.height = "1400px";
+  iframe.style.border = "0";
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentDocument!;
+  doc.open();
+  doc.write(html);
+  doc.close();
+
+  // Aguarda fontes/imagens carregarem
+  await new Promise((r) => setTimeout(r, 400));
+  try { await (doc as any).fonts?.ready; } catch {}
+
+  const target = (doc.querySelector(".doc") as HTMLElement) ?? doc.body;
   const nomeSetor = (d.setor ?? "geral").replace(/[^\w-]+/g, "_");
   const filename = `${d.tipo === "nf" ? "NF" : "Fatura"}_${nomeSetor}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
@@ -452,16 +464,17 @@ export async function baixarFaturaPDF(d: FaturaData) {
         margin: [8, 6, 8, 6],
         filename,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", windowWidth: 900 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         pagebreak: { mode: ["css", "legacy"] },
       })
       .from(target)
       .save();
   } finally {
-    document.body.removeChild(container);
+    document.body.removeChild(iframe);
   }
 }
+
 
 
 function formatDate(s: string) {
