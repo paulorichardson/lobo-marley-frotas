@@ -573,7 +573,10 @@ function RegistrarPagamentoDialog({
           data_pagamento: dataPagamento,
           forma_pagamento: forma,
           comprovante_url,
-          observacoes: observacoes || null,
+          observacoes:
+            (taxaPct > 0
+              ? `Taxa ${taxaPct}% retida (${BRL(valorTaxa)} sobre bruto ${BRL(valorBruto)}). `
+              : "") + (observacoes || ""),
           pago_por: adminId,
         })
         .select()
