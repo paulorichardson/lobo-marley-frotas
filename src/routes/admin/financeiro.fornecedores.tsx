@@ -699,9 +699,19 @@ function RegistrarPagamentoDialog({
             />
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md bg-muted">
-            <span className="text-sm">Total a pagar</span>
-            <span className="text-lg font-bold">{BRL(valorTotal)}</span>
+          <div className="p-3 rounded-md bg-muted space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span>Valor bruto</span>
+              <span className="font-mono">{BRL(valorBruto)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm text-amber-600">
+              <span>Taxa retida ({taxaPct}%)</span>
+              <span className="font-mono">− {BRL(valorTaxa)}</span>
+            </div>
+            <div className="flex items-center justify-between border-t border-border pt-1.5">
+              <span className="text-sm font-medium">Líquido a transferir</span>
+              <span className="text-lg font-bold">{BRL(valorTotal)}</span>
+            </div>
           </div>
         </div>
 
