@@ -99,7 +99,7 @@ function gerarHash(d: FaturaData) {
   return Math.abs(h).toString(16).padStart(12, "0").slice(0, 16).toUpperCase();
 }
 
-export function imprimirFatura(d: FaturaData) {
+function buildFaturaHTML(d: FaturaData, autoprint: boolean): string {
   const tomador = resolverTomador(d.empresa, d.setor);
   const titulo = d.tipo === "nf" ? "NOTA FISCAL DE SERVIÇO" : "FATURA CORPORATIVA";
   const numeroExibido =
