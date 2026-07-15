@@ -78,6 +78,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   const [pagarForn, setPagarForn] = useState<ForExterno | null>(null);
   const [novoForn, setNovoForn] = useState(false);
   const [importarNFs, setImportarNFs] = useState(false);
+  const [filtroSetor, setFiltroSetor] = useState<string>("__all__");
 
   async function carregar() {
     setLoading(true);
@@ -136,6 +137,23 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     return Array.from(map.entries()).map(([id, v]) => ({ id, ...v, saldo: Math.max(0, v.servicos - v.pago) }));
   }, [oss, pagamentos, fornecedores]);
 
+  const setoresDisponiveis = useMemo(() => {
+    const s = new Set<string>();
+    for (const o of oss) {
+      const set = (o.veiculo?.setor ?? "").trim();
+      s.add(set || "Sem setor");
+    }
+    return Array.from(s).sort();
+  }, [oss]);
+
+  const ossFiltradas = useMemo(() => {
+    if (filtroSetor === "__all__") return oss;
+    return oss.filter((o) => {
+      const set = (o.veiculo?.setor ?? "").trim() || "Sem setor";
+      return set === filtroSetor;
+    });
+  }, [oss, filtroSetor]);
+
   const totalSelecionado = useMemo(
     () => oss.filter((o) => selecionadas.has(o.id)).reduce((s, o) => s + Number(o.valor_liquido_faturavel ?? o.valor_final ?? 0), 0),
     [oss, selecionadas],
@@ -147,11 +165,17 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
     });
   }
   function toggleTodas() {
-    if (selecionadas.size === oss.filter((o) => !o.fatura_id).length) {
-      setSelecionadas(new Set());
-    } else {
-      setSelecionadas(new Set(oss.filter((o) => !o.fatura_id).map((o) => o.id)));
-    }
+    const disponiveis = ossFiltradas.filter((o) => !o.fatura_id);
+    const todasSelecionadas = disponiveis.length > 0 && disponiveis.every((o) => selecionadas.has(o.id));
+    setSelecionadas((prev) => {
+      const n = new Set(prev);
+      if (todasSelecionadas) {
+        disponiveis.forEach((o) => n.delete(o.id));
+      } else {
+        disponiveis.forEach((o) => n.add(o.id));
+      }
+      return n;
+    });
   }
 
   async function gerarDocumento(tipo: "fatura" | "nf", taxa: number, numNf: string, serie: string, obs: string) {
@@ -286,6 +310,18 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
           <Label className="text-xs">Até</Label>
           <Input type="date" value={periodoFim} onChange={(e) => setPeriodoFim(e.target.value)} />
         </div>
+        <div className="min-w-[200px]">
+          <Label className="text-xs">Setor / Secretaria</Label>
+          <Select value={filtroSetor} onValueChange={setFiltroSetor}>
+            <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">Todos os setores</SelectItem>
+              {setoresDisponiveis.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="ml-auto flex gap-2 flex-wrap">
           <Button variant="default" onClick={() => setImportarNFs(true)} className="bg-gradient-to-r from-primary to-primary/80">
             <Sparkles className="w-4 h-4 mr-1" /> Importar NFs (IA)
@@ -326,7 +362,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
               <TableHeader><TableRow>
                 <TableHead className="w-8">
                   <Checkbox
-                    checked={oss.length > 0 && selecionadas.size === oss.filter((o) => !o.fatura_id).length}
+                    checked={ossFiltradas.filter((o) => !o.fatura_id).length > 0 && ossFiltradas.filter((o) => !o.fatura_id).every((o) => selecionadas.has(o.id))}
                     onCheckedChange={toggleTodas}
                   />
                 </TableHead>
@@ -340,9 +376,9 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 <TableHead>Status</TableHead>
               </TableRow></TableHeader>
               <TableBody>
-                {oss.length === 0 ? (
-                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
-                ) : oss.map((o) => (
+                {ossFiltradas.length === 0 ? (
+                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período{filtroSetor !== "__all__" ? ` para o setor "${filtroSetor}"` : ""}.</TableCell></TableRow>
+                ) : ossFiltradas.map((o) => (
                   <TableRow key={o.id} className={o.fatura_id ? "opacity-60" : ""}>
                     <TableCell>
                       <Checkbox
