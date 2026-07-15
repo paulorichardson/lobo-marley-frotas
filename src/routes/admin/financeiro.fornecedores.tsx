@@ -296,12 +296,12 @@ function FinanceiroFornecedoresPage() {
           </div>
 
           {/* KPIs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-3">
                 <Receipt className="w-8 h-8 text-muted-foreground" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Total no período</p>
+                  <p className="text-xs text-muted-foreground">Total faturado</p>
                   <p className="text-xl font-bold">{BRL(totais.total)}</p>
                 </div>
               </div>
@@ -317,16 +317,26 @@ function FinanceiroFornecedoresPage() {
             </Card>
             <Card className="p-4">
               <div className="flex items-center gap-3">
+                <Receipt className="w-8 h-8 text-amber-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Taxa a reter</p>
+                  <p className="text-xl font-bold text-amber-600">{BRL(totais.taxa)}</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
                 <CreditCard className="w-8 h-8 text-destructive" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Saldo a pagar</p>
-                  <p className={`text-xl font-bold ${totais.saldo > 0 ? "text-destructive" : ""}`}>
-                    {BRL(totais.saldo)}
+                  <p className="text-xs text-muted-foreground">Líquido a pagar</p>
+                  <p className={`text-xl font-bold ${totais.liquido > 0 ? "text-destructive" : ""}`}>
+                    {BRL(totais.liquido)}
                   </p>
                 </div>
               </div>
             </Card>
           </div>
+
 
           <Card className="p-4 space-y-3">
             <Input
