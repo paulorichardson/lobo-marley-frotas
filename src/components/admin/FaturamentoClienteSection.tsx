@@ -79,6 +79,8 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
   const [novoForn, setNovoForn] = useState(false);
   const [importarNFs, setImportarNFs] = useState(false);
   const [filtroSetor, setFiltroSetor] = useState<string>("__all__");
+  const [textoNFSe, setTextoNFSe] = useState<{ fatura: Fatura; setor: string; texto: string } | null>(null);
+  const [gerandoTexto, setGerandoTexto] = useState<string | null>(null);
 
   async function carregar() {
     setLoading(true);
