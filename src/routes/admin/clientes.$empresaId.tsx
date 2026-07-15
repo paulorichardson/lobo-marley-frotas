@@ -17,6 +17,8 @@ import { ContratoFinanceiroSection } from "@/components/admin/ContratoFinanceiro
 import { ContratoAnexosSection } from "@/components/admin/ContratoAnexosSection";
 import { FaturamentoClienteSection } from "@/components/admin/FaturamentoClienteSection";
 import { UnidadesSection } from "@/components/admin/UnidadesSection";
+import { GerarRascunhoNFModal } from "@/components/admin/GerarRascunhoNFModal";
+import { FileText } from "lucide-react";
 
 export const Route = createFileRoute("/admin/clientes/$empresaId")({
   head: () => ({ meta: [{ title: "Cliente — Lobo Marley" }] }),
@@ -36,6 +38,7 @@ function ClienteDetalhe() {
   const [veiculos, setVeiculos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(false);
+  const [openRascunho, setOpenRascunho] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -164,7 +167,12 @@ function ClienteDetalhe() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="faturamento">
+        <TabsContent value="faturamento" className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setOpenRascunho(true)} variant="default">
+              <FileText className="w-4 h-4 mr-1" /> Gerar rascunho NFS-e (mensal)
+            </Button>
+          </div>
           <FaturamentoClienteSection empresa={empresa} />
         </TabsContent>
 
@@ -183,6 +191,14 @@ function ClienteDetalhe() {
           <ContratoAnexosSection empresaId={empresaId} />
         </TabsContent>
       </Tabs>
+
+      <GerarRascunhoNFModal
+        open={openRascunho}
+        onOpenChange={setOpenRascunho}
+        empresaId={empresaId}
+        empresaNome={empresa?.nome ?? ""}
+        empresaCnpj={empresa?.cnpj ?? null}
+      />
     </div>
   );
 }
