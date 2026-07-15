@@ -360,14 +360,18 @@ function FinanceiroFornecedoresPage() {
                     <TableRow>
                       <TableHead>Fornecedor</TableHead>
                       <TableHead>Tipo</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-right">Bruto</TableHead>
                       <TableHead className="text-right">Pago</TableHead>
                       <TableHead className="text-right">Saldo</TableHead>
+                      <TableHead className="text-right w-28">Taxa %</TableHead>
+                      <TableHead className="text-right">Líquido a pagar</TableHead>
                       <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtradas.map((r) => (
+                    {filtradas.map((r) => {
+                      const liquido = r.saldo * (1 - r.taxaPct / 100);
+                      return (
                       <TableRow key={r.id}>
                         <TableCell>
                           <div className="font-medium">{r.nome}</div>
@@ -383,8 +387,19 @@ function FinanceiroFornecedoresPage() {
                         <TableCell className="text-right font-mono">{BRL(r.total)}</TableCell>
                         <TableCell className="text-right font-mono text-emerald-600">{BRL(r.pago)}</TableCell>
                         <TableCell className="text-right">
-                          <span className={`font-mono font-semibold ${r.saldo > 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                          <span className={`font-mono ${r.saldo > 0 ? "text-foreground" : "text-muted-foreground"}`}>
                             {BRL(r.saldo)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <TaxaInline
+                            value={r.taxaPct}
+                            onSave={(v) => salvarTaxa(r.cadastroId, v)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className={`font-mono font-semibold ${liquido > 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                            {BRL(liquido)}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
@@ -393,12 +408,13 @@ function FinanceiroFornecedoresPage() {
                               <Eye className="w-4 h-4 mr-1" /> Ver Serviços
                             </Button>
                             <Button size="sm" disabled={r.saldo <= 0} onClick={() => setPagar(r)}>
-                              <CreditCard className="w-4 h-4 mr-1" /> Registrar Pagamento
+                              <CreditCard className="w-4 h-4 mr-1" /> Pagar
                             </Button>
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
