@@ -362,7 +362,7 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
               <TableHeader><TableRow>
                 <TableHead className="w-8">
                   <Checkbox
-                    checked={oss.length > 0 && selecionadas.size === oss.filter((o) => !o.fatura_id).length}
+                    checked={ossFiltradas.filter((o) => !o.fatura_id).length > 0 && ossFiltradas.filter((o) => !o.fatura_id).every((o) => selecionadas.has(o.id))}
                     onCheckedChange={toggleTodas}
                   />
                 </TableHead>
@@ -376,9 +376,9 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
                 <TableHead>Status</TableHead>
               </TableRow></TableHeader>
               <TableBody>
-                {oss.length === 0 ? (
-                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período.</TableCell></TableRow>
-                ) : oss.map((o) => (
+                {ossFiltradas.length === 0 ? (
+                  <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Sem OSs no período{filtroSetor !== "__all__" ? ` para o setor "${filtroSetor}"` : ""}.</TableCell></TableRow>
+                ) : ossFiltradas.map((o) => (
                   <TableRow key={o.id} className={o.fatura_id ? "opacity-60" : ""}>
                     <TableCell>
                       <Checkbox
