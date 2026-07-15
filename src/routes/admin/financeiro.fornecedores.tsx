@@ -100,7 +100,7 @@ function FinanceiroFornecedoresPage() {
       // 1. Fornecedores aprovados
       const { data: cads, error: e1 } = await supabase
         .from("fornecedores_cadastro")
-        .select("user_id, razao_social, nome_fantasia, email_login, tipos_fornecimento")
+        .select("id, user_id, razao_social, nome_fantasia, email_login, tipos_fornecimento, taxa_percentual")
         .eq("status", "aprovado");
       if (e1) throw e1;
 
