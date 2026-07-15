@@ -191,6 +191,14 @@ function ClienteDetalhe() {
           <ContratoAnexosSection empresaId={empresaId} />
         </TabsContent>
       </Tabs>
+
+      <GerarRascunhoNFModal
+        open={openRascunho}
+        onOpenChange={setOpenRascunho}
+        empresaId={empresaId}
+        empresaNome={empresa?.nome ?? ""}
+        empresaCnpj={empresa?.cnpj ?? null}
+      />
     </div>
   );
 }
