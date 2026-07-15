@@ -62,12 +62,14 @@ type Servico = {
 
 type FornecedorRow = {
   id: string;
+  cadastroId: string;
   nome: string;
   email: string;
   tipos: string[];
   total: number;
   pago: number;
   saldo: number;
+  taxaPct: number;
   servicos: Servico[];
 };
 
@@ -98,7 +100,7 @@ function FinanceiroFornecedoresPage() {
       // 1. Fornecedores aprovados
       const { data: cads, error: e1 } = await supabase
         .from("fornecedores_cadastro")
-        .select("user_id, razao_social, nome_fantasia, email_login, tipos_fornecimento")
+        .select("id, user_id, razao_social, nome_fantasia, email_login, tipos_fornecimento, taxa_percentual")
         .eq("status", "aprovado");
       if (e1) throw e1;
 
@@ -207,12 +209,14 @@ function FinanceiroFornecedoresPage() {
         const pago = servicos.reduce((s, x) => s + x.pago, 0);
         return {
           id: f.user_id as string,
+          cadastroId: f.id as string,
           nome: f.nome_fantasia || f.razao_social,
           email: f.email_login,
           tipos: f.tipos_fornecimento ?? [],
           total,
           pago,
           saldo: Math.max(0, total - pago),
+          taxaPct: Number((f as any).taxa_percentual ?? 0),
           servicos: servicos.sort((a, b) => (b.data > a.data ? 1 : -1)),
         };
       });
@@ -243,9 +247,30 @@ function FinanceiroFornecedoresPage() {
       total: rows.reduce((s, r) => s + r.total, 0),
       pago: rows.reduce((s, r) => s + r.pago, 0),
       saldo: rows.reduce((s, r) => s + r.saldo, 0),
+      liquido: rows.reduce((s, r) => s + r.saldo * (1 - r.taxaPct / 100), 0),
+      taxa: rows.reduce((s, r) => s + r.saldo * (r.taxaPct / 100), 0),
     }),
     [rows],
   );
+
+  async function salvarTaxa(cadastroId: string, taxa: number) {
+    if (taxa < 0 || taxa > 100 || Number.isNaN(taxa)) {
+      toast.error("Taxa inválida (0–100%)");
+      return;
+    }
+    const { error } = await supabase
+      .from("fornecedores_cadastro")
+      .update({ taxa_percentual: taxa })
+      .eq("id", cadastroId);
+    if (error) {
+      toast.error("Erro ao salvar taxa", { description: error.message });
+      return;
+    }
+    setRows((prev) =>
+      prev.map((r) => (r.cadastroId === cadastroId ? { ...r, taxaPct: taxa } : r)),
+    );
+    toast.success("Taxa atualizada");
+  }
 
   return (
     <ProtectedRoute roles={["admin"]}>
@@ -271,12 +296,12 @@ function FinanceiroFornecedoresPage() {
           </div>
 
           {/* KPIs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-3">
                 <Receipt className="w-8 h-8 text-muted-foreground" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Total no período</p>
+                  <p className="text-xs text-muted-foreground">Total faturado</p>
                   <p className="text-xl font-bold">{BRL(totais.total)}</p>
                 </div>
               </div>
@@ -292,16 +317,26 @@ function FinanceiroFornecedoresPage() {
             </Card>
             <Card className="p-4">
               <div className="flex items-center gap-3">
+                <Receipt className="w-8 h-8 text-amber-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Taxa a reter</p>
+                  <p className="text-xl font-bold text-amber-600">{BRL(totais.taxa)}</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
                 <CreditCard className="w-8 h-8 text-destructive" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Saldo a pagar</p>
-                  <p className={`text-xl font-bold ${totais.saldo > 0 ? "text-destructive" : ""}`}>
-                    {BRL(totais.saldo)}
+                  <p className="text-xs text-muted-foreground">Líquido a pagar</p>
+                  <p className={`text-xl font-bold ${totais.liquido > 0 ? "text-destructive" : ""}`}>
+                    {BRL(totais.liquido)}
                   </p>
                 </div>
               </div>
             </Card>
           </div>
+
 
           <Card className="p-4 space-y-3">
             <Input
@@ -325,14 +360,18 @@ function FinanceiroFornecedoresPage() {
                     <TableRow>
                       <TableHead>Fornecedor</TableHead>
                       <TableHead>Tipo</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-right">Bruto</TableHead>
                       <TableHead className="text-right">Pago</TableHead>
                       <TableHead className="text-right">Saldo</TableHead>
+                      <TableHead className="text-right w-28">Taxa %</TableHead>
+                      <TableHead className="text-right">Líquido a pagar</TableHead>
                       <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtradas.map((r) => (
+                    {filtradas.map((r) => {
+                      const liquido = r.saldo * (1 - r.taxaPct / 100);
+                      return (
                       <TableRow key={r.id}>
                         <TableCell>
                           <div className="font-medium">{r.nome}</div>
@@ -348,8 +387,19 @@ function FinanceiroFornecedoresPage() {
                         <TableCell className="text-right font-mono">{BRL(r.total)}</TableCell>
                         <TableCell className="text-right font-mono text-emerald-600">{BRL(r.pago)}</TableCell>
                         <TableCell className="text-right">
-                          <span className={`font-mono font-semibold ${r.saldo > 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                          <span className={`font-mono ${r.saldo > 0 ? "text-foreground" : "text-muted-foreground"}`}>
                             {BRL(r.saldo)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <TaxaInline
+                            value={r.taxaPct}
+                            onSave={(v) => salvarTaxa(r.cadastroId, v)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className={`font-mono font-semibold ${liquido > 0 ? "text-destructive" : "text-muted-foreground"}`}>
+                            {BRL(liquido)}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
@@ -358,12 +408,13 @@ function FinanceiroFornecedoresPage() {
                               <Eye className="w-4 h-4 mr-1" /> Ver Serviços
                             </Button>
                             <Button size="sm" disabled={r.saldo <= 0} onClick={() => setPagar(r)}>
-                              <CreditCard className="w-4 h-4 mr-1" /> Registrar Pagamento
+                              <CreditCard className="w-4 h-4 mr-1" /> Pagar
                             </Button>
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
@@ -436,6 +487,29 @@ function FinanceiroFornecedoresPage() {
   );
 }
 
+function TaxaInline({ value, onSave }: { value: number; onSave: (v: number) => void | Promise<void> }) {
+  const [v, setV] = useState<string>(value.toString());
+  useEffect(() => { setV(value.toString()); }, [value]);
+  return (
+    <div className="flex items-center justify-end gap-1">
+      <Input
+        type="number"
+        min={0}
+        max={100}
+        step={0.01}
+        value={v}
+        onChange={(e) => setV(e.target.value)}
+        onBlur={() => {
+          const num = Number(v.replace(",", "."));
+          if (num !== value) onSave(num);
+        }}
+        className="w-20 h-8 text-right font-mono"
+      />
+      <span className="text-xs text-muted-foreground">%</span>
+    </div>
+  );
+}
+
 function RegistrarPagamentoDialog({
   fornecedor,
   adminId,
@@ -460,7 +534,10 @@ function RegistrarPagamentoDialog({
   const [salvando, setSalvando] = useState(false);
 
   const itensSel = emAberto.filter((s) => selecionados.has(`${s.tipo}::${s.id}`));
-  const valorTotal = itensSel.reduce((sum, s) => sum + s.saldo, 0);
+  const valorBruto = itensSel.reduce((sum, s) => sum + s.saldo, 0);
+  const taxaPct = fornecedor.taxaPct ?? 0;
+  const valorTaxa = valorBruto * (taxaPct / 100);
+  const valorTotal = valorBruto - valorTaxa;
 
   function toggle(key: string) {
     setSelecionados((prev) => {
@@ -496,7 +573,10 @@ function RegistrarPagamentoDialog({
           data_pagamento: dataPagamento,
           forma_pagamento: forma,
           comprovante_url,
-          observacoes: observacoes || null,
+          observacoes:
+            (taxaPct > 0
+              ? `Taxa ${taxaPct}% retida (${BRL(valorTaxa)} sobre bruto ${BRL(valorBruto)}). `
+              : "") + (observacoes || ""),
           pago_por: adminId,
         })
         .select()
@@ -619,9 +699,19 @@ function RegistrarPagamentoDialog({
             />
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md bg-muted">
-            <span className="text-sm">Total a pagar</span>
-            <span className="text-lg font-bold">{BRL(valorTotal)}</span>
+          <div className="p-3 rounded-md bg-muted space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span>Valor bruto</span>
+              <span className="font-mono">{BRL(valorBruto)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm text-amber-600">
+              <span>Taxa retida ({taxaPct}%)</span>
+              <span className="font-mono">− {BRL(valorTaxa)}</span>
+            </div>
+            <div className="flex items-center justify-between border-t border-border pt-1.5">
+              <span className="text-sm font-medium">Líquido a transferir</span>
+              <span className="text-lg font-bold">{BRL(valorTotal)}</span>
+            </div>
           </div>
         </div>
 
