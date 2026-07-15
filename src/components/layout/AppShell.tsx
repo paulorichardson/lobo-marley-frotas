@@ -27,6 +27,7 @@ const STATIC_NAV: Record<Exclude<AppRole, "fornecedor">, NavItem[]> = {
     { to: "/admin/financeiro", label: "Financeiro", icon: Receipt },
     { to: "/admin/financeiro-contratual", label: "Motor Financeiro", icon: Crown },
     { to: "/admin/financeiro/fornecedores", label: "Pag. Fornec.", icon: CreditCard },
+    { to: "/admin/fornecedores", label: "Fornecedores", icon: Users },
     { to: "/admin/configuracoes", label: "Config", icon: Settings },
   ],
   gestor_frota: [
