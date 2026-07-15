@@ -62,12 +62,14 @@ type Servico = {
 
 type FornecedorRow = {
   id: string;
+  cadastroId: string;
   nome: string;
   email: string;
   tipos: string[];
   total: number;
   pago: number;
   saldo: number;
+  taxaPct: number;
   servicos: Servico[];
 };
 
