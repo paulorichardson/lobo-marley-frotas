@@ -674,6 +674,7 @@ export type Database = {
           responsavel_cpf: string | null
           responsavel_nome: string
           status: string
+          taxa_percentual: number
           telefone: string | null
           tipo_conta: string | null
           tipos_fornecimento: string[]
@@ -710,6 +711,7 @@ export type Database = {
           responsavel_cpf?: string | null
           responsavel_nome: string
           status?: string
+          taxa_percentual?: number
           telefone?: string | null
           tipo_conta?: string | null
           tipos_fornecimento?: string[]
@@ -746,6 +748,7 @@ export type Database = {
           responsavel_cpf?: string | null
           responsavel_nome?: string
           status?: string
+          taxa_percentual?: number
           telefone?: string | null
           tipo_conta?: string | null
           tipos_fornecimento?: string[]
