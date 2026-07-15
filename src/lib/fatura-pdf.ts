@@ -457,19 +457,53 @@ export async function baixarFaturaPDF(d: FaturaData) {
   const filename = `${d.tipo === "nf" ? "NF" : "Fatura"}_${nomeSetor}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
   try {
-    const mod: any = await import("html2pdf.js");
-    const html2pdf = mod.default ?? mod;
-    await html2pdf()
-      .set({
-        margin: [8, 6, 8, 6],
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", windowWidth: 900 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] },
-      })
-      .from(target)
-      .save();
+    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+      import("html2canvas-pro"),
+      import("jspdf"),
+    ]);
+
+    const canvas = await html2canvas(target, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: "#ffffff",
+      windowWidth: 900,
+      logging: false,
+    });
+
+    const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const marginX = 6;
+    const marginY = 8;
+    const printableWidth = pageWidth - marginX * 2;
+    const printableHeight = pageHeight - marginY * 2;
+    const pageCanvasHeight = Math.floor((printableHeight * canvas.width) / printableWidth);
+
+    let sourceY = 0;
+    let page = 0;
+    while (sourceY < canvas.height) {
+      const sliceHeight = Math.min(pageCanvasHeight, canvas.height - sourceY);
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = sliceHeight;
+      const ctx = pageCanvas.getContext("2d");
+      if (!ctx) throw new Error("Não foi possível preparar a página do PDF");
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      ctx.drawImage(canvas, 0, sourceY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+      if (page > 0) pdf.addPage();
+      const imgData = pageCanvas.toDataURL("image/jpeg", 0.98);
+      const renderedHeight = (sliceHeight * printableWidth) / canvas.width;
+      pdf.addImage(imgData, "JPEG", marginX, marginY, printableWidth, renderedHeight);
+
+      sourceY += sliceHeight;
+      page += 1;
+    }
+
+    pdf.save(filename);
   } finally {
     document.body.removeChild(iframe);
   }
