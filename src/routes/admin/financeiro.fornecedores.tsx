@@ -534,7 +534,10 @@ function RegistrarPagamentoDialog({
   const [salvando, setSalvando] = useState(false);
 
   const itensSel = emAberto.filter((s) => selecionados.has(`${s.tipo}::${s.id}`));
-  const valorTotal = itensSel.reduce((sum, s) => sum + s.saldo, 0);
+  const valorBruto = itensSel.reduce((sum, s) => sum + s.saldo, 0);
+  const taxaPct = fornecedor.taxaPct ?? 0;
+  const valorTaxa = valorBruto * (taxaPct / 100);
+  const valorTotal = valorBruto - valorTaxa;
 
   function toggle(key: string) {
     setSelecionados((prev) => {
