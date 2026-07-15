@@ -43,6 +43,7 @@ import { Route as FornecedorFinanceiroRouteImport } from './routes/fornecedor/fi
 import { Route as FornecedorDespesaRouteImport } from './routes/fornecedor/despesa'
 import { Route as FornecedorAbastecerRouteImport } from './routes/fornecedor/abastecer'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin/relatorios'
+import { Route as AdminFornecedoresRouteImport } from './routes/admin/fornecedores'
 import { Route as AdminFinanceiroContratualRouteImport } from './routes/admin/financeiro-contratual'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin/financeiro'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
@@ -226,6 +227,11 @@ const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
   path: '/admin/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFornecedoresRoute = AdminFornecedoresRouteImport.update({
+  id: '/admin/fornecedores',
+  path: '/admin/fornecedores',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminFinanceiroContratualRoute =
   AdminFinanceiroContratualRouteImport.update({
     id: '/admin/financeiro-contratual',
@@ -293,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
+  '/admin/fornecedores': typeof AdminFornecedoresRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -340,6 +347,7 @@ export interface FileRoutesByTo {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
+  '/admin/fornecedores': typeof AdminFornecedoresRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -387,6 +395,7 @@ export interface FileRoutesById {
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/financeiro-contratual': typeof AdminFinanceiroContratualRoute
+  '/admin/fornecedores': typeof AdminFornecedoresRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/fornecedor/abastecer': typeof FornecedorAbastecerRoute
   '/fornecedor/despesa': typeof FornecedorDespesaRoute
@@ -436,6 +445,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
+    | '/admin/fornecedores'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -483,6 +493,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
+    | '/admin/fornecedores'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/financeiro'
     | '/admin/financeiro-contratual'
+    | '/admin/fornecedores'
     | '/admin/relatorios'
     | '/fornecedor/abastecer'
     | '/fornecedor/despesa'
@@ -577,6 +589,7 @@ export interface RootRouteChildren {
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminFinanceiroContratualRoute: typeof AdminFinanceiroContratualRoute
+  AdminFornecedoresRoute: typeof AdminFornecedoresRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
   FornecedorAbastecerRoute: typeof FornecedorAbastecerRoute
   FornecedorDespesaRoute: typeof FornecedorDespesaRoute
@@ -853,6 +866,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/fornecedores': {
+      id: '/admin/fornecedores'
+      path: '/admin/fornecedores'
+      fullPath: '/admin/fornecedores'
+      preLoaderRoute: typeof AdminFornecedoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/financeiro-contratual': {
       id: '/admin/financeiro-contratual'
       path: '/admin/financeiro-contratual'
@@ -968,6 +988,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminFinanceiroContratualRoute: AdminFinanceiroContratualRoute,
+  AdminFornecedoresRoute: AdminFornecedoresRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
   FornecedorAbastecerRoute: FornecedorAbastecerRoute,
   FornecedorDespesaRoute: FornecedorDespesaRoute,
@@ -1006,12 +1027,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
