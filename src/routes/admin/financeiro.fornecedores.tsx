@@ -209,12 +209,14 @@ function FinanceiroFornecedoresPage() {
         const pago = servicos.reduce((s, x) => s + x.pago, 0);
         return {
           id: f.user_id as string,
+          cadastroId: f.id as string,
           nome: f.nome_fantasia || f.razao_social,
           email: f.email_login,
           tipos: f.tipos_fornecimento ?? [],
           total,
           pago,
           saldo: Math.max(0, total - pago),
+          taxaPct: Number((f as any).taxa_percentual ?? 0),
           servicos: servicos.sort((a, b) => (b.data > a.data ? 1 : -1)),
         };
       });
