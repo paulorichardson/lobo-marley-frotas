@@ -316,7 +316,21 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
       const compIni = new Date(f.periodo_inicio).toLocaleDateString("pt-BR");
       const compFim = new Date(f.periodo_fim).toLocaleDateString("pt-BR");
 
+      const alvo = `${empresa.razao_social ?? ""} ${empresa.nome_fantasia ?? ""}`.toLowerCase();
+      const isIpupiara = alvo.includes("ipupiara");
+
+      const valorBruto = itens.reduce((s, o) => s + Number(o.valor_final ?? 0), 0);
+      const valorLiquido = Number(f.valor_total);
+      const desconto = valorBruto - valorLiquido;
+      const comissao = valorLiquido * 0.03;
+
       const linhas: string[] = [];
+      if (isIpupiara) {
+        linhas.push(
+          `Serviços de administração e gerenciamento de manutenção preventiva e corretiva de frotas, com fornecimento de peças e ampla rede de oficinas credenciadas. CONTRATO Nº 105/2026, vinculado ao Pregão Eletrônico nº 019/2025 (Processo Administrativo nº 116/2025). Vigência: 12 meses a partir da assinatura. TAXA DE ADMINISTRAÇÃO: -51% (desconto aplicado sobre o valor bruto das notas). VALOR BRUTO: ${BRL(valorBruto)} | DESCONTO (51%): ${BRL(desconto)} | VALOR LÍQUIDO: ${BRL(valorLiquido)}.`
+        );
+        linhas.push("");
+      }
       linhas.push(`Prestação de serviços de gestão e intermediação de manutenção de frota de veículos referente ao período de ${compIni} a ${compFim}${setorLabel && setorLabel !== "—" ? ` — Secretaria/Setor: ${setorLabel}` : ""}.`);
       linhas.push("");
       linhas.push(`Tomador: ${empresa.razao_social}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ""}.`);
@@ -331,8 +345,15 @@ export function FaturamentoClienteSection({ empresa }: { empresa: any }) {
         linhas.push(`• OS ${o.numero_os ?? "—"} · ${dt} · ${veic}${of}${nf}: ${o.descricao ?? ""} — ${BRL(valor)}`);
       }
       linhas.push("");
-      linhas.push(`VALOR TOTAL DA NOTA: ${BRL(Number(f.valor_total))}.`);
+      linhas.push(`VALOR TOTAL DA NOTA: ${BRL(valorLiquido)}.`);
       if (f.numero_fatura) linhas.push(`Referente à Fatura Interna nº ${f.numero_fatura}.`);
+
+      if (isIpupiara) {
+        linhas.push("");
+        linhas.push(
+          `Base de cálculo conforme Art. 18 da IN RFB nº 2.145/2023: Valor total dos serviços (base): ${BRL(valorLiquido)}. Valor da comissão (3%): ${BRL(comissao)}. Conforme o §1º do Art. 18, destaca-se que a base de cálculo para retenção dos tributos federais corresponde ao valor da comissão acima indicada. Não há retenção de ISS sobre a comissão destacada, conforme entendimento vigente sobre a não incidência de ISS em operações de intermediação sem cobrança de comissão específica.`
+        );
+      }
 
       setTextoNFSe({ fatura: f, setor: setorLabel, texto: linhas.join("\n") });
     } catch (e: any) {
