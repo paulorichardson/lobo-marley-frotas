@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
   const EMAIL = "paulorichardson@gmail.com";
-  const SENHA = "206213";
+  const SENHA = "Paulo@206213";
   const USER_ID = "e8a2d484-2843-49a7-a5a9-29b1e1bad019";
 
   const { error } = await admin.auth.admin.updateUserById(USER_ID, {
